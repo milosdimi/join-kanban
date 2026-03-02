@@ -77,6 +77,10 @@ a {
     transform: scale(1.05);
 }
 
+#profileDropdown {
+    z-index: 1000;
+}
+
 /* --- MOBILE LOGO (Global) --- */
 .mobile-logo {
     position: absolute;

@@ -72,6 +72,7 @@ function showContactDetails(index) {
 
     if (window.innerWidth < 1000) {
         document.querySelector('.contacts-container').classList.add('show-mobile-details');
+        document.body.classList.add('no-scroll');
     }
 
     content.innerHTML = generateContactDetailHTML(contact, index);
@@ -91,6 +92,7 @@ function highlightActiveContact(index) {
  */
 function closeMobileDetails() {
     document.querySelector('.contacts-container').classList.remove('show-mobile-details');
+    document.body.classList.remove('no-scroll');
 
     const menu = document.getElementById('mobileMenuOptions');
     if (menu) menu.classList.remove('show');
