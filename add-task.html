@@ -1,19 +1,41 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join - Add Task</title>
-
-    <!-- Favicon & PWA -->
-    <link rel="icon" type="image/png" href="assets/img/favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="assets/img/favicon/favicon.svg" />
-    <link rel="shortcut icon" href="assets/img/favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="Join" />
-    <link rel="manifest" href="assets/img/favicon/site.webmanifest" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="author" content="Milos Dimitrijevic">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="application-name" content="Join">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Join">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#2A3647">
+    <meta name="msapplication-TileColor" content="#2A3647">
+    <title>Join | Add Task</title>
+    <meta name="description" content="Create detailed tasks with assignees, priorities, categories, and due dates in Join.">
+    <link rel="canonical" href="https://join.dimit.cc/add-task.html">
 
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Join">
+    <meta property="og:title" content="Join | Add Task">
+    <meta property="og:description" content="Add and structure new tasks quickly to keep your team workflow clear.">
+    <meta property="og:url" content="https://join.dimit.cc/add-task.html">
+    <meta property="og:image" content="https://join.dimit.cc/assets/img/join_logo_login.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Join | Add Task">
+    <meta name="twitter:description" content="Add and structure new tasks quickly to keep your team workflow clear.">
+    <meta name="twitter:image" content="https://join.dimit.cc/assets/img/join_logo_login.png">
+
+    <link rel="icon" type="image/png" href="assets/img/favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon/favicon.svg">
+    <link rel="shortcut icon" href="assets/img/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="assets/img/favicon/site.webmanifest">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/summary.css">
     <link rel="stylesheet" href="css/add-task.css">
@@ -69,7 +91,7 @@
                                 <div id="dropdownAssigned" class="dropdown-container" onclick="toggleContactsDropdown(event)">
                                     <div class="dropdown-select">
                                         <span id="dropdownSelectText">Select contacts to assign</span>
-                                        <img src="assets/img/arrow_left_icon.png" alt="▼" class="dropdown-arrow">
+                                        <img src="assets/img/arrow_left_icon.png" alt="â–¼" class="dropdown-arrow">
                                     </div>
                                     <div id="dropdownOptions" class="dropdown-options d-none" onclick="event.stopPropagation()"></div>
                                 </div>
@@ -84,7 +106,7 @@
                                         <option value="Technical Task">Technical Task</option>
                                         <option value="User Story">User Story</option>
                                     </select>
-                                    <img src="assets/img/arrow_left_icon.png" alt="▼" class="select-arrow">
+                                    <img src="assets/img/arrow_left_icon.png" alt="â–¼" class="select-arrow">
                                 </div>
                             </div>
 
@@ -126,3 +148,4 @@
     <script src="js/add-task.js"></script>
 </body>
 </html>
+
