@@ -1,4 +1,13 @@
-User-agent: *
+﻿User-agent: *
 Allow: /
+
+# Internal template fragments
 Disallow: /assets/templates/
+
+# App-only pages behind login flow
+Disallow: /summary.html
+Disallow: /board.html
+Disallow: /add-task.html
+Disallow: /contacts.html
+
 Sitemap: https://join.dimit.cc/sitemap.xml
