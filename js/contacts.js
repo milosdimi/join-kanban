@@ -193,6 +193,11 @@ function validateContactForm() {
     return isValid;
 }
 
+/**
+ * Validates a single input field (checks for empty value and email format).
+ * @param {HTMLInputElement} input - The input element to validate.
+ * @returns {boolean} True if valid, false otherwise.
+ */
 function validateInput(input) {
     if (!input.value.trim()) {
         input.classList.add('error-border');
@@ -205,10 +210,10 @@ function validateInput(input) {
             input.classList.add('error-border');
             return false;
         }
-    } else {
-        input.classList.remove('error-border');
-        return true;
     }
+
+    input.classList.remove('error-border');
+    return true;
 }
 
 /**

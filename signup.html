@@ -42,7 +42,7 @@
                     <img src="assets/img/mail_icon.png" alt="Email" class="input-icon">
                 </div>
                 <div class="input-container">
-                    <input type="password" id="password" placeholder="Password" required oninput="updatePasswordIcon('password')">
+                    <input type="password" id="password" placeholder="Password" required oninput="updatePasswordIcon('password'); validatePassword()">
                     <img src="assets/img/lock_icon.png" alt="Password" class="input-icon" onclick="togglePasswordVisibility('password', this)">
                 </div>
                 <div class="input-container">

@@ -179,8 +179,10 @@ async function createAndLoginUser(name, email, password) {
 async function login() {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
+    const msgBox = document.getElementById('msgBox');
 
     resetValidationErrors([emailInput, passwordInput]);
+    if (msgBox) msgBox.classList.add('d-none');
 
     let isValid = true;
     if (!validateInput(emailInput)) isValid = false;
@@ -226,6 +228,12 @@ function validateInput(input) {
         }
     }
 
+    // Remove error if valid
+    if (container) {
+        container.classList.remove('error-border');
+    } else {
+        input.classList.remove('error-border');
+    }
     return true;
 }
 
