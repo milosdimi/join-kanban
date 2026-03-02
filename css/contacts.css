@@ -63,6 +63,7 @@
     background-color: #F0F0F0;
 }
 
+
 .contact-item.active {
     background-color: #2A3647; 
     color: white;
@@ -98,7 +99,7 @@
 
 .contact-item.active .contact-name,
 .contact-item.active .contact-email {
-    color: white;
+    color: white; 
 }
 
 /* --- RIGHT DETAIL VIEW --- */
@@ -502,14 +503,24 @@ form {
 
     .show-mobile-details .contact-detail-view {
         display: block;
-        position: fixed; 
+        position: fixed;
         top: 90px;
         left: 0;
+        right: 0;
+        bottom: 0; 
         width: 100%;
-        height: calc(100vh - 90px);
+        height: auto;
         z-index: 10; 
         background-color: var(--bg-color);
         overflow-y: auto;
+        padding-bottom: 150px; 
+        -webkit-overflow-scrolling: touch; 
+    }
+
+    
+    .header {
+        z-index: 20 !important;
+        position: relative;
     }
 
 
