@@ -28,6 +28,11 @@ function renderContactList() {
     let list = document.getElementById('contactList');
     list.innerHTML = '';
 
+    if (contacts.length === 0) {
+        list.innerHTML = '<div style="padding: 20px; text-align: center; color: #A8A8A8;">No contacts yet.</div>';
+        return;
+    }
+
     contacts.sort((a, b) => a.name.localeCompare(b.name));
 
     let currentLetter = '';
@@ -65,12 +70,20 @@ function showContactDetails(index) {
     const contact = contacts[index];
     const content = document.getElementById('contactDetail');
 
-
     if (window.innerWidth < 1000) {
         document.querySelector('.contacts-container').classList.add('show-mobile-details');
     }
 
     content.innerHTML = generateContactDetailHTML(contact, index);
+    highlightActiveContact(index);
+}
+
+function highlightActiveContact(index) {
+    // Remove active class from all
+    document.querySelectorAll('.contact-item').forEach(item => item.classList.remove('active'));
+    // Add to current
+    const activeItem = document.getElementById(`contact-${index}`);
+    if (activeItem) activeItem.classList.add('active');
 }
 
 /**
@@ -154,10 +167,39 @@ function closeAddContact() {
  * Handles the form submission for adding or editing a contact.
  */
 function handleContactFormSubmit() {
+    if (!validateContactForm()) return;
+
     if (editingContactIndex === null) {
         createContact();
     } else {
         saveContact(editingContactIndex);
+    }
+}
+
+/**
+ * Validates the contact form inputs.
+ * @returns {boolean} True if valid.
+ */
+function validateContactForm() {
+    const name = document.getElementById('contactName');
+    const email = document.getElementById('contactEmail');
+    const phone = document.getElementById('contactPhone');
+    
+    let isValid = true;
+    if (!validateInput(name)) isValid = false;
+    if (!validateInput(email)) isValid = false;
+    if (!validateInput(phone)) isValid = false;
+
+    return isValid;
+}
+
+function validateInput(input) {
+    if (!input.value.trim()) {
+        input.classList.add('error-border');
+        return false;
+    } else {
+        input.classList.remove('error-border');
+        return true;
     }
 }
 

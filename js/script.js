@@ -7,6 +7,7 @@ async function init() {
     checkAuth();
     checkCookieConsent(); 
     highlightActiveMenu();
+    updateProfileMenu(); 
 }
 
 /**
@@ -88,6 +89,27 @@ function hideSidebarMenu() {
 function logOut() {
     localStorage.removeItem('currentUser');
     window.location.href = 'index.html';
+}
+
+/**
+ * Updates the profile dropdown menu based on user status.
+ * Changes "Log out" to "Log in" for guests or unauthenticated users.
+ */
+function updateProfileMenu() {
+    let user = localStorage.getItem('currentUser');
+    let dropdown = document.getElementById('profileDropdown');
+    
+    if (dropdown) {
+        
+        if (!user || user === 'guest') {
+            dropdown.innerHTML = `
+                <a href="help.html">Help</a>
+                <a href="legal-notice.html">Legal Notice</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="index.html">Log in</a>
+            `;
+        }
+    }
 }
 
 /**

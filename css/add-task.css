@@ -45,6 +45,7 @@ select,
     font-size: 20px;
     width: 100%;
     font-family: 'Inter', sans-serif;
+    max-width: 100%; 
 }
 
 .error-border {

@@ -62,6 +62,11 @@
     background-color: #F0F0F0;
 }
 
+.contact-item.active {
+    background-color: #2A3647; 
+    color: white;
+}
+
 .contact-avatar {
     width: 42px;
     height: 42px;
@@ -88,6 +93,11 @@
     color: #007CEE;
     text-decoration: none;
     font-size: 16px;
+}
+
+.contact-item.active .contact-name,
+.contact-item.active .contact-email {
+    color: white;
 }
 
 /* --- RIGHT DETAIL VIEW --- */
@@ -355,6 +365,10 @@ form {
     background-size: 20px;
 }
 
+.error-border {
+    border-color: #FF8190 !important;
+}
+
 .input-name {
     background-image: url('../assets/img/user_icon.png');
 }
@@ -486,6 +500,14 @@ form {
 
     .show-mobile-details .contact-detail-view {
         display: block;
+        position: fixed; 
+        top: 90px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 90px);
+        z-index: 50; 
+        background-color: var(--bg-color);
+        overflow-y: auto;
     }
 
 

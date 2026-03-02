@@ -110,6 +110,11 @@
     cursor: pointer;
 }
 
+
+.error-border {
+    border-color: #FF8190 !important;
+}
+
 .validation-msg {
     color: #FF8190;
     font-size: 12px;

@@ -96,7 +96,7 @@ function updatePasswordIcon(inputId) {
         icon.src = 'assets/img/lock_icon.png';
         input.type = 'password';
     } else {
-        
+
         if (icon.src.includes('lock_icon.png')) {
             icon.src = 'assets/img/invisible.png';
         }
@@ -110,7 +110,7 @@ function updatePasswordIcon(inputId) {
  */
 function togglePasswordVisibility(inputId, icon) {
     const input = document.getElementById(inputId);
-    if (input.value.length === 0) return; 
+    if (input.value.length === 0) return;
 
     const type = input.type === 'password' ? 'text' : 'password';
     input.type = type;
@@ -121,18 +121,35 @@ function togglePasswordVisibility(inputId, icon) {
  * Registers a new user if they don't exist yet.
  */
 async function register() {
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirmPassword');
+    const privacyCheckbox = document.getElementById('privacyPolicy');
+
+    // Reset errors
+    resetValidationErrors([nameInput, emailInput, passwordInput, confirmInput]);
+
+    // Validate
+    let isValid = true;
+    if (!validateInput(nameInput)) isValid = false;
+    if (!validateInput(emailInput)) isValid = false;
+    if (!validateInput(passwordInput)) isValid = false;
+    if (!validateInput(confirmInput)) isValid = false;
+    if (!privacyCheckbox.checked) isValid = false;
+
+    if (!isValid) return;
+
     await loadUsers();
-    
+
+    const email = emailInput.value;
+
     if (isUserExisting(email)) {
         alert('User already exists!');
         return;
     }
 
-    await createAndLoginUser(name, email, password);
+    await createAndLoginUser(nameInput.value, email, passwordInput.value);
 }
 
 /**
@@ -160,17 +177,56 @@ async function createAndLoginUser(name, email, password) {
  * Handles the login process.
  */
 async function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    resetValidationErrors([emailInput, passwordInput]);
+
+    let isValid = true;
+    if (!validateInput(emailInput)) isValid = false;
+    if (!validateInput(passwordInput)) isValid = false;
+
+    if (!isValid) return;
 
     await loadUsers();
-    const user = users.find(u => u.email === email && u.password === password);
+    const user = users.find(u => u.email === emailInput.value && u.password === passwordInput.value);
 
     if (user) {
         loginSuccess(user.name);
     } else {
         showLoginError();
     }
+}
+
+/**
+ * Validates a single input field.
+ * @param {HTMLElement} input - The input element.
+ * @returns {boolean} True if valid.
+ */
+function validateInput(input) {
+    if (!input.value.trim()) {
+
+        const container = input.closest('.input-container');
+        if (container) {
+            container.classList.add('error-border');
+        } else {
+            input.classList.add('error-border');
+        }
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Resets validation errors for a list of inputs.
+ * @param {HTMLElement[]} inputs - Array of input elements.
+ */
+function resetValidationErrors(inputs) {
+    inputs.forEach(input => {
+        const container = input.closest('.input-container');
+        if (container) container.classList.remove('error-border');
+        input.classList.remove('error-border');
+    });
 }
 
 /**

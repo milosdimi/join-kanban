@@ -325,7 +325,7 @@ function generateContactLetterHTML(letter) {
  */
 function generateContactItemHTML(contact, index) {
     return /*html*/`
-        <div class="contact-item" onclick="showContactDetails(${index})">
+        <div class="contact-item" id="contact-${index}" onclick="showContactDetails(${index})">
             <div class="contact-avatar" style="background-color: ${contact.color};">${getInitials(contact.name)}</div>
             <div class="contact-info">
                 <span class="contact-name">${contact.name}</span>
