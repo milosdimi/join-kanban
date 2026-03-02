@@ -204,9 +204,10 @@ async function login() {
  * @returns {boolean} True if valid.
  */
 function validateInput(input) {
+    const container = input.closest('.input-container');
+    
+    // 1. Check if empty
     if (!input.value.trim()) {
-
-        const container = input.closest('.input-container');
         if (container) {
             container.classList.add('error-border');
         } else {
@@ -214,6 +215,17 @@ function validateInput(input) {
         }
         return false;
     }
+
+    // 2. Check Email format if it is an email field
+    if (input.type === 'email') {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(input.value)) {
+            if (container) container.classList.add('error-border');
+            else input.classList.add('error-border');
+            return false;
+        }
+    }
+
     return true;
 }
 

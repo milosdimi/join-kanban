@@ -197,6 +197,14 @@ function validateInput(input) {
     if (!input.value.trim()) {
         input.classList.add('error-border');
         return false;
+    } 
+    
+    if (input.type === 'email') {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(input.value)) {
+            input.classList.add('error-border');
+            return false;
+        }
     } else {
         input.classList.remove('error-border');
         return true;

@@ -367,6 +367,7 @@ form {
 
 .error-border {
     border-color: #FF8190 !important;
+    box-shadow: 0 0 4px 0 #FF8190;
 }
 
 .input-name {
