@@ -30,7 +30,7 @@ function generateEditSubtaskHTML(currentTitle, index) {
             <div class="subtask-edit-actions">
                 <img src="assets/img/delete_icon.svg" onclick="deleteSubtask(${index})" class="subtask-action-icon">
                 <div class="subtask-separator-list"></div>
-                <img src="assets/img/check_icon.png" onclick="saveSubtask(${index})" class="subtask-action-icon">
+                <img src="assets/img/check_dark_icon.svg" onclick="saveSubtask(${index})" class="subtask-action-icon">
             </div>
         </div>
     `;

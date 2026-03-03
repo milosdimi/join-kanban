@@ -3,6 +3,7 @@
     display: flex;
     gap: 50px;
     margin-top: 30px;
+    max-width: 1000px; 
 }
 
 .form-column {
@@ -23,6 +24,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative;
 }
 
 label {
@@ -58,6 +60,14 @@ input[type="date"] {
     box-shadow: 0 0 4px 0 #FF8190;
 }
 
+.input-error-msg {
+    color: #FF8190;
+    font-size: 14px;
+    margin-top: 4px;
+    position: absolute;
+    bottom: -22px;
+}
+
 /* --- CUSTOM SELECT ARROW --- */
 select {
     appearance: none;
@@ -69,6 +79,7 @@ select {
 .select-wrapper {
     position: relative;
     width: 100%;
+    margin-bottom: 0; 
 }
 
 .select-arrow {
@@ -204,6 +215,8 @@ textarea {
     list-style: none;
     margin-top: 10px;
     padding-left: 10px;
+    max-height: 120px; 
+    overflow-y: auto;
 }
 
 .subtask-item {
@@ -249,6 +262,14 @@ textarea {
     background-color: #D1D1D1;
 }
 
+
+.subtask-item.editing {
+    background-color: white;
+    border-bottom: 1px solid #29ABE2;
+    border-radius: 0;
+    padding: 4px 10px;
+}
+
 .subtask-edit-input-wrapper {
     display: flex;
     align-items: center;
@@ -261,6 +282,7 @@ textarea {
     background: transparent;
     font-size: 16px;
     padding: 0;
+    border-radius: 2px;
 }
 
 .subtask-edit-input-wrapper input:focus {
@@ -279,6 +301,7 @@ textarea {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    max-width: 1000px; 
     margin-top: 100px;
     margin-bottom: 80px;
 }
@@ -550,4 +573,22 @@ textarea {
     margin-top: 5px;
     flex-wrap: wrap;
     min-height: 0;
+}
+
+/* --- MOBILE OPTIMIZATION (Small Screens) --- */
+@media (max-width: 380px) {
+    .prio-buttons {
+        gap: 5px;
+    }
+
+    .prio-btn {
+        padding: 10px 4px;
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .prio-btn img {
+        width: 14px;
+        height: auto;
+    }
 }

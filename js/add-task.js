@@ -15,11 +15,50 @@ async function initAddTask() {
     await loadContacts();
     setMinDate();
     setupSubtaskInput(); 
+    addValidationMsgElements(); 
+    setupInputEventListeners();
 
     if (id) {
         editingTaskId = parseInt(id);
         prepareEditMode();
     }
+}
+
+/**
+ * Injects validation message elements into the DOM if they don't exist.
+ */
+function addValidationMsgElements() {
+    const fields = ['title', 'dueDate', 'category'];
+    fields.forEach(id => {
+        const input = document.getElementById(id);
+        if (input && !document.getElementById(`msg-${id}`)) {
+            const msgDiv = document.createElement('div');
+            msgDiv.id = `msg-${id}`;
+            msgDiv.className = 'input-error-msg d-none';
+            msgDiv.innerText = 'This field is required';
+            // Insert after the input (or select)
+            input.parentNode.insertBefore(msgDiv, input.nextSibling);
+        }
+    });
+}
+
+/**
+ * Sets up event listeners to clear validation errors on input/change.
+ */
+function setupInputEventListeners() {
+    const fields = ['title', 'dueDate', 'category'];
+    fields.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            ['input', 'change'].forEach(eventType => {
+                input.addEventListener(eventType, () => {
+                    input.classList.remove('error-border');
+                    const msg = document.getElementById(`msg-${id}`);
+                    if (msg) msg.classList.add('d-none');
+                });
+            });
+        }
+    });
 }
 
 /**
@@ -99,6 +138,13 @@ function clearTask() {
     newTaskStatus = 'todo';
     assignedContacts = [];
     renderSelectedContactsBadges();
+
+    document.getElementById('title').classList.remove('error-border');
+    document.getElementById('dueDate').classList.remove('error-border');
+    document.getElementById('category').classList.remove('error-border');
+    document.getElementById('msg-title')?.classList.add('d-none');
+    document.getElementById('msg-dueDate')?.classList.add('d-none');
+    document.getElementById('msg-category')?.classList.add('d-none');
 }
 
 /**
@@ -127,28 +173,24 @@ function validateTaskForm() {
     const date = document.getElementById('dueDate');
     const category = document.getElementById('category');
 
-    if (!title.value.trim()) {
-        title.classList.add('error-border');
-        isValid = false;
-    } else {
-        title.classList.remove('error-border');
-    }
-
-    if (!date.value) {
-        date.classList.add('error-border');
-        isValid = false;
-    } else {
-        date.classList.remove('error-border');
-    }
-
-    if (!category.value) {
-        category.classList.add('error-border');
-        isValid = false;
-    } else {
-        category.classList.remove('error-border');
-    }
+    if (!validateField(title, 'msg-title')) isValid = false;
+    if (!validateField(date, 'msg-dueDate')) isValid = false;
+    if (!validateField(category, 'msg-category')) isValid = false;
     
     return isValid;
+}
+
+function validateField(input, msgId) {
+    const msgElement = document.getElementById(msgId);
+    if (!input.value.trim()) {
+        input.classList.add('error-border');
+        if (msgElement) msgElement.classList.remove('d-none');
+        return false;
+    } else {
+        input.classList.remove('error-border');
+        if (msgElement) msgElement.classList.add('d-none');
+        return true;
+    }
 }
 
 /**
@@ -170,6 +212,9 @@ function handleTaskFormSubmit() {
  * Creates a new task and saves it to storage.
  */
 async function createTask() {
+    const btn = document.querySelector('.btn-create');
+    if (btn) btn.disabled = true;
+
     let newTask = getTaskData();
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
