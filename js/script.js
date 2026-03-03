@@ -8,6 +8,7 @@ async function init() {
     checkCookieConsent(); 
     highlightActiveMenu();
     updateProfileMenu(); 
+    updateUserInitials();
     handleLoginAnimation();
 }
 
@@ -101,15 +102,7 @@ function updateProfileMenu() {
     let dropdown = document.getElementById('profileDropdown');
     
     if (dropdown) {
-        
-        if (!user || user === 'guest') {
-            dropdown.innerHTML = `
-                <a href="help.html">Help</a>
-                <a href="legal-notice.html">Legal Notice</a>
-                <a href="privacy-policy.html">Privacy Policy</a>
-                <a href="index.html">Log in</a>
-            `;
-        }
+        dropdown.innerHTML = generateProfileMenuHTML(user);
     }
 }
 
@@ -176,4 +169,33 @@ function handleLoginAnimation() {
         loginPage.classList.add('animate');
         sessionStorage.setItem('introShown', 'true');
     }
+}
+
+/**
+ * Updates the header profile icon with user initials if logged in.
+ */
+function updateUserInitials() {
+    let user = localStorage.getItem('currentUser');
+    let profileIcon = document.querySelector('.profile-icon');
+
+    if (user && profileIcon && user !== 'guest') {
+        let initials = getInitials(user);
+        
+        let profileDiv = document.createElement('div');
+        profileDiv.classList.add('profile-icon'); 
+        profileDiv.classList.add('profile-initials');
+        profileDiv.innerHTML = initials;
+        
+        profileIcon.parentNode.replaceChild(profileDiv, profileIcon);
+    }
+}
+
+/**
+ * Generates initials from a name.
+ * @param {string} name - The full name.
+ * @returns {string} The initials (max 2 chars).
+ */
+function getInitials(name) {
+    if (!name) return '';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 }
