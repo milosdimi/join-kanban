@@ -8,6 +8,7 @@ async function init() {
     checkCookieConsent(); 
     highlightActiveMenu();
     updateProfileMenu(); 
+    handleLoginAnimation();
 }
 
 /**
@@ -154,4 +155,25 @@ function acceptCookies() {
 function declineCookies() {
     localStorage.setItem('cookieConsent', 'false');
     document.getElementById('cookie-banner').remove();
+}
+
+/**
+ * Handles the intro animation on the login page.
+ * Runs only once per session and ensures it doesn't run on signup.
+ */
+function handleLoginAnimation() {
+    const path = window.location.pathname;
+    const isSignup = path.includes('signup.html');
+    const logo = document.querySelector('.logo');
+    const loginCard = document.querySelector('.login-card');
+    const signupBox = document.querySelector('.header-signup-box');
+    const loginPage = document.querySelector('.login-page');
+
+    if (!isSignup && logo && loginCard && signupBox && loginPage && !sessionStorage.getItem('introShown')) {
+        logo.classList.add('animate');
+        loginCard.classList.add('animate');
+        signupBox.classList.add('animate');
+        loginPage.classList.add('animate');
+        sessionStorage.setItem('introShown', 'true');
+    }
 }
