@@ -329,7 +329,7 @@ function generateContactItemHTML(contact, index) {
             <div class="contact-avatar" style="background-color: ${contact.color};">${getInitials(contact.name)}</div>
             <div class="contact-info">
                 <span class="contact-name">${contact.name}</span>
-                <a href="mailto:${contact.email}" class="contact-email">${contact.email}</a>
+                <span class="contact-email">${contact.email}</span>
             </div>
         </div>
     `;

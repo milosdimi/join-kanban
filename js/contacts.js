@@ -121,6 +121,7 @@ function openAddContact() {
     avatar.innerHTML = '<img src="assets/img/person.svg" alt="User" class="user-icon-placeholder">';
     avatar.style.backgroundColor = '#D1D1D1';
 
+    resetContactValidation();
     document.getElementById('addContactOverlay').classList.remove('d-none');
     document.body.classList.add('no-scroll'); 
 }
@@ -146,6 +147,7 @@ function openEditContact(index) {
     avatar.innerHTML = getInitials(contact.name);
     avatar.style.backgroundColor = contact.color;
 
+    resetContactValidation();
     document.getElementById('addContactOverlay').classList.remove('d-none');
     document.body.classList.add('no-scroll'); 
 }
@@ -201,23 +203,59 @@ function validateContactForm() {
  * @returns {boolean} True if valid, false otherwise.
  */
 function validateInput(input) {
+    const msgElement = document.getElementById(`msg-${input.id}`);
+    let message = '';
+
     if (!input.value.trim()) {
-        input.classList.add('error-border');
-        return false;
+        message = 'This field is required.';
     } 
     
-    if (input.type === 'email') {
+    if (!message && input.type === 'email') {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(input.value)) {
-            input.classList.add('error-border');
-            return false;
+            message = 'Please enter a valid email address.';
         }
     }
 
-    input.classList.remove('error-border');
-    return true;
+    if (!message && input.id === 'contactPhone') {
+        const phonePattern = /^[+0-9\s]*$/;
+        if (input.value.trim() && !phonePattern.test(input.value)) { // Only validate if not empty
+            message = 'Please enter a valid phone number.';
+        }
+    }
+
+    if (message) {
+        input.classList.add('error-border');
+        if (msgElement) {
+            msgElement.innerText = message;
+            msgElement.classList.remove('d-none');
+        }
+        return false;
+    } else {
+        input.classList.remove('error-border');
+        if (msgElement) {
+            msgElement.classList.add('d-none');
+        }
+        return true;
+    }
 }
 
+/**
+ * Resets all validation states in the contact form.
+ */
+function resetContactValidation() {
+    const inputs = ['contactName', 'contactEmail', 'contactPhone'];
+    inputs.forEach(id => {
+        const input = document.getElementById(id);
+        const msgElement = document.getElementById(`msg-${id}`);
+        if (input) {
+            input.classList.remove('error-border');
+        }
+        if (msgElement) {
+            msgElement.classList.add('d-none');
+        }
+    });
+}
 /**
  * Creates a new contact and saves it.
  */

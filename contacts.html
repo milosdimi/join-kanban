@@ -97,9 +97,18 @@
                     </div>
 
                     <form id="contactForm" onsubmit="handleContactFormSubmit(); return false;" novalidate>
-                        <input type="text" id="contactName" placeholder="Name" class="input-contact input-name" required>
-                        <input type="email" id="contactEmail" placeholder="Email" class="input-contact input-email" required>
-                        <input type="tel" id="contactPhone" placeholder="Phone" class="input-contact input-phone">
+                        <div class="contact-input-wrapper">
+                            <input type="text" id="contactName" placeholder="Name" class="input-contact input-name" required>
+                            <div id="msg-contactName" class="contact-error-msg d-none"></div>
+                        </div>
+                        <div class="contact-input-wrapper">
+                            <input type="email" id="contactEmail" placeholder="Email" class="input-contact input-email" required>
+                            <div id="msg-contactEmail" class="contact-error-msg d-none"></div>
+                        </div>
+                        <div class="contact-input-wrapper">
+                            <input type="tel" id="contactPhone" placeholder="Phone" class="input-contact input-phone">
+                            <div id="msg-contactPhone" class="contact-error-msg d-none"></div>
+                        </div>
                         
                         <div class="add-contact-actions">
                             <button type="button" class="btn-transparent" onclick="closeAddContact()">Cancel <img src="assets/img/cancel_icon.svg" alt=""></button>
@@ -116,4 +125,3 @@
     <script src="js/contacts.js"></script>
 </body>
 </html>
-
