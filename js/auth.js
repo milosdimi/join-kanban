@@ -170,7 +170,7 @@ function isUserExisting(email) {
 async function createAndLoginUser(name, email, password) {
     users.push({ name: name, email: email, password: password });
     await localStorage.setItem('users', JSON.stringify(users));
-    loginSuccess(name);
+    window.location.href = 'index.html?msg=signup_success';
 }
 
 /**

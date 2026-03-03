@@ -129,7 +129,7 @@
     height: 50px;
     border-radius: 50%;
     border: 2px solid var(--primary-color);
-    color: var(--secondary-color);
+
     display: flex;
     justify-content: center;
     align-items: center;

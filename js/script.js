@@ -185,6 +185,7 @@ function updateUserInitials() {
         profileDiv.classList.add('profile-icon'); 
         profileDiv.classList.add('profile-initials');
         profileDiv.innerHTML = initials;
+        profileDiv.onclick = toggleDropdown;
         
         profileIcon.parentNode.replaceChild(profileDiv, profileIcon);
     }
