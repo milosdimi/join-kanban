@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,18 +58,22 @@
                 <div class="input-container">
                     <input type="text" id="name" placeholder="Name" required>
                     <img src="assets/img/user_icon.png" alt="Name" class="input-icon">
+                    <div id="msg-name" class="input-error-msg d-none"></div>
                 </div>
                 <div class="input-container">
                     <input type="email" id="email" placeholder="Email" required>
                     <img src="assets/img/mail_icon.png" alt="Email" class="input-icon">
+                    <div id="msg-email" class="input-error-msg d-none"></div>
                 </div>
                 <div class="input-container">
                     <input type="password" id="password" placeholder="Password" required oninput="updatePasswordIcon('password'); validatePassword()">
                     <img src="assets/img/lock_icon.png" alt="Password" class="input-icon" onclick="togglePasswordVisibility('password', this)">
+                    <div id="msg-password" class="input-error-msg d-none"></div>
                 </div>
                 <div class="input-container">
                     <input type="password" id="confirmPassword" placeholder="Confirm Password" required oninput="updatePasswordIcon('confirmPassword'); validatePassword()">
                     <img src="assets/img/lock_icon.png" alt="Confirm Password" class="input-icon" onclick="togglePasswordVisibility('confirmPassword', this)">
+                    <div id="msg-confirmPassword" class="input-error-msg d-none"></div>
                 </div>
                 
                 <div id="msgBox" class="validation-msg d-none">Your passwords don't match. Please try again.</div>
@@ -100,4 +104,3 @@
     <script src="js/auth.js"></script>
 </body>
 </html>
-

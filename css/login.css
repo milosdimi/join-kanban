@@ -100,7 +100,7 @@
     border: 1px solid #D1D1D1;
     border-radius: 10px;
     padding: 12px 20px;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
     position: relative; 
 }
 
@@ -127,6 +127,14 @@
 .error-border {
     border-color: #FF8190 !important;
     box-shadow: 0 0 4px 0 #FF8190;
+}
+
+.input-error-msg {
+    color: #FF8190;
+    font-size: 12px;
+    position: absolute;
+    bottom: -24px;
+    left: 0;
 }
 
 .validation-msg {

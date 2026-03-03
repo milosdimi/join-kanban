@@ -207,11 +207,14 @@ async function login() {
  */
 function validateInput(input) {
     const container = input.closest('.input-container');
+    const msgId = 'msg-' + input.id;
+    const msgElement = document.getElementById(msgId);
     
     // 1. Check if empty
     if (!input.value.trim()) {
         if (container) {
             container.classList.add('error-border');
+            if(msgElement) { msgElement.innerText = 'This field is required'; msgElement.classList.remove('d-none'); }
         } else {
             input.classList.add('error-border');
         }
@@ -224,6 +227,7 @@ function validateInput(input) {
         if (!emailPattern.test(input.value)) {
             if (container) container.classList.add('error-border');
             else input.classList.add('error-border');
+            if(msgElement) { msgElement.innerText = 'Please enter a valid email'; msgElement.classList.remove('d-none'); }
             return false;
         }
     }
@@ -234,6 +238,7 @@ function validateInput(input) {
     } else {
         input.classList.remove('error-border');
     }
+    if(msgElement) { msgElement.classList.add('d-none'); }
     return true;
 }
 
@@ -244,8 +249,12 @@ function validateInput(input) {
 function resetValidationErrors(inputs) {
     inputs.forEach(input => {
         const container = input.closest('.input-container');
+        const msgId = 'msg-' + input.id;
+        const msgElement = document.getElementById(msgId);
+        
         if (container) container.classList.remove('error-border');
         input.classList.remove('error-border');
+        if(msgElement) msgElement.classList.add('d-none');
     });
 }
 

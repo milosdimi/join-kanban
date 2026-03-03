@@ -54,11 +54,13 @@
                 <div class="input-container">
                     <input type="email" id="email" placeholder="Email" required>
                     <img src="assets/img/mail_icon.png" alt="Email" class="input-icon">
+                    <div id="msg-email" class="input-error-msg d-none"></div>
                 </div>
                 
                 <div class="input-container">
                     <input type="password" id="password" placeholder="Password" required oninput="updatePasswordIcon('password')">
                     <img src="assets/img/lock_icon.png" alt="Password" class="input-icon" onclick="togglePasswordVisibility('password', this)">
+                    <div id="msg-password" class="input-error-msg d-none"></div>
                 </div>
 
                 <div id="msgBox" class="validation-msg d-none">Email or password is incorrect.</div>
