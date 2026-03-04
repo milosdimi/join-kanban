@@ -1,10 +1,11 @@
-﻿﻿/**
+﻿﻿﻿﻿/**
  * Initializes the main application logic.
  * Includes HTML templates, checks authentication, and highlights the active menu.
  */
 async function init() {
     await includeHTML();
     checkAuth();
+    checkAndLoadDummyData();
     checkCookieConsent(); 
     highlightActiveMenu();
     updateProfileMenu(); 
@@ -199,4 +200,35 @@ function updateUserInitials() {
 function getInitials(name) {
     if (!name) return '';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
+
+/**
+ * Checks if local storage is empty and loads dummy data if needed.
+ */
+function checkAndLoadDummyData() {
+    if (!localStorage.getItem('tasks') && !localStorage.getItem('contacts')) {
+        const dummyContacts = [
+            { name: "Anton Mayer", email: "anton@gmail.com", phone: "+49 1111 111 11 1", color: "#FF7A00" },
+            { name: "Anja Schulz", email: "schulz@hotmail.com", phone: "+49 2222 222 22 2", color: "#FF5EB3" },
+            { name: "Benedikt Ziegler", email: "benedikt@gmail.com", phone: "+49 3333 333 33 3", color: "#6E52FF" },
+            { name: "David Eisenberg", email: "davidberg@gmail.com", phone: "+49 4444 444 44 4", color: "#9327FF" },
+            { name: "Eva Fischer", email: "eva@gmail.com", phone: "+49 5555 555 55 5", color: "#00BEE8" },
+            { name: "Fabian Horst", email: "fabian@gmail.com", phone: "+49 6666 666 66 6", color: "#1FD7C1" },
+            { name: "Gabriel Ring", email: "gabriel@gmail.com", phone: "+49 7777 777 77 7", color: "#FF745E" },
+            { name: "Hanna Miller", email: "hanna@gmail.com", phone: "+49 8888 888 88 8", color: "#FFA35E" },
+            { name: "Irene Vogt", email: "irene@gmail.com", phone: "+49 9999 999 99 9", color: "#FC71FF" },
+            { name: "Johannes Ewald", email: "johannes@gmail.com", phone: "+49 0000 000 00 0", color: "#FFC701" }
+        ];
+
+        const dummyTasks = [
+            { id: 1710000000001, title: "Website Redesign", description: "Modify the structure of the main page.", dueDate: "2024-12-31", category: "User Story", prio: "urgent", status: "todo", subtasks: [{ title: "Create Wireframes", completed: false }, { title: "Review with Client", completed: false }], assignedContacts: ["anton@gmail.com", "schulz@hotmail.com"] },
+            { id: 1710000000002, title: "Call Accounting", description: "Clarify the monthly invoice details.", dueDate: "2024-11-15", category: "Technical Task", prio: "medium", status: "inprogress", subtasks: [], assignedContacts: ["benedikt@gmail.com"] },
+            { id: 1710000000003, title: "Fix Navigation Bug", description: "Menu does not open on mobile devices.", dueDate: "2024-10-20", category: "Technical Task", prio: "urgent", status: "awaitingfeedback", subtasks: [{ title: "Debug CSS", completed: true }], assignedContacts: ["davidberg@gmail.com", "eva@gmail.com"] },
+            { id: 1710000000004, title: "Update Privacy Policy", description: "Include new GDPR regulations.", dueDate: "2024-12-01", category: "User Story", prio: "low", status: "done", subtasks: [], assignedContacts: ["fabian@gmail.com"] },
+            { id: 1710000000005, title: "Marketing Campaign", description: "Plan social media posts for Q4.", dueDate: "2024-11-01", category: "User Story", prio: "medium", status: "todo", subtasks: [{ title: "Draft Content", completed: false }, { title: "Design Assets", completed: false }], assignedContacts: ["gabriel@gmail.com", "hanna@gmail.com"] }
+        ];
+
+        localStorage.setItem('contacts', JSON.stringify(dummyContacts));
+        localStorage.setItem('tasks', JSON.stringify(dummyTasks));
+    }
 }

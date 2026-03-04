@@ -122,3 +122,9 @@ a {
 .no-scroll {
     overflow: hidden;
 }
+
+/* --- GLOBAL CONTENT LIMIT --- */
+.content {
+    max-width: 1440px;
+    width: 100%;
+}

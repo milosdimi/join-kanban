@@ -70,7 +70,7 @@ function validatePassword() {
  * @param {HTMLElement} input - The input element to style.
  */
 function showPasswordError(msgBox, input) {
-    msgBox.classList.remove('d-none');
+    msgBox.classList.add('visible');
     input.style.borderColor = '#FF8190';
 }
 
@@ -80,7 +80,7 @@ function showPasswordError(msgBox, input) {
  * @param {HTMLElement} input - The input element to style.
  */
 function hidePasswordError(msgBox, input) {
-    msgBox.classList.add('d-none');
+    msgBox.classList.remove('visible');
     input.style.borderColor = '#D1D1D1';
 }
 
@@ -182,7 +182,7 @@ async function login() {
     const msgBox = document.getElementById('msgBox');
 
     resetValidationErrors([emailInput, passwordInput]);
-    if (msgBox) msgBox.classList.add('d-none');
+    if (msgBox) msgBox.classList.remove('visible');
 
     let isValid = true;
     if (!validateInput(emailInput)) isValid = false;
@@ -272,5 +272,5 @@ function loginSuccess(name) {
  */
 function showLoginError() {
     const msgBox = document.getElementById('msgBox');
-    if (msgBox) msgBox.classList.remove('d-none');
+    if (msgBox) msgBox.classList.add('visible');
 }

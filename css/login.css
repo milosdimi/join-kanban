@@ -145,6 +145,12 @@
     text-align: left;
     width: 100%;
     padding-left: 20px;
+    visibility: hidden; 
+    min-height: 20px;
+}
+
+.validation-msg.visible {
+    visibility: visible;
 }
 
 .options-container {
