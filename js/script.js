@@ -1,4 +1,4 @@
-﻿﻿﻿﻿/**
+﻿﻿/**
  * Initializes the main application logic.
  * Includes HTML templates, checks authentication, and highlights the active menu.
  */

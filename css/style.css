@@ -128,3 +128,23 @@ a {
     max-width: 1440px;
     width: 100%;
 }
+
+/* --- HIDE GLOBAL SCROLLBAR --- */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.wrapper::-webkit-scrollbar,
+.main-area::-webkit-scrollbar,
+.content::-webkit-scrollbar,
+.legal-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+html,
+body,
+.wrapper,
+.main-area,
+.content,
+.legal-wrapper {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}

@@ -732,3 +732,32 @@ form {
     align-items: center;
     gap: 10px;
 }
+
+/* --- CUSTOM SCROLLBAR FOR CONTACTS --- */
+.contact-list::-webkit-scrollbar,
+.contact-detail-view::-webkit-scrollbar {
+    width: 6px;
+}
+
+.contact-list::-webkit-scrollbar-track,
+.contact-detail-view::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.contact-list::-webkit-scrollbar-thumb,
+.contact-detail-view::-webkit-scrollbar-thumb {
+    background-color: #A8A8A8;
+    border-radius: 10px;
+}
+
+.contact-list::-webkit-scrollbar-thumb:hover,
+.contact-detail-view::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
+}
+
+/* Firefox */
+.contact-list,
+.contact-detail-view {
+    scrollbar-width: thin;
+    scrollbar-color: #2a3d59 transparent;
+}
