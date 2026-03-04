@@ -223,6 +223,8 @@ function editTask(taskId) {
     newTaskStatus = task.status;
     populateForm(task);
     setupSubtaskInput(); 
+    addValidationMsgElements();
+    setupInputEventListeners();
 
     
     const createBtn = modal.querySelector('.btn-create');
@@ -247,6 +249,8 @@ function openAddTaskModal(status = 'todo') {
     clearTask(); 
     setMinDate(); 
     setupSubtaskInput(); 
+    addValidationMsgElements();
+    setupInputEventListeners();
     
     overlay.classList.remove('d-none');
     document.body.classList.add('no-scroll'); 
