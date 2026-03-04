@@ -468,17 +468,22 @@ form {
 @media (max-width: 1000px) {
     .contacts-container {
         flex-direction: column;
-        height: calc(100vh - 80px - 90px);
-        margin-bottom: 80px;
+        height: 100%;
+        margin-bottom: 0;
         background-color: var(--white);
+        overflow-y: auto;
     }
 
     /* LIST VIEW */
     .contact-list-container {
         width: 100%;
-        height: 100%;
-        padding: 20px;
+
+        padding: 8px;
         box-shadow: none;
+    }
+
+    .contact-list {
+        padding-bottom: 150px;
     }
 
     .contact-avatar-large {
@@ -528,7 +533,7 @@ form {
         top: 90px;
         left: 0;
         right: 0;
-        bottom: 0; 
+        bottom: 80px; 
         width: 100%;
         height: auto;
         z-index: 10; 
@@ -650,8 +655,7 @@ form {
     .add-contact-left {
         width: 100%;
         height: auto;
-        padding: 25px 20px;
-        padding: 64px 24px;
+        padding: 55px 24px;
         align-items: flex-start;
         border-radius: 0;
     }
@@ -680,9 +684,7 @@ form {
     .add-contact-form-container {
         flex-direction: column;
         gap: 15px;
-        margin-top: 30px;
-        margin-top: 50px;
-
+        margin-top: 40px;
     }
 
     .add-contact-user-img {
@@ -693,7 +695,7 @@ form {
         left: 50%;
         transform: translateX(-50%);
         z-index: 5;
-        font-size: 38px;
+        font-size: 40px;
     }
 
     .close-icon {
@@ -716,6 +718,16 @@ form {
 
     .btn-transparent {
         display: none;
+    }
+
+    /* Kompakteres Formular auf Mobile */
+    form {
+        gap: 30px;
+    }
+
+    .close-icon-container {
+        top: 25px;
+        right: 25px;
     }
 }
 
@@ -760,14 +772,4 @@ form {
 .contact-detail-view {
     scrollbar-width: thin;
     scrollbar-color: #2a3d59 transparent;
-}
-
-/* --- EXTRA SMALL DEVICES (iPhone SE etc.) --- */
-@media (max-width: 450px) {
-    .add-contact-card {
-        width: 100% !important;
-        height: 100% !important;
-        max-height: 100vh !important;
-        border-radius: 0 !important;
-    }
 }
