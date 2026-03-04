@@ -211,7 +211,7 @@ function validateInput(input) {
     } 
     
     if (!message && input.type === 'email') {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(input.value)) {
             message = 'Please enter a valid email address.';
         }
