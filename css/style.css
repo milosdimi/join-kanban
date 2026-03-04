@@ -139,7 +139,7 @@ a {
 /* --- DRAG & DROP HIGHLIGHTING --- */
 .drag-area-highlight {
     background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
+    border-radius: 24px;
 }
 
 .dragging-active .task-card {

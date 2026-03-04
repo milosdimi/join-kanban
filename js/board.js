@@ -113,7 +113,9 @@ async function moveToFromMenu(event, taskId, newStatus) {
  */
 function startDragging(id) {
     currentDraggedElement = id;
-    document.body.classList.add('dragging-active'); // Hilft gegen Flackern
+    setTimeout(() => {
+        document.body.classList.add('dragging-active');
+    }, 10);
 }
 
 /**
