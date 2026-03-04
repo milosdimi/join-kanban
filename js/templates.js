@@ -49,7 +49,7 @@ function generateTaskHTML(task) {
     let moveMenuHTML = generateMoveMenuHTML(task);
 
     return /*html*/`
-    <div draggable="true" ondragstart="startDragging(${task.id})" class="task-card" onclick="openTaskDetails(${task.id})">
+    <div draggable="true" ondragstart="startDragging(${task.id})" ondragend="stopDragging()" class="task-card" onclick="openTaskDetails(${task.id})">
         <div class="task-card-header">
             <div class="task-category" style="background-color: ${categoryColor}">${task.category}</div>
             ${moveMenuHTML}

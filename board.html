@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -70,7 +70,7 @@
                             <span>To do</span>
                             <div class="plus-btn-border" onclick="openAddTaskModal('todo')">+</div>
                         </div>
-                        <div class="task-list" id="todo" ondrop="moveTo('todo')" ondragover="allowDrop(event)">
+                        <div class="task-list" id="todo" ondrop="moveTo('todo')" ondragover="allowDrop(event); highlight('todo')" ondragleave="removeHighlight('todo')">
                             <div class="no-tasks">No tasks To do</div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                             <span>In progress</span>
                             <div class="plus-btn-border" onclick="openAddTaskModal('inprogress')">+</div>
                         </div>
-                        <div class="task-list" id="inprogress" ondrop="moveTo('inprogress')" ondragover="allowDrop(event)">
+                        <div class="task-list" id="inprogress" ondrop="moveTo('inprogress')" ondragover="allowDrop(event); highlight('inprogress')" ondragleave="removeHighlight('inprogress')">
                             <div class="no-tasks">No tasks In progress</div>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
                             <span>Awaiting Feedback</span>
                             <div class="plus-btn-border" onclick="openAddTaskModal('awaitingfeedback')">+</div>
                         </div>
-                        <div class="task-list" id="awaitingfeedback" ondrop="moveTo('awaitingfeedback')" ondragover="allowDrop(event)">
+                        <div class="task-list" id="awaitingfeedback" ondrop="moveTo('awaitingfeedback')" ondragover="allowDrop(event); highlight('awaitingfeedback')" ondragleave="removeHighlight('awaitingfeedback')">
                             <div class="no-tasks">No tasks Awaiting Feedback</div>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                         <div class="column-header">
                             <span>Done</span>
                         </div>
-                        <div class="task-list" id="done" ondrop="moveTo('done')" ondragover="allowDrop(event)">
+                        <div class="task-list" id="done" ondrop="moveTo('done')" ondragover="allowDrop(event); highlight('done')" ondragleave="removeHighlight('done')">
                             <div class="no-tasks">No tasks Done</div>
                         </div>
                     </div>

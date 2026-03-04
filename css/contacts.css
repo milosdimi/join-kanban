@@ -761,3 +761,13 @@ form {
     scrollbar-width: thin;
     scrollbar-color: #2a3d59 transparent;
 }
+
+/* --- EXTRA SMALL DEVICES (iPhone SE etc.) --- */
+@media (max-width: 450px) {
+    .add-contact-card {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+    }
+}

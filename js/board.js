@@ -113,6 +113,7 @@ async function moveToFromMenu(event, taskId, newStatus) {
  */
 function startDragging(id) {
     currentDraggedElement = id;
+    document.body.classList.add('dragging-active'); // Hilft gegen Flackern
 }
 
 /**
@@ -121,6 +122,29 @@ function startDragging(id) {
  */
 function allowDrop(ev) {
     ev.preventDefault();
+}
+
+/**
+ * Stops the drag operation and cleans up.
+ */
+function stopDragging() {
+    document.body.classList.remove('dragging-active');
+}
+
+/**
+ * Highlights the drop area when dragging a task over it.
+ * @param {string} id - The ID of the column.
+ */
+function highlight(id) {
+    document.getElementById(id).classList.add('drag-area-highlight');
+}
+
+/**
+ * Removes the highlight from the drop area.
+ * @param {string} id - The ID of the column.
+ */
+function removeHighlight(id) {
+    document.getElementById(id).classList.remove('drag-area-highlight');
 }
 
 /**
@@ -133,6 +157,8 @@ function moveTo(status) {
         tasks[taskIndex].status = status;
         localStorage.setItem('tasks', JSON.stringify(tasks));
         renderBoard();
+        removeHighlight(status);
+        stopDragging();
     }
 }
 

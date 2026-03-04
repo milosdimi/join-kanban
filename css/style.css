@@ -136,6 +136,16 @@ a {
     width: 100%;
 }
 
+/* --- DRAG & DROP HIGHLIGHTING --- */
+.drag-area-highlight {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.dragging-active .task-card {
+    pointer-events: none; 
+}
+
 /* --- HIDE MOBILE MOVE MENU ON DESKTOP --- */
 @media (hover: hover) {
     .move-menu-wrapper {
