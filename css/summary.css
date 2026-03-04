@@ -87,7 +87,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 40px;
+    padding: 0 max(40px, calc(100% - 1440px + 40px)) 0 40px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 3;
