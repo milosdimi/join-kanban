@@ -136,6 +136,13 @@ a {
     width: 100%;
 }
 
+/* --- HIDE MOBILE MOVE MENU ON DESKTOP --- */
+@media (hover: hover) {
+    .move-menu-wrapper {
+        display: none !important;
+    }
+}
+
 /* --- HIDE GLOBAL SCROLLBAR --- */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,

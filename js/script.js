@@ -1,4 +1,4 @@
-﻿﻿/**
+﻿﻿﻿﻿/**
  * Initializes the main application logic.
  * Includes HTML templates, checks authentication, and highlights the active menu.
  */
@@ -231,4 +231,13 @@ function checkAndLoadDummyData() {
         localStorage.setItem('contacts', JSON.stringify(dummyContacts));
         localStorage.setItem('tasks', JSON.stringify(dummyTasks));
     }
+}
+
+/**
+ * Resets data to dummy data (For testing purposes).
+ */
+function resetToDummyData() {
+    localStorage.clear();
+    checkAndLoadDummyData();
+    location.reload();
 }

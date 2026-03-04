@@ -223,7 +223,7 @@ function validateInput(input) {
 
     // 2. Check Email format if it is an email field
     if (input.type === 'email') {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(input.value)) {
             if (container) container.classList.add('error-border');
             else input.classList.add('error-border');

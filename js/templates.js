@@ -279,7 +279,7 @@ function generateAddTaskModalHTML(title, formContent) {
  */
 function getCategoryColor(category) {
     if (category === 'Technical Task') return '#1FD7C1';
-    if (category === 'User Story') return '#0038FF';
+    if (category === 'User Story') return '#0022AA';
     return '#888';
 }
 

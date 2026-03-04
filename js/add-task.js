@@ -176,6 +176,13 @@ function validateTaskForm() {
     if (!validateField(title, 'msg-title')) isValid = false;
     if (!validateField(date, 'msg-dueDate')) isValid = false;
     if (!validateField(category, 'msg-category')) isValid = false;
+
+    // Date Year Validation
+    if (date.value && new Date(date.value).getFullYear() < 2000) {
+        document.getElementById('msg-dueDate').innerText = 'Please enter a valid year';
+        document.getElementById('msg-dueDate').classList.remove('d-none');
+        isValid = false;
+    }
     
     return isValid;
 }
@@ -310,7 +317,7 @@ function setupSubtaskInput() {
  */
 function addSubtask() {
     let input = document.getElementById('subtask');
-    if (input.value.length > 0) {
+    if (input.value.trim().length > 0) {
         subtasks.push({
             title: input.value,
             completed: false
@@ -351,7 +358,7 @@ function editSubtask(index) {
  */
 function saveSubtask(index) {
     let input = document.getElementById(`edit-subtask-${index}`);
-    if (input.value.length > 0) {
+    if (input.value.trim().length > 0) {
         subtasks[index].title = input.value;
     } else {
         
