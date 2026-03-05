@@ -33,7 +33,7 @@ label {
 }
 
 .required {
-    color: #FF8190;
+    color: #FF001F;
 }
 
 input,
@@ -56,16 +56,16 @@ input[type="date"] {
 }
 
 .error-border {
-    border-color: #FF8190 !important;
-    box-shadow: 0 0 4px 0 #FF8190;
+    border-color: #FF001F !important;
+    box-shadow: 0 0 4px 0 #FF001F;
 }
 
 .input-error-msg {
-    color: #FF8190;
-    font-size: 14px;
+    color: #FF001F;
+    font-size: 16px;
     margin-top: 4px;
     position: absolute;
-    bottom: -22px;
+    bottom: -24px;
 }
 
 /* --- CUSTOM SELECT ARROW --- */
