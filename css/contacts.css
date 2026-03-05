@@ -85,16 +85,21 @@
 .contact-info {
     display: flex;
     flex-direction: column;
+    min-width: 0; 
 }
 
 .contact-name {
     font-size: 20px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .contact-email {
     color: #007CEE;
     text-decoration: none;
     font-size: 16px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .contact-item.active .contact-name,
@@ -156,11 +161,15 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-width: 0;
+    flex: 1;
 }
 
 .contact-detail-name {
     font-size: 47px;
     font-weight: bold;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .contact-detail-actions {
@@ -202,11 +211,15 @@
     color: #007CEE;
     text-decoration: none;
     margin-bottom: 10px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .info-value-phone {
     color: black;
     text-decoration: none;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* --- ADD CONTACT OVERLAY --- */
@@ -364,7 +377,7 @@ form {
 }
 
 .input-contact {
-    padding: 13px 21px;
+    padding: 13px 50px 13px 21px;
     border: 1px solid #D1D1D1;
     border-radius: 10px;
     font-size: 20px;
@@ -708,7 +721,7 @@ form {
     }
 
     .input-contact {
-        padding: 10px 15px;
+        padding: 10px 50px 10px 15px;
         font-size: 16px;
     }
 
