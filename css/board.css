@@ -566,8 +566,9 @@
         overflow-x: hidden; 
         align-items: stretch;
         gap: 24px;
-        padding-bottom: 20px;
-        
+        padding-bottom: 100px;
+        padding-right: 0;
+        height: auto;
         
         -ms-overflow-style: none;  
         scrollbar-width: none;  
@@ -579,6 +580,7 @@
         overflow-x: auto;
         gap: 16px;
         padding-bottom: 10px;
+        padding-right: 20px;
         min-height: auto; 
         
         -ms-overflow-style: none;

@@ -469,21 +469,41 @@ textarea {
 }
 
 /* --- RESET FÜR MODAL (Board) --- */
-.task-detail-modal .form-footer {
-    position: static;
-    padding: 0;
-    margin-top: 40px;
-    box-shadow: none;
-    background-color: transparent;
-    width: auto;
+@media (min-width: 1001px) {
+    .task-detail-modal .form-footer {
+        position: static;
+        padding: 0;
+        margin-top: 40px;
+        box-shadow: none;
+        background-color: transparent;
+        width: auto;
+    }
+
+    .task-detail-modal .form-actions {
+        position: static;
+        padding: 0;
+        box-shadow: none;
+        width: 100%;
+        background-color: transparent;
+    }
 }
 
-.task-detail-modal .form-actions {
-    position: static;
-    padding: 0;
-    box-shadow: none;
-    width: 100%;
-    background-color: transparent;
+@media (max-width: 1000px) {
+    .task-detail-modal .form-actions {
+        position: static;
+        width: 100%;
+        background-color: transparent;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .task-detail-modal .form-footer {
+        padding-bottom: 0;
+    }
+
+    .task-detail-modal {
+        padding-bottom: 20px !important;
+    }
 }
 
 .task-detail-modal .form-layout {
