@@ -426,7 +426,7 @@ textarea {
         margin-bottom: 12px; 
         background-color: transparent;
         box-shadow: none;
-        padding-bottom: 64px; 
+        padding-bottom: 150px; 
     }
 
     .form-actions {
@@ -443,11 +443,9 @@ textarea {
     }
 
     .required-info {
-        display: block; 
-        margin-bottom: 15px; 
-        font-size: 14px;
-        text-align: center; 
-        width: 100%;
+        display: block;
+        text-align: center;
+        margin-bottom: 20px;
     }
 
     .btn-clear,
