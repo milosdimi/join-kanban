@@ -72,7 +72,7 @@
 
 .legal-link {
     color: #A8A8A8;
-    font-size: 14px;
+    font-size: 16px;
     text-decoration: none;
 }
 
@@ -217,7 +217,7 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
-    flex: 1;
+    flex: 2;
 }
 
 .metrics-row {
@@ -439,6 +439,20 @@
     }
 }
 
+/* --- RESPONSIVE (Tablet Portrait 1000px - 1150px) --- */
+@media (max-width: 1150px) {
+    .dashboard-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .greeting-container {
+        padding-left: 0;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+}
+
 /* --- RESPONSIVE DESIGN (Mobile < 1000px) --- */
 @media (max-width: 1000px) {
     .wrapper {
@@ -474,9 +488,9 @@
 
     .menu-link {
         flex-direction: column;
-        padding: 10px;
+        padding: 8px 5px;
         gap: 5px;
-        font-size: 12px;
+        font-size: 14px;
         width: auto;
         border-radius: 16px;
     }
@@ -529,6 +543,7 @@
     .dashboard-content {
         flex-direction: column;
         gap: 30px;
+        align-items: initial; 
     }
 
     .metrics-container {
@@ -561,5 +576,38 @@
 
     .card-number {
         font-size: 54px;
+    }
+}
+
+/* --- RESPONSIVE (Small Mobile < 400px) --- */
+@media (max-width: 400px) {
+    .wide-card {
+        padding: 0 15px;
+        gap: 15px;
+    }
+
+    .urgent-left {
+        gap: 10px;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .card-icon img {
+        width: 24px;
+    }
+
+    .card-number {
+        font-size: 36px;
+    }
+
+    .urgent-date {
+        font-size: 16px;
+    }
+
+    .urgent-deadline-label {
+        font-size: 16px;
     }
 }
