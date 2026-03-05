@@ -217,6 +217,7 @@ textarea {
     padding-left: 10px;
     max-height: 120px; 
     overflow-y: auto;
+    min-height: 120px; 
 }
 
 .subtask-item {
@@ -234,13 +235,16 @@ textarea {
 }
 
 .subtask-item:not(.editing):hover .subtask-actions {
-    display: flex;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .subtask-actions {
-    display: none;
+    display: flex;
     align-items: center;
     gap: 4px;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .subtask-action-icon {
@@ -302,8 +306,8 @@ textarea {
     justify-content: space-between;
     align-items: flex-end;
     max-width: 1000px; 
-    margin-top: 100px;
-    margin-bottom: 80px;
+    margin-top: 16px;
+    margin-bottom: 40px; 
 }
 
 .required-info {
@@ -573,7 +577,7 @@ textarea {
     gap: 5px;
     margin-top: 5px;
     flex-wrap: wrap;
-    min-height: 0;
+    min-height: 32px; 
 }
 
 /* --- MOBILE OPTIMIZATION (Small Screens) --- */
