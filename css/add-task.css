@@ -158,6 +158,10 @@ textarea {
     align-items: center;
 }
 
+.subtask-input-wrapper input {
+    padding-right: 90px;
+}
+
 .subtask-icons {
     position: absolute;
     right: 15px;
@@ -364,7 +368,7 @@ textarea {
     display: flex;
     align-items: center;
     gap: 15px;
-    z-index: 1000;
+    z-index: 100;
     animation: slideInAndOut 1.5s ease-in-out forwards;
 }
 

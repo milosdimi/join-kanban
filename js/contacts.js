@@ -123,6 +123,9 @@ function openAddContact() {
 
     resetContactValidation();
     document.getElementById('addContactOverlay').classList.remove('d-none');
+    document.getElementById('addContactOverlay').onclick = function(e) {
+        if(e.target === this) closeAddContact();
+    };
     document.body.classList.add('no-scroll'); 
 }
 
@@ -149,6 +152,9 @@ function openEditContact(index) {
 
     resetContactValidation();
     document.getElementById('addContactOverlay').classList.remove('d-none');
+    document.getElementById('addContactOverlay').onclick = function(e) {
+        if(e.target === this) closeAddContact();
+    };
     document.body.classList.add('no-scroll'); 
 }
 

@@ -112,6 +112,7 @@ async function moveToFromMenu(event, taskId, newStatus) {
  * @param {number} id - The ID of the dragged task.
  */
 function startDragging(id) {
+    if (window.innerWidth < 1000) return; 
     currentDraggedElement = id;
     setTimeout(() => {
         document.body.classList.add('dragging-active');
@@ -251,6 +252,7 @@ function editTask(taskId) {
     newTaskStatus = task.status;
     populateForm(task);
     setupSubtaskInput(); 
+    setMinDate();
     addValidationMsgElements();
     setupInputEventListeners();
 
@@ -265,6 +267,10 @@ function editTask(taskId) {
  * @param {string} status - The default status for the new task.
  */
 function openAddTaskModal(status = 'todo') {
+    if (window.innerWidth < 1000) {
+        window.location.href = 'add-task.html';
+        return;
+    }
     const overlay = document.getElementById('addTaskOverlay');
     const modal = overlay.querySelector('.task-detail-modal');
     loadContacts(); 

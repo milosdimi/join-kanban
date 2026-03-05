@@ -274,6 +274,9 @@ function redirectToBoard() {
 async function saveEditedTask() {
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     const taskIndex = tasks.findIndex(t => t.id === editingTaskId);
+    
+    const btn = document.querySelector('.btn-create');
+    if (btn) btn.disabled = true;
 
     if (taskIndex !== -1) {
         updateTaskObject(tasks[taskIndex]);
