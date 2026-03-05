@@ -16,6 +16,8 @@ function setGreeting() {
     let user = localStorage.getItem('currentUser');
     let timeText = getTimeGreeting();
 
+    if (!greetingElement || !nameElement) return;
+
     if (user === 'guest') {
         greetingElement.innerHTML = `${timeText}!`;
         nameElement.innerHTML = '';

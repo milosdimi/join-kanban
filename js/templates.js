@@ -223,12 +223,23 @@ function generateSubtaskListDetailHTML(task) {
 function generateBoardContactsHTML(assignedContacts) {
     if (!assignedContacts) return '';
     let html = '';
-    assignedContacts.forEach(email => {
+    const maxVisible = 4;
+    const count = assignedContacts.length;
+
+    let displayCount = count > maxVisible ? maxVisible - 1 : count;
+
+    for (let i = 0; i < displayCount; i++) {
+        let email = assignedContacts[i];
         let contact = contacts.find(c => c.email === email);
         if (contact) {
             html += `<div class="contact-badge-board" style="background-color: ${contact.color}">${getInitials(contact.name)}</div>`;
         }
-    });
+    }
+
+    if (count > maxVisible) {
+        html += `<div class="contact-badge-board" style="background-color: #2A3647; color: white;">+${count - displayCount}</div>`;
+    }
+    
     return html;
 }
 
