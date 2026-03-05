@@ -223,6 +223,8 @@
     font-weight: 700;
     font-size: 16px;
     color: var(--primary-color);
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .task-description {
@@ -356,11 +358,15 @@
     font-size: 40px;
     font-weight: 700;
     color: var(--primary-color);
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .task-detail-description {
     font-size: 18px;
     line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .task-detail-info-row {
@@ -410,6 +416,11 @@
 
 .task-detail-subtask-item:hover {
     background-color: #EEE;
+}
+
+.task-detail-subtask-item span {
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .task-detail-subtask-item input {
