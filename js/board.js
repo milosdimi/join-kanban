@@ -44,6 +44,9 @@ function renderBoard() {
     const searchInput = document.getElementById('searchInput');
     const search = searchInput ? searchInput.value.toLowerCase() : '';
 
+    // Safety check: If columns don't exist, stop rendering to prevent errors
+    if (!document.getElementById('todo')) return;
+
     columns.forEach(colId => {
         document.getElementById(colId).innerHTML = '';
     });

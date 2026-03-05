@@ -11,6 +11,7 @@ async function init() {
     updateProfileMenu(); 
     updateUserInitials();
     handleLoginAnimation();
+    checkSignupSuccess();
 }
 
 /**
@@ -200,4 +201,25 @@ function updateUserInitials() {
 function getInitials(name) {
     if (!name) return '';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
+
+/**
+ * Checks URL parameters for signup success message and displays a toast.
+ */
+function checkSignupSuccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('msg') === 'signup_success') {
+        const msgDiv = document.createElement('div');
+        msgDiv.innerText = 'You Signed Up successfully';
+        msgDiv.style.cssText = "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInBottom 0.5s ease-out;";
+        
+        document.body.appendChild(msgDiv);
+        
+        setTimeout(() => {
+            msgDiv.style.transition = "opacity 0.5s";
+            msgDiv.style.opacity = "0";
+            setTimeout(() => msgDiv.remove(), 500);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 3000);
+    }
 }
