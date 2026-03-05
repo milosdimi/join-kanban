@@ -33,7 +33,7 @@ label {
 }
 
 .required {
-    color: #FF001F;
+    color: #D40018;
 }
 
 input,
@@ -56,12 +56,12 @@ input[type="date"] {
 }
 
 .error-border {
-    border-color: #FF001F !important;
-    box-shadow: 0 0 4px 0 #FF001F;
+    border-color: #D40018 !important;
+    box-shadow: 0 0 4px 0 #D40018;
 }
 
 .input-error-msg {
-    color: #FF001F;
+    color: #D40018;
     font-size: 16px;
     margin-top: 4px;
     position: absolute;
