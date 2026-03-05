@@ -313,6 +313,7 @@ async function deleteContact(index) {
     renderContactList();
     document.getElementById('contactDetail').innerHTML = '';
     closeMobileDetails(); 
+    showContactSuccessMessage('Contact deleted');
 }
 
 /**

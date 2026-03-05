@@ -236,6 +236,7 @@ async function deleteTask(taskId) {
     await localStorage.setItem('tasks', JSON.stringify(tasks));
     closeTaskDetails();
     renderBoard();
+    showBoardToastMessage('Task deleted');
 }
 
 /**
@@ -324,4 +325,31 @@ function closeAddTaskModal() {
         modal.innerHTML = '';
         document.body.classList.remove('no-scroll'); 
     }, 300);
+}
+
+/**
+ * Shows a toast message on the board.
+ * @param {string} text - The message text.
+ */
+function showBoardToastMessage(text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.innerText = text;
+    msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 2s ease-in-out forwards;";
+    
+    if (!document.getElementById('keyframes-slideInAndOut')) {
+        const style = document.createElement('style');
+        style.id = 'keyframes-slideInAndOut';
+        style.innerHTML = `
+            @keyframes slideInAndOut {
+                0% { opacity: 0; transform: translate(-50%, 100px); }
+                10% { opacity: 1; transform: translate(-50%, 50%); }
+                90% { opacity: 1; transform: translate(-50%, 50%); }
+                100% { opacity: 0; transform: translate(-50%, 100px); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(msgDiv);
+    setTimeout(() => msgDiv.remove(), 2000);
 }
