@@ -773,3 +773,25 @@ form {
     scrollbar-width: thin;
     scrollbar-color: #2a3d59 transparent;
 }
+
+/* --- SUCCESS MESSAGE --- */
+.contact-success-msg {
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    background-color: #2A3647;
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    animation: slideInAndOut 2s ease-in-out forwards;
+}
+
+@keyframes slideInAndOut {
+    0% { opacity: 0; transform: translate(-50%, 100px); }
+    10% { opacity: 1; transform: translate(-50%, 50%); }
+    90% { opacity: 1; transform: translate(-50%, 50%); }
+    100% { opacity: 0; transform: translate(-50%, 100px); }
+}

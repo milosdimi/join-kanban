@@ -211,14 +211,26 @@ function checkSignupSuccess() {
     if (urlParams.get('msg') === 'signup_success') {
         const msgDiv = document.createElement('div');
         msgDiv.innerText = 'You Signed Up successfully';
-        msgDiv.style.cssText = "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInBottom 0.5s ease-out;";
+        msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 3s ease-in-out forwards;";
+        
+        if (!document.getElementById('keyframes-slideInAndOut')) {
+            const style = document.createElement('style');
+            style.id = 'keyframes-slideInAndOut';
+            style.innerHTML = `
+                @keyframes slideInAndOut {
+                    0% { opacity: 0; transform: translate(-50%, 100px); }
+                    10% { opacity: 1; transform: translate(-50%, 50%); }
+                    90% { opacity: 1; transform: translate(-50%, 50%); }
+                    100% { opacity: 0; transform: translate(-50%, 100px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
         
         document.body.appendChild(msgDiv);
         
         setTimeout(() => {
-            msgDiv.style.transition = "opacity 0.5s";
-            msgDiv.style.opacity = "0";
-            setTimeout(() => msgDiv.remove(), 500);
+            msgDiv.remove();
             window.history.replaceState({}, document.title, window.location.pathname);
         }, 3000);
     }

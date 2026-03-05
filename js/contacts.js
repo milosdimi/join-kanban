@@ -280,6 +280,7 @@ async function createContact() {
     await localStorage.setItem('contacts', JSON.stringify(contacts));
     renderContactList();
     closeAddContact();
+    showContactSuccessMessage('Contact successfully created');
 }
 
 /**
@@ -299,6 +300,7 @@ async function saveContact(index) {
     renderContactList();
     showContactDetails(index);
     closeAddContact();
+    showContactSuccessMessage('Contact successfully updated');
 }
 
 /**
@@ -311,4 +313,16 @@ async function deleteContact(index) {
     renderContactList();
     document.getElementById('contactDetail').innerHTML = '';
     closeMobileDetails(); 
+}
+
+/**
+ * Shows a success message animation.
+ * @param {string} text - The message text.
+ */
+function showContactSuccessMessage(text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'contact-success-msg';
+    msgDiv.innerText = text;
+    document.body.appendChild(msgDiv);
+    setTimeout(() => msgDiv.remove(), 2000);
 }
