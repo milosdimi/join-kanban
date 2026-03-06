@@ -375,7 +375,7 @@ textarea {
     display: flex;
     align-items: center;
     gap: 15px;
-    z-index: 100;
+    z-index: 950;
     animation: slideInAndOut 1.5s ease-in-out forwards;
 }
 
