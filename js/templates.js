@@ -377,7 +377,7 @@ function generateContactDetailHTML(contact, index) {
             <a href="tel:${contact.phone}" class="info-value-phone">${contact.phone}</a>
         </div>
 
-        <div class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <div class="mobile-menu-btn" onclick="toggleMobileMenu(event)">
             <img src="assets/img/more_vert_icon.svg" alt="Options">
         </div>
 

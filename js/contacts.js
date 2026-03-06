@@ -100,10 +100,27 @@ function closeMobileDetails() {
 
 /**
  * Toggles the mobile options menu.
+ * @param {Event} event - The click event.
  */
-function toggleMobileMenu() {
+function toggleMobileMenu(event) {
+    if (event) event.stopPropagation();
     const menu = document.getElementById('mobileMenuOptions');
-    if (menu) menu.classList.toggle('show');
+    if (menu) {
+        menu.classList.toggle('show');
+        if (menu.classList.contains('show')) {
+            document.addEventListener('click', closeMobileMenuOnClickOutside);
+        } else {
+            document.removeEventListener('click', closeMobileMenuOnClickOutside);
+        }
+    }
+}
+
+function closeMobileMenuOnClickOutside(event) {
+    const menu = document.getElementById('mobileMenuOptions');
+    if (!menu || !menu.contains(event.target)) {
+        if (menu) menu.classList.remove('show');
+        document.removeEventListener('click', closeMobileMenuOnClickOutside);
+    }
 }
 
 /**
@@ -136,6 +153,9 @@ function openAddContact() {
 function openEditContact(index) {
     editingContactIndex = index;
     const contact = contacts[index];
+
+    const menu = document.getElementById('mobileMenuOptions');
+    if (menu) menu.classList.remove('show');
 
     document.getElementById('contactModalTitle').innerText = 'Edit contact';
     
