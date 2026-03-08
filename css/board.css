@@ -589,6 +589,7 @@
         padding-bottom: 100px;
         padding-right: 0;
         height: auto;
+        overflow-y: visible;
         
         -ms-overflow-style: none;  
         scrollbar-width: none;  
