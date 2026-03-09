@@ -70,9 +70,9 @@
     display: flex;
     justify-content: space-between;
     gap: 24px;
-    height: 100%;
+    height: auto;
     overflow-x: auto;
-    overflow-y: hidden;
+    overflow-y: visible;
     
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
@@ -574,7 +574,7 @@
     .board-columns {
         flex-wrap: wrap;
         overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: visible;
         gap: 18px;
         padding-bottom: 24px;
     }
