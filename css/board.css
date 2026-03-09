@@ -129,7 +129,7 @@
 .no-tasks {
     background-color: #E7E7E7;
     border: 1px dashed #A8A8A8;
-    border-radius: 10px;
+    border-radius: 24px;
     color: #A8A8A8;
     display: flex;
     justify-content: center;
@@ -499,26 +499,89 @@
     word-break: break-word;
 }
 
-/* --- RESPONSIVE BOARD (Desktop Intermediate 1000px - 1400px) --- */
-@media (max-width: 1400px) {
+/* --- RESPONSIVE BOARD --- */
+@media (min-width: 1001px) and (max-width: 1640px) {
+    .main-area .content {
+        padding: 40px 32px !important;
+    }
+
+    .board-header {
+        margin-bottom: 36px;
+        gap: 16px;
+    }
+
     .board-header h1 {
-        font-size: 48px; 
+        font-size: clamp(42px, 3.4vw, 56px);
     }
 
-    .board-columns {
-        flex-wrap: wrap; 
+    .board-header-right {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
 
-    .board-column {
-        flex: 1 1 45%; 
-        min-width: 300px;
-        margin-bottom: 20px;
+    .search-bar {
+        padding: 8px 12px;
+    }
+
+    .search-bar input {
+        width: min(320px, 26vw);
+        font-size: 18px;
+    }
+
+    .btn-add-task {
+        font-size: 19px;
+        padding: 8px 14px;
     }
 }
 
-@media (min-width: 1001px) and (max-width: 1640px) {
+@media (min-width: 1201px) and (max-width: 1640px) {
+    .board-columns {
+        flex-wrap: nowrap;
+        gap: 16px;
+    }
+
+    .board-column {
+        min-width: 220px;
+    }
+}
+
+@media (min-width: 1401px) and (max-width: 1640px) {
     .main-area .content {
-        padding: 50px !important;
+        padding: 36px 24px !important;
+    }
+
+    .board-columns {
+        gap: 14px;
+        overflow-x: hidden;
+    }
+
+    .board-column {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .column-header {
+        font-size: 18px;
+    }
+
+    .search-bar input {
+        width: 260px;
+    }
+}
+
+@media (min-width: 1001px) and (max-width: 1200px) {
+    .board-columns {
+        flex-wrap: wrap;
+        overflow-x: hidden;
+        overflow-y: auto;
+        gap: 18px;
+        padding-bottom: 24px;
+    }
+
+    .board-column {
+        flex: 1 1 calc(50% - 9px);
+        min-width: 280px;
     }
 }
 
