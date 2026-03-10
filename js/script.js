@@ -1,11 +1,10 @@
-﻿﻿/**
+﻿/**
  * Initializes the main application logic.
  * Includes HTML templates, checks authentication, and highlights the active menu.
  */
 async function init() {
     await includeHTML();
     checkAuth();
-    checkAndLoadDummyData();
     checkCookieConsent(); 
     highlightActiveMenu();
     updateProfileMenu(); 

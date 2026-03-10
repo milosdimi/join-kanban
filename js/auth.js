@@ -1,16 +1,3 @@
-let users = [];
-
-/**
- * Loads users from local storage into the users array.
- */
-async function loadUsers() {
-    try {
-        users = JSON.parse(localStorage.getItem('users')) || [];
-    } catch (e) {
-        console.error('Could not load users', e);
-    }
-}
-
 /**
  * Logs in the user as a guest and redirects to the summary page.
  */
@@ -140,41 +127,61 @@ async function register() {
 
     if (!isValid) return;
 
-    await loadUsers();
-
+    const name = nameInput.value;
     const email = emailInput.value;
+    const password = passwordInput.value;
 
-    if (isUserExisting(email)) {
-        alert('User already exists!');
-        return;
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Add the user's name to their Firebase profile
+        await user.updateProfile({
+            displayName: name
+        });
+
+        // Create a starter pack of data for the new user in Firestore
+        await seedInitialDataForUser(user.uid);
+
+        // Redirect to login page with a success message
+        window.location.href = 'index.html?msg=signup_success';
+    } catch (error) {
+        console.error("Registration failed:", error);
+        if (error.code == 'auth/email-already-in-use') {
+            alert('An account with this email address already exists.');
+        } else {
+            alert('Registration failed. Please try again.');
+        }
     }
-
-    await createAndLoginUser(nameInput.value, email, passwordInput.value);
 }
 
 /**
- * Checks if a user with the given email already exists.
- * @param {string} email - The email to check.
- * @returns {boolean} True if user exists.
+ * Creates the initial set of dummy tasks and contacts for a new user in Firestore.
+ * @param {string} userId - The UID of the new user.
  */
-function isUserExisting(email) {
-    return users.some(u => u.email === email);
+async function seedInitialDataForUser(userId) {
+    const batch = db.batch();
+    const dummyTasks = getDummyTasks();
+    const dummyContacts = getDummyContacts();
+
+    // Add each dummy task to a 'tasks' subcollection for the user
+    dummyTasks.forEach(task => {
+        const taskRef = db.collection('users').doc(userId).collection('tasks').doc();
+        batch.set(taskRef, task);
+    });
+
+    // Add each dummy contact to a 'contacts' subcollection for the user
+    dummyContacts.forEach(contact => {
+        const contactRef = db.collection('users').doc(userId).collection('contacts').doc();
+        batch.set(contactRef, contact);
+    });
+
+    // Commit the batch write to the database
+    await batch.commit();
 }
 
 /**
- * Creates a new user, saves to storage, and logs them in.
- * @param {string} name - User name.
- * @param {string} email - User email.
- * @param {string} password - User password.
- */
-async function createAndLoginUser(name, email, password) {
-    users.push({ name: name, email: email, password: password });
-    await localStorage.setItem('users', JSON.stringify(users));
-    window.location.href = 'index.html?msg=signup_success';
-}
-
-/**
- * Handles the login process.
+ * Handles the login process using Firebase Authentication.
  */
 async function login() {
     const emailInput = document.getElementById('email');
@@ -190,56 +197,17 @@ async function login() {
 
     if (!isValid) return;
 
-    await loadUsers();
-    const user = users.find(u => u.email === emailInput.value && u.password === passwordInput.value);
-
-    if (user) {
-        loginSuccess(user.name);
-    } else {
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value);
+        const user = userCredential.user;
+        // Use the existing loginSuccess function which uses localStorage for now.
+        // This will be updated in a later step to use Firebase's auth state observer.
+        loginSuccess(user.displayName);
+    } catch (error) {
+        console.error("Login failed:", error);
+        // Provide a generic error message for security reasons.
         showLoginError();
     }
-}
-
-/**
- * Validates a single input field.
- * @param {HTMLElement} input - The input element.
- * @returns {boolean} True if valid.
- */
-function validateInput(input) {
-    const container = input.closest('.input-container');
-    const msgId = 'msg-' + input.id;
-    const msgElement = document.getElementById(msgId);
-    
-    // 1. Check if empty
-    if (!input.value.trim()) {
-        if (container) {
-            container.classList.add('error-border');
-            if(msgElement) { msgElement.innerText = 'This field is required'; msgElement.classList.remove('d-none'); }
-        } else {
-            input.classList.add('error-border');
-        }
-        return false;
-    }
-
-    // 2. Check Email format if it is an email field
-    if (input.type === 'email') {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(input.value)) {
-            if (container) container.classList.add('error-border');
-            else input.classList.add('error-border');
-            if(msgElement) { msgElement.innerText = 'Please enter a valid email'; msgElement.classList.remove('d-none'); }
-            return false;
-        }
-    }
-
-    // Remove error if valid
-    if (container) {
-        container.classList.remove('error-border');
-    } else {
-        input.classList.remove('error-border');
-    }
-    if(msgElement) { msgElement.classList.add('d-none'); }
-    return true;
 }
 
 /**
@@ -273,4 +241,43 @@ function loginSuccess(name) {
 function showLoginError() {
     const msgBox = document.getElementById('msgBox');
     if (msgBox) msgBox.classList.add('visible');
+}
+
+/**
+ * Validates a single input field for login/signup forms.
+ * @param {HTMLElement} input - The input element.
+ * @returns {boolean} True if valid.
+ */
+function validateInput(input) {
+    const container = input.closest('.input-container');
+    const msgId = 'msg-' + input.id;
+    const msgElement = document.getElementById(msgId);
+
+    // 1. Check if empty
+    if (!input.value.trim()) {
+        if (container) {
+            container.classList.add('error-border');
+            if (msgElement) { msgElement.innerText = 'This field is required'; msgElement.classList.remove('d-none'); }
+        } else {
+            input.classList.add('error-border');
+        }
+        return false;
+    }
+
+    // 2. Check Email format if it is an email field
+    if (input.type === 'email') {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(input.value)) {
+            if (container) container.classList.add('error-border');
+            else input.classList.add('error-border');
+            if (msgElement) { msgElement.innerText = 'Please enter a valid email'; msgElement.classList.remove('d-none'); }
+            return false;
+        }
+    }
+
+    // Remove error if valid
+    if (container) container.classList.remove('error-border');
+    else input.classList.remove('error-border');
+    if (msgElement) msgElement.classList.add('d-none');
+    return true;
 }
