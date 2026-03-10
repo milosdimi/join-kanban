@@ -1,27 +1,32 @@
 let tasks = [];
 let currentDraggedElement;
-let taskFormTemplate = ''; 
+let taskFormTemplate = '';
 
 /**
  * Initializes the board by loading tasks, contacts, and templates.
  */
 async function initBoard() {
     await loadTasks();
-    await loadContacts(); 
+    await loadContacts();
     renderBoard();
-    await loadTaskFormTemplate(); 
+    await loadTaskFormTemplate();
 }
 
 /**
  * Loads tasks from local storage.
  */
 async function loadTasks() {
-    try {
-        tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    } catch (e) {
-        console.error('Could not load tasks', e);
-        tasks = [];
-    }
+    return new Promise((resolve) => {
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                const snapshot = await db.collection('users').doc(user.uid).collection('tasks').get();
+                tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } else {
+                tasks = [];
+            }
+            resolve();
+        });
+    });
 }
 
 /**
@@ -44,7 +49,6 @@ function renderBoard() {
     const searchInput = document.getElementById('searchInput');
     const search = searchInput ? searchInput.value.toLowerCase() : '';
 
-    // Safety check: If columns don't exist, stop rendering to prevent errors
     if (!document.getElementById('todo')) return;
 
     columns.forEach(colId => {
@@ -88,12 +92,12 @@ function checkEmptyColumns() {
  * @param {number} taskId - The ID of the task.
  */
 function toggleMoveMenu(event, taskId) {
-    event.stopPropagation(); 
+    event.stopPropagation();
     let menu = document.getElementById(`move-menu-${taskId}`);
-    
-    
+
+
     document.querySelectorAll('.move-menu-dropdown').forEach(el => {
-        if(el.id !== `move-menu-${taskId}`) el.classList.add('d-none');
+        if (el.id !== `move-menu-${taskId}`) el.classList.add('d-none');
     });
 
     menu.classList.toggle('d-none');
@@ -106,8 +110,8 @@ function toggleMoveMenu(event, taskId) {
  * @param {string} newStatus - The new status.
  */
 async function moveToFromMenu(event, taskId, newStatus) {
-    event.stopPropagation(); 
-    await moveToStatus(taskId, newStatus); 
+    event.stopPropagation();
+    await moveToStatus(taskId, newStatus);
 }
 
 /**
@@ -115,7 +119,7 @@ async function moveToFromMenu(event, taskId, newStatus) {
  * @param {number} id - The ID of the dragged task.
  */
 function startDragging(id) {
-    if (window.innerWidth < 1000) return; 
+    if (window.innerWidth < 1000) return;
     currentDraggedElement = id;
     setTimeout(() => {
         document.body.classList.add('dragging-active');
@@ -158,10 +162,13 @@ function removeHighlight(id) {
  * @param {string} status - The target status.
  */
 function moveTo(status) {
-    const taskIndex = tasks.findIndex(t => t.id === currentDraggedElement);
-    if (taskIndex !== -1) {
-        tasks[taskIndex].status = status;
-        localStorage.setItem('tasks', JSON.stringify(tasks));
+    const task = tasks.find(t => t.id === currentDraggedElement);
+    if (task) {
+        task.status = status;
+        // Update in Firestore
+        const user = firebase.auth().currentUser;
+        if (user) db.collection('users').doc(user.uid).collection('tasks').doc(currentDraggedElement).update({ status: status });
+
         renderBoard();
         removeHighlight(status);
         stopDragging();
@@ -180,11 +187,11 @@ function openTaskDetails(taskId) {
 
     const overlay = document.getElementById('taskDetailOverlay');
     const modal = overlay.querySelector('.task-detail-modal');
-    modal.classList.remove('large-modal'); 
-    
+    modal.classList.remove('large-modal');
+
     modal.innerHTML = generateTaskDetailHTML(task);
     overlay.classList.remove('d-none');
-    document.body.classList.add('no-scroll'); 
+    document.body.classList.add('no-scroll');
 }
 
 /**
@@ -194,17 +201,17 @@ function closeTaskDetails() {
     const overlay = document.getElementById('taskDetailOverlay');
     const modal = overlay.querySelector('.task-detail-modal');
     modal.classList.add('slide-out');
-    
+
     setTimeout(() => {
         overlay.classList.add('d-none');
         modal.classList.remove('slide-out');
         modal.innerHTML = '';
-        document.body.classList.remove('no-scroll'); 
+        document.body.classList.remove('no-scroll');
     }, 300);
 }
 
 // Closes dropdowns when clicking outside
-window.addEventListener('click', function(e) {
+window.addEventListener('click', function (e) {
     document.querySelectorAll('.move-menu-dropdown').forEach(menu => {
         if (!menu.classList.contains('d-none')) {
             menu.classList.add('d-none');
@@ -218,10 +225,13 @@ window.addEventListener('click', function(e) {
  * @param {string} newStatus - The new status.
  */
 async function moveToStatus(taskId, newStatus) {
-    const taskIndex = tasks.findIndex(t => t.id === taskId);
-    if (taskIndex !== -1) {
-        tasks[taskIndex].status = newStatus;
-        await localStorage.setItem('tasks', JSON.stringify(tasks));
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.status = newStatus;
+        // Update in Firestore
+        const user = firebase.auth().currentUser;
+        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ status: newStatus });
+
         closeTaskDetails();
         renderBoard();
     }
@@ -232,8 +242,10 @@ async function moveToStatus(taskId, newStatus) {
  * @param {number} taskId - The ID of the task.
  */
 async function deleteTask(taskId) {
+    const user = firebase.auth().currentUser;
+    if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).delete();
+
     tasks = tasks.filter(t => t.id !== taskId);
-    await localStorage.setItem('tasks', JSON.stringify(tasks));
     closeTaskDetails();
     renderBoard();
     showBoardToastMessage('Task deleted');
@@ -246,21 +258,19 @@ async function deleteTask(taskId) {
 function editTask(taskId) {
     const task = tasks.find(t => t.id === taskId);
     const modal = document.querySelector('#taskDetailOverlay .task-detail-modal');
-    loadContacts(); 
-    modal.classList.add('large-modal'); 
-    
+    loadContacts();
+    modal.classList.add('large-modal');
+
     modal.innerHTML = generateAddTaskModalHTML('Edit Task', taskFormTemplate);
 
-    // Setup Edit Mode
     editingTaskId = taskId;
     newTaskStatus = task.status;
     populateForm(task);
-    setupSubtaskInput(); 
+    setupSubtaskInput();
     setMinDate();
     addValidationMsgElements();
     setupInputEventListeners();
 
-    
     const createBtn = modal.querySelector('.btn-create');
     createBtn.innerHTML = 'Save <img src="assets/img/check_icon.png" alt="">';
     modal.querySelector('.btn-clear').classList.add('d-none');
@@ -277,21 +287,21 @@ function openAddTaskModal(status = 'todo') {
     }
     const overlay = document.getElementById('addTaskOverlay');
     const modal = overlay.querySelector('.task-detail-modal');
-    loadContacts(); 
-    modal.classList.add('large-modal'); 
-    
+    loadContacts();
+    modal.classList.add('large-modal');
+
     modal.innerHTML = generateAddTaskModalHTML('Add Task', taskFormTemplate);
-    
-    newTaskStatus = status; 
+
+    newTaskStatus = status;
     editingTaskId = null;
-    clearTask(); 
-    setMinDate(); 
-    setupSubtaskInput(); 
+    clearTask();
+    setMinDate();
+    setupSubtaskInput();
     addValidationMsgElements();
     setupInputEventListeners();
-    
+
     overlay.classList.remove('d-none');
-    document.body.classList.add('no-scroll'); 
+    document.body.classList.add('no-scroll');
 }
 
 /**
@@ -300,12 +310,14 @@ function openAddTaskModal(status = 'todo') {
  * @param {number} subtaskIndex - The index of the subtask.
  */
 async function toggleSubtask(taskId, subtaskIndex) {
-    const taskIndex = tasks.findIndex(t => t.id === taskId);
-    if (taskIndex !== -1) {
-        const subtask = tasks[taskIndex].subtasks[subtaskIndex];
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        const subtask = task.subtasks[subtaskIndex];
         subtask.completed = !subtask.completed;
-        await localStorage.setItem('tasks', JSON.stringify(tasks));
-                
+
+        const user = firebase.auth().currentUser;
+        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
+
         renderBoard();
         openTaskDetails(taskId);
     }
@@ -318,12 +330,12 @@ function closeAddTaskModal() {
     const overlay = document.getElementById('addTaskOverlay');
     const modal = overlay.querySelector('.task-detail-modal');
     modal.classList.add('slide-out');
-    
+
     setTimeout(() => {
         overlay.classList.add('d-none');
         modal.classList.remove('slide-out');
         modal.innerHTML = '';
-        document.body.classList.remove('no-scroll'); 
+        document.body.classList.remove('no-scroll');
     }, 300);
 }
 
@@ -335,7 +347,7 @@ function showBoardToastMessage(text) {
     const msgDiv = document.createElement('div');
     msgDiv.innerText = text;
     msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 2s ease-in-out forwards;";
-    
+
     if (!document.getElementById('keyframes-slideInAndOut')) {
         const style = document.createElement('style');
         style.id = 'keyframes-slideInAndOut';

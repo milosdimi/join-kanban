@@ -1,16 +1,13 @@
-﻿/**
+/**
  * Initializes the main application logic.
  * Includes HTML templates, checks authentication, and highlights the active menu.
  */
 async function init() {
     await includeHTML();
-    checkAuth();
     checkCookieConsent(); 
-    highlightActiveMenu();
-    updateProfileMenu(); 
-    updateUserInitials();
     handleLoginAnimation();
     checkSignupSuccess();
+    checkAuth(); 
 }
 
 /**
@@ -49,30 +46,31 @@ function highlightActiveMenu() {
  * Redirects guests/unauthenticated users away from protected pages.
  */
 function checkAuth() {
-    let user = localStorage.getItem('currentUser');
-    let path = window.location.pathname;
+    const protectedPages = ['summary.html', 'board.html', 'add-task.html', 'contacts.html'];
+    const loginPages = ['index.html', 'signup.html', '/'];
+    const path = window.location.pathname;
+    const isProtectedPage = protectedPages.some(page => path.includes(page));
+    const isLoginPage = loginPages.some(page => path.endsWith(page));
 
-    let loginPages = ['index.html', 'signup.html', '/'];
-    let publicPages = ['privacy-policy.html', 'legal-notice.html', 'help.html'];
-    // Checks
-    let isLoginPage = loginPages.some(page => path.endsWith(page));
-    let isPublicPage = publicPages.some(page => path.includes(page));
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
 
-    if (user && isLoginPage) {
-        window.location.href = 'summary.html';
-        return;
-    }
+            if (isLoginPage) {
+                window.location.href = 'summary.html';
+            }
+        } else {
 
-    if (!user) {
-
-        if (!isLoginPage && !isPublicPage) {
-            window.location.href = 'index.html';
+            if (isProtectedPage) {
+                window.location.href = 'index.html';
+            }
         }
 
-        else if (isPublicPage) {
-            hideSidebarMenu();
-        }
-    }
+        highlightActiveMenu();
+        updateProfileMenu(user);
+        updateUserInitials(user);
+
+        if (!user && !isLoginPage && !isProtectedPage) hideSidebarMenu();
+    });
 }
 
 /**
@@ -89,19 +87,21 @@ function hideSidebarMenu() {
 /**
  * Logs out the current user and redirects to the login page.
  */
-function logOut() {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
+async function logOut() {
+    try {
+        await firebase.auth().signOut();
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error("Logout failed", error);
+    }
 }
 
 /**
  * Updates the profile dropdown menu based on user status.
  * Changes "Log out" to "Log in" for guests or unauthenticated users.
  */
-function updateProfileMenu() {
-    let user = localStorage.getItem('currentUser');
+function updateProfileMenu(user) {
     let dropdown = document.getElementById('profileDropdown');
-    
     if (dropdown) {
         dropdown.innerHTML = generateProfileMenuHTML(user);
     }
@@ -175,13 +175,12 @@ function handleLoginAnimation() {
 /**
  * Updates the header profile icon with user initials if logged in.
  */
-function updateUserInitials() {
-    let user = localStorage.getItem('currentUser');
+function updateUserInitials(user) {
     let profileIcon = document.querySelector('.profile-icon');
 
-    if (user && profileIcon && user !== 'guest') {
-        let initials = getInitials(user);
-        
+    if (user && profileIcon && user.displayName && user.displayName !== 'Guest') {
+        let initials = getInitials(user.displayName);
+
         let profileDiv = document.createElement('div');
         profileDiv.classList.add('profile-icon'); 
         profileDiv.classList.add('profile-initials');

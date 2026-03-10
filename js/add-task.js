@@ -19,7 +19,7 @@ async function initAddTask() {
     setupInputEventListeners();
 
     if (id) {
-        editingTaskId = parseInt(id);
+        editingTaskId = id;
         prepareEditMode();
     }
 }
@@ -36,7 +36,6 @@ function addValidationMsgElements() {
             msgDiv.id = `msg-${id}`;
             msgDiv.className = 'input-error-msg d-none';
             msgDiv.innerText = 'This field is required';
-            // Insert after the input (or select)
             input.parentNode.insertBefore(msgDiv, input.nextSibling);
         }
     });
@@ -82,11 +81,17 @@ function setMinDate() {
  * Loads contacts from local storage.
  */
 async function loadContacts() {
-    try {
-        contacts = JSON.parse(localStorage.getItem('contacts')) || [];
-    } catch (e) {
-        console.error('Could not load contacts', e);
-    }
+    return new Promise((resolve) => {
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                const snapshot = await db.collection('users').doc(user.uid).collection('contacts').get();
+                contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } else {
+                contacts = [];
+            }
+            resolve();
+        });
+    });
 }
 
 /**
@@ -98,7 +103,12 @@ async function prepareEditMode() {
     createBtn.innerHTML = 'Save <img src="assets/img/check_icon.png" alt="">';
     document.querySelector('.btn-clear').classList.add('d-none'); 
 
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let tasks = [];
+    const user = firebase.auth().currentUser;
+    if (user) {
+        const snapshot = await db.collection('users').doc(user.uid).collection('tasks').get();
+        tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
     const taskToEdit = tasks.find(t => t.id === editingTaskId);
 
     if (taskToEdit) {
@@ -223,10 +233,9 @@ async function createTask() {
     if (btn) btn.disabled = true;
 
     let newTask = getTaskData();
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     
-    tasks.push(newTask);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    const user = firebase.auth().currentUser;
+    if (user) await db.collection('users').doc(user.uid).collection('tasks').add(newTask);
     
     showTaskAddedMessage();
     redirectToBoard();
@@ -238,7 +247,6 @@ async function createTask() {
  */
 function getTaskData() {
     return {
-        id: new Date().getTime(),
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
         dueDate: document.getElementById('dueDate').value,
@@ -272,15 +280,14 @@ function redirectToBoard() {
  * Saves changes to an existing task.
  */
 async function saveEditedTask() {
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    const taskIndex = tasks.findIndex(t => t.id === editingTaskId);
-    
     const btn = document.querySelector('.btn-create');
     if (btn) btn.disabled = true;
 
-    if (taskIndex !== -1) {
-        updateTaskObject(tasks[taskIndex]);
-        await localStorage.setItem('tasks', JSON.stringify(tasks));
+    const user = firebase.auth().currentUser;
+    if (user && editingTaskId) {
+        let updatedTask = {};
+        updateTaskObject(updatedTask);
+        await db.collection('users').doc(user.uid).collection('tasks').doc(editingTaskId).update(updatedTask);
         showTaskAddedMessage('Task updated');
         redirectToBoard();
     }

@@ -1,16 +1,27 @@
 /**
- * Logs in the user as a guest and redirects to the summary page.
+ * Logs in the user as a guest using Firebase Anonymous Auth.
  */
-function guestLogin() {
-    localStorage.setItem('currentUser', 'guest');
-    window.location.href = 'summary.html';
+async function guestLogin() {
+    try {
+        const userCredential = await auth.signInAnonymously();
+        const user = userCredential.user;
+
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+            await seedInitialDataForUser(user.uid, 'Guest', 'guest@join.test');
+        }
+        window.location.href = 'summary.html';
+    } catch (error) {
+        console.error("Guest login failed:", error);
+        alert("Guest login failed. Please try again.");
+    }
 }
 
 /**
  * Initializes the signup page.
  */
 function initSignup() {
-    // Clean Code: No dummy data in production
+
 }
 
 /**
@@ -135,20 +146,19 @@ async function register() {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // Add the user's name to their Firebase profile
         await user.updateProfile({
             displayName: name
         });
 
-        // Create a starter pack of data for the new user in Firestore
-        await seedInitialDataForUser(user.uid);
+        await seedInitialDataForUser(user.uid, name, email);
 
-        // Redirect to login page with a success message
         window.location.href = 'index.html?msg=signup_success';
     } catch (error) {
         console.error("Registration failed:", error);
         if (error.code == 'auth/email-already-in-use') {
             alert('An account with this email address already exists.');
+        } else if (error.code == 'auth/weak-password') {
+            alert('Password should be at least 6 characters.');
         } else {
             alert('Registration failed. Please try again.');
         }
@@ -158,25 +168,31 @@ async function register() {
 /**
  * Creates the initial set of dummy tasks and contacts for a new user in Firestore.
  * @param {string} userId - The UID of the new user.
+ * @param {string} name - The name of the user.
+ * @param {string} email - The email of the user.
  */
-async function seedInitialDataForUser(userId) {
+async function seedInitialDataForUser(userId, name, email) {
     const batch = db.batch();
     const dummyTasks = getDummyTasks();
     const dummyContacts = getDummyContacts();
 
-    // Add each dummy task to a 'tasks' subcollection for the user
+    const userRef = db.collection('users').doc(userId);
+    batch.set(userRef, {
+        name: name,
+        email: email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
     dummyTasks.forEach(task => {
         const taskRef = db.collection('users').doc(userId).collection('tasks').doc();
         batch.set(taskRef, task);
     });
 
-    // Add each dummy contact to a 'contacts' subcollection for the user
     dummyContacts.forEach(contact => {
         const contactRef = db.collection('users').doc(userId).collection('contacts').doc();
         batch.set(contactRef, contact);
     });
 
-    // Commit the batch write to the database
     await batch.commit();
 }
 
@@ -200,12 +216,10 @@ async function login() {
     try {
         const userCredential = await auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value);
         const user = userCredential.user;
-        // Use the existing loginSuccess function which uses localStorage for now.
-        // This will be updated in a later step to use Firebase's auth state observer.
-        loginSuccess(user.displayName);
+        window.location.href = 'summary.html';
     } catch (error) {
         console.error("Login failed:", error);
-        // Provide a generic error message for security reasons.
+
         showLoginError();
     }
 }
@@ -219,20 +233,11 @@ function resetValidationErrors(inputs) {
         const container = input.closest('.input-container');
         const msgId = 'msg-' + input.id;
         const msgElement = document.getElementById(msgId);
-        
+
         if (container) container.classList.remove('error-border');
         input.classList.remove('error-border');
-        if(msgElement) msgElement.classList.add('d-none');
+        if (msgElement) msgElement.classList.add('d-none');
     });
-}
-
-/**
- * Sets the current user and redirects to summary.
- * @param {string} name - The user's name.
- */
-function loginSuccess(name) {
-    localStorage.setItem('currentUser', name);
-    window.location.href = 'summary.html';
 }
 
 /**
@@ -271,6 +276,16 @@ function validateInput(input) {
             if (container) container.classList.add('error-border');
             else input.classList.add('error-border');
             if (msgElement) { msgElement.innerText = 'Please enter a valid email'; msgElement.classList.remove('d-none'); }
+            return false;
+        }
+    }
+
+    // 3. Check Password length
+    if (input.type === 'password') {
+        if (input.value.length < 6) {
+            if (container) container.classList.add('error-border');
+            else input.classList.add('error-border');
+            if (msgElement) { msgElement.innerText = 'Password must be at least 6 characters.'; msgElement.classList.remove('d-none'); }
             return false;
         }
     }

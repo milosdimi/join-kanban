@@ -14,11 +14,17 @@ async function initContacts() {
  * Loads contacts from local storage.
  */
 async function loadContacts() {
-    try {
-        contacts = JSON.parse(localStorage.getItem('contacts')) || [];
-    } catch (e) {
-        console.error('Could not load contacts', e);
-    }
+    return new Promise((resolve) => {
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                const snapshot = await db.collection('users').doc(user.uid).collection('contacts').get();
+                contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } else {
+                contacts = [];
+            }
+            resolve();
+        });
+    });
 }
 
 /**
@@ -80,9 +86,9 @@ function showContactDetails(index) {
 }
 
 function highlightActiveContact(index) {
-    // Remove active class from all
+
     document.querySelectorAll('.contact-item').forEach(item => item.classList.remove('active'));
-    // Add to current
+
     const activeItem = document.getElementById(`contact-${index}`);
     if (activeItem) activeItem.classList.add('active');
 }
@@ -245,7 +251,7 @@ function validateInput(input) {
 
     if (!message && input.id === 'contactPhone') {
         const phonePattern = /^[+0-9\s]*$/;
-        if (input.value.trim() && !phonePattern.test(input.value)) { // Only validate if not empty
+        if (input.value.trim() && !phonePattern.test(input.value)) {
             message = 'Please enter a valid phone number.';
         }
     }
@@ -290,14 +296,17 @@ async function createContact() {
     let email = document.getElementById('contactEmail');
     let phone = document.getElementById('contactPhone');
 
-    contacts.push({
+    const newContact = {
         name: name.value.trim(),
         email: email.value.trim(),
         phone: phone.value.trim(),
         color: colors[Math.floor(Math.random() * colors.length)]
-    });
+    };
 
-    await localStorage.setItem('contacts', JSON.stringify(contacts));
+    const user = firebase.auth().currentUser;
+    if (user) await db.collection('users').doc(user.uid).collection('contacts').add(newContact);
+    
+    await loadContacts();
     renderContactList();
     closeAddContact();
     showContactSuccessMessage('Contact successfully created');
@@ -311,12 +320,16 @@ async function saveContact(index) {
     let name = document.getElementById('contactName').value;
     let email = document.getElementById('contactEmail').value;
     let phone = document.getElementById('contactPhone').value;
+    
+    const contactId = contacts[index].id;
 
     contacts[index].name = name.trim();
     contacts[index].email = email.trim();
     contacts[index].phone = phone.trim();
 
-    await localStorage.setItem('contacts', JSON.stringify(contacts));
+    const user = firebase.auth().currentUser;
+    if (user) await db.collection('users').doc(user.uid).collection('contacts').doc(contactId).update(contacts[index]);
+
     renderContactList();
     showContactDetails(index);
     closeAddContact();
@@ -328,8 +341,11 @@ async function saveContact(index) {
  * @param {number} index - The index of the contact.
  */
 async function deleteContact(index) {
+    const contactId = contacts[index].id;
+    const user = firebase.auth().currentUser;
+    if (user) await db.collection('users').doc(user.uid).collection('contacts').doc(contactId).delete();
+
     contacts.splice(index, 1);
-    await localStorage.setItem('contacts', JSON.stringify(contacts));
     renderContactList();
     document.getElementById('contactDetail').innerHTML = '';
     closeMobileDetails(); 
