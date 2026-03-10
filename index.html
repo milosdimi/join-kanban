@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
 </head>
-<body onload="init()">
+<body onload="init(); initLogin()">
 
     <main class="login-page">
         <header class="login-header">
@@ -69,6 +69,7 @@
                     <label class="remember-me">
                         <input type="checkbox" id="rememberMe"> Remember me
                     </label>
+                    <a href="#" onclick="resetPassword(); return false;" class="forgot-password" style="color: #29ABE2; text-decoration: none;">Forgot my password</a>
                 </div>
 
                 <div class="button-container">

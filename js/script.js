@@ -233,3 +233,35 @@ function checkSignupSuccess() {
         }, 3000);
     }
 }
+
+/**
+ * Creates the initial set of dummy tasks and contacts for a new user in Firestore.
+ * This function is placed here to be globally accessible.
+ * @param {string} userId - The UID of the new user.
+ * @param {string} name - The name of the user.
+ * @param {string} email - The email of the user.
+ */
+async function seedInitialDataForUser(userId, name, email) {
+    const batch = db.batch();
+    const dummyTasks = getDummyTasks();
+    const dummyContacts = getDummyContacts();
+
+    const userRef = db.collection('users').doc(userId);
+    batch.set(userRef, {
+        name: name,
+        email: email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    dummyTasks.forEach(task => {
+        const taskRef = db.collection('users').doc(userId).collection('tasks').doc();
+        batch.set(taskRef, task);
+    });
+
+    dummyContacts.forEach(contact => {
+        const contactRef = db.collection('users').doc(userId).collection('contacts').doc();
+        batch.set(contactRef, contact);
+    });
+
+    await batch.commit();
+}

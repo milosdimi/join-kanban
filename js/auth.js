@@ -3,17 +3,25 @@
  */
 async function guestLogin() {
     try {
-        const userCredential = await auth.signInAnonymously();
-        const user = userCredential.user;
-
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
-            await seedInitialDataForUser(user.uid, 'Guest', 'guest@join.test');
-        }
+        await auth.signInAnonymously();
         window.location.href = 'summary.html';
     } catch (error) {
         console.error("Guest login failed:", error);
         alert("Guest login failed. Please try again.");
+    }
+}
+
+/**
+ * Initializes the login page.
+ * Checks if "Remember Me" was used and pre-fills the email.
+ */
+function initLogin() {
+    const email = localStorage.getItem('rememberedEmail');
+    if (email) {
+        const emailInput = document.getElementById('email');
+        const rememberMe = document.getElementById('rememberMe');
+        if (emailInput) emailInput.value = email;
+        if (rememberMe) rememberMe.checked = true;
     }
 }
 
@@ -166,37 +174,6 @@ async function register() {
 }
 
 /**
- * Creates the initial set of dummy tasks and contacts for a new user in Firestore.
- * @param {string} userId - The UID of the new user.
- * @param {string} name - The name of the user.
- * @param {string} email - The email of the user.
- */
-async function seedInitialDataForUser(userId, name, email) {
-    const batch = db.batch();
-    const dummyTasks = getDummyTasks();
-    const dummyContacts = getDummyContacts();
-
-    const userRef = db.collection('users').doc(userId);
-    batch.set(userRef, {
-        name: name,
-        email: email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    dummyTasks.forEach(task => {
-        const taskRef = db.collection('users').doc(userId).collection('tasks').doc();
-        batch.set(taskRef, task);
-    });
-
-    dummyContacts.forEach(contact => {
-        const contactRef = db.collection('users').doc(userId).collection('contacts').doc();
-        batch.set(contactRef, contact);
-    });
-
-    await batch.commit();
-}
-
-/**
  * Handles the login process using Firebase Authentication.
  */
 async function login() {
@@ -216,6 +193,14 @@ async function login() {
     try {
         const userCredential = await auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value);
         const user = userCredential.user;
+
+        const rememberMe = document.getElementById('rememberMe');
+        if (rememberMe && rememberMe.checked) {
+            localStorage.setItem('rememberedEmail', emailInput.value);
+        } else {
+            localStorage.removeItem('rememberedEmail');
+        }
+
         window.location.href = 'summary.html';
     } catch (error) {
         
@@ -226,6 +211,36 @@ async function login() {
         }
 
         showLoginError();
+    }
+}
+
+/**
+ * Sends a password reset email to the user.
+ */
+async function resetPassword() {
+    const emailInput = document.getElementById('email');
+    const email = emailInput.value;
+
+    if (!email) {
+        const msgElement = document.getElementById('msg-email');
+        emailInput.classList.add('error-border');
+        if (msgElement) {
+            msgElement.innerText = 'Please enter your email to reset password';
+            msgElement.classList.remove('d-none');
+        }
+        return;
+    }
+
+    try {
+        await auth.sendPasswordResetEmail(email);
+        alert('Password reset email sent! Please check your inbox.');
+    } catch (error) {
+        console.error("Reset password failed:", error);
+        if (error.code === 'auth/user-not-found') {
+            alert('No user found with this email address.');
+        } else {
+            alert('Something went wrong. Please try again.');
+        }
     }
 }
 

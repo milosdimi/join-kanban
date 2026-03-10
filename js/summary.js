@@ -4,6 +4,14 @@
 function initSummary() {
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
+
+            if (user.isAnonymous) {
+                const tasksSnapshot = await db.collection('users').doc(user.uid).collection('tasks').limit(1).get();
+                if (tasksSnapshot.empty) {
+                    await seedInitialDataForUser(user.uid, 'Guest', 'guest@join.test');
+                }
+            }
+
             setGreeting(user);
             await updateSummaryMetrics(user);
             checkMobileGreeting(user);
