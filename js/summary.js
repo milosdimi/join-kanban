@@ -2,28 +2,31 @@
  * Initializes the summary page.
  */
 function initSummary() {
-    setGreeting();
-    updateSummaryMetrics();
-    checkMobileGreeting();
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            setGreeting(user);
+            await updateSummaryMetrics(user);
+            checkMobileGreeting(user);
+        }
+    });
 }
 
 /**
  * Sets the greeting text based on time and user status.
  */
-function setGreeting() {
+function setGreeting(user) {
     let greetingElement = document.querySelector('.greeting-text');
     let nameElement = document.querySelector('.greeting-name');
-    let user = localStorage.getItem('currentUser');
     let timeText = getTimeGreeting();
 
     if (!greetingElement || !nameElement) return;
 
-    if (user === 'guest') {
+    if (user.isAnonymous) {
         greetingElement.innerHTML = `${timeText}!`;
         nameElement.innerHTML = '';
     } else {
         greetingElement.innerHTML = `${timeText},`;
-        nameElement.innerHTML = user || 'User';
+        nameElement.innerHTML = user.displayName || 'User';
     }
 }
 
@@ -46,20 +49,22 @@ function getTimeGreeting() {
 /**
  * Loads tasks and updates the metric cards on the summary page.
  */
-function updateSummaryMetrics() {
-    let tasks = loadTasksFromStorage();
+async function updateSummaryMetrics(user) {
+    let tasks = await loadTasksFromFirestore(user.uid);
     updateTaskCounts(tasks);
     updateUrgentMetric(tasks);
 }
 
 /**
- * Loads tasks from local storage safely.
+ * Loads tasks from Firestore.
  * @returns {Array} Array of tasks.
  */
-function loadTasksFromStorage() {
+async function loadTasksFromFirestore(userId) {
     try {
-        return JSON.parse(localStorage.getItem('tasks')) || [];
+        const snapshot = await db.collection('users').doc(userId).collection('tasks').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (e) {
+        console.error('Could not load tasks', e);
         return [];
     }
 }
@@ -135,23 +140,23 @@ function animateNumber(element, endValue, duration) {
 /**
  * Handles the mobile greeting animation.
  */
-function checkMobileGreeting() {
+function checkMobileGreeting(user) {
     if (window.innerWidth < 1000 && !sessionStorage.getItem('mobileGreetingShown')) {
-        showMobileGreetingOverlay();
+        showMobileGreetingOverlay(user);
     }
 }
 
 /**
  * Displays the mobile greeting overlay and hides it after a delay.
  */
-function showMobileGreetingOverlay() {
+function showMobileGreetingOverlay(user) {
     const overlay = document.getElementById('mobileGreeting');
     if (!overlay) return;
     
-    const user = localStorage.getItem('currentUser') || 'Guest';
+    const userName = user.isAnonymous ? 'Guest' : (user.displayName || 'User');
     const greeting = getTimeGreeting();
 
-    overlay.querySelector('.greeting-content').innerHTML = generateMobileGreetingHTML(greeting, user);
+    overlay.querySelector('.greeting-content').innerHTML = generateMobileGreetingHTML(greeting, userName);
     overlay.classList.remove('d-none');
     sessionStorage.setItem('mobileGreetingShown', 'true');
 
