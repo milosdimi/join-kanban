@@ -218,7 +218,12 @@ async function login() {
         const user = userCredential.user;
         window.location.href = 'summary.html';
     } catch (error) {
-        console.error("Login failed:", error);
+        
+        if (error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+
+        } else {
+            console.error("Login failed:", error);
+        }
 
         showLoginError();
     }
