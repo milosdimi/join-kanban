@@ -472,3 +472,14 @@ function generateProfileMenuHTML(user) {
         `;
     }
 }
+
+/**
+ * Generates HTML for the authentication toast message.
+ * @param {string} message - The message to display.
+ * @returns {string} HTML string.
+ */
+function generateAuthToastHTML(message) {
+    return /*html*/`
+        <div class="auth-toast">${message} <img src="assets/img/mail_icon.png" style="filter: brightness(0) invert(1); width: 24px; height: 24px;"></div>
+    `;
+}

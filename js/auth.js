@@ -233,15 +233,26 @@ async function resetPassword() {
 
     try {
         await auth.sendPasswordResetEmail(email);
-        alert('Password reset email sent! Please check your inbox.');
+        showAuthToast('Email sent');
     } catch (error) {
         console.error("Reset password failed:", error);
         if (error.code === 'auth/user-not-found') {
-            alert('No user found with this email address.');
+            showAuthToast('Email not found');
         } else {
-            alert('Something went wrong. Please try again.');
+            showAuthToast('Something went wrong');
         }
     }
+}
+
+/**
+ * Shows a toast message for authentication feedback.
+ * @param {string} message - The message to display.
+ */
+function showAuthToast(message) {
+    const msgContainer = document.createElement('div');
+    msgContainer.innerHTML = generateAuthToastHTML(message);
+    document.body.appendChild(msgContainer);
+    setTimeout(() => msgContainer.remove(), 3000);
 }
 
 /**
