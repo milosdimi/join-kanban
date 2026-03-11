@@ -23,13 +23,14 @@ function initLogin() {
         if (emailInput) emailInput.value = email;
         if (rememberMe) rememberMe.checked = true;
     }
+    setupValidationListeners();
 }
 
 /**
  * Initializes the signup page.
  */
 function initSignup() {
-
+    setupValidationListeners();
 }
 
 /**
@@ -160,6 +161,7 @@ async function register() {
 
         await seedInitialDataForUser(user.uid, name, email);
 
+        await auth.signOut();
         window.location.href = 'index.html?msg=signup_success';
     } catch (error) {
         console.error("Registration failed:", error);
@@ -220,10 +222,17 @@ async function login() {
 async function resetPassword() {
     const emailInput = document.getElementById('email');
     const email = emailInput.value;
+    const container = emailInput.closest('.input-container');
 
     if (!email) {
         const msgElement = document.getElementById('msg-email');
-        emailInput.classList.add('error-border');
+        
+        if (container) {
+            container.classList.add('error-border');
+        } else {
+            emailInput.classList.add('error-border');
+        }
+
         if (msgElement) {
             msgElement.innerText = 'Please enter your email to reset password';
             msgElement.classList.remove('d-none');
@@ -253,6 +262,24 @@ function showAuthToast(message) {
     msgContainer.innerHTML = generateAuthToastHTML(message);
     document.body.appendChild(msgContainer);
     setTimeout(() => msgContainer.remove(), 3000);
+}
+
+/**
+ * Sets up event listeners to clear validation errors when the user types.
+ */
+function setupValidationListeners() {
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const container = this.closest('.input-container');
+            const msgId = 'msg-' + this.id;
+            const msgElement = document.getElementById(msgId);
+
+            if (container) container.classList.remove('error-border');
+            this.classList.remove('error-border');
+            if (msgElement) msgElement.classList.add('d-none');
+        });
+    });
 }
 
 /**
