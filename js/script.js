@@ -265,3 +265,17 @@ async function seedInitialDataForUser(userId, name, email) {
 
     await batch.commit();
 }
+
+/**
+ * Shows the global loading spinner.
+ */
+function showSpinner() {
+    document.getElementById('loader-overlay').classList.remove('d-none');
+}
+
+/**
+ * Hides the global loading spinner.
+ */
+function hideSpinner() {
+    document.getElementById('loader-overlay').classList.add('d-none');
+}

@@ -6,8 +6,10 @@ let editingContactIndex = null;
  * Initializes the contacts page.
  */
 async function initContacts() {
+    showSpinner();
     await loadContacts();
     renderContactList();
+    hideSpinner();
 }
 
 /**

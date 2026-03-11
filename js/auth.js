@@ -151,6 +151,8 @@ async function register() {
     const email = emailInput.value;
     const password = passwordInput.value;
 
+    showSpinner();
+
     try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -164,6 +166,7 @@ async function register() {
         await auth.signOut();
         window.location.href = 'index.html?msg=signup_success';
     } catch (error) {
+        hideSpinner();
         console.error("Registration failed:", error);
         if (error.code == 'auth/email-already-in-use') {
             alert('An account with this email address already exists.');
@@ -192,6 +195,8 @@ async function login() {
 
     if (!isValid) return;
 
+    showSpinner();
+
     try {
         const userCredential = await auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value);
         const user = userCredential.user;
@@ -205,7 +210,7 @@ async function login() {
 
         window.location.href = 'summary.html';
     } catch (error) {
-        
+        hideSpinner();
         if (error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
 
         } else {
@@ -240,6 +245,8 @@ async function resetPassword() {
         return;
     }
 
+    showSpinner();
+
     try {
         await auth.sendPasswordResetEmail(email);
         showAuthToast('Email sent');
@@ -250,6 +257,8 @@ async function resetPassword() {
         } else {
             showAuthToast('Something went wrong');
         }
+    } finally {
+        hideSpinner();
     }
 }
 

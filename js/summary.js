@@ -3,6 +3,7 @@
  */
 function initSummary() {
     firebase.auth().onAuthStateChanged(async (user) => {
+        showSpinner();
         if (user) {
 
             if (user.isAnonymous) {
@@ -15,6 +16,7 @@ function initSummary() {
             setGreeting(user);
             await updateSummaryMetrics(user);
             checkMobileGreeting(user);
+            hideSpinner();
         }
     });
 }

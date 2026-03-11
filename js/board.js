@@ -6,10 +6,12 @@ let taskFormTemplate = '';
  * Initializes the board by loading tasks, contacts, and templates.
  */
 async function initBoard() {
+    showSpinner();
     await loadTasks();
     await loadContacts();
     renderBoard();
     await loadTaskFormTemplate();
+    hideSpinner();
 }
 
 /**
