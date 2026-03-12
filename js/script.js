@@ -4,6 +4,7 @@
  */
 async function init() {
     await includeHTML();
+    preventAuthFlash();
     checkCookieConsent(); 
     handleLoginAnimation();
     checkSignupSuccess();
@@ -58,19 +59,56 @@ function checkAuth() {
             if (isLoginPage) {
                 window.location.href = 'summary.html';
             }
+            showSidebarMenu();
+            updateHeaderVisibility(true);
         } else {
 
             if (isProtectedPage) {
                 window.location.href = 'index.html';
             }
+            hideSidebarMenu();
+            updateHeaderVisibility(false); 
         }
 
         highlightActiveMenu();
         updateProfileMenu(user);
         updateUserInitials(user);
-
-        if (!user && !isLoginPage && !isProtectedPage) hideSidebarMenu();
     });
+}
+
+/**
+ * NEW: Immediately hides sensitive menu items on public pages based on URL,
+ * before Firebase auth check completes. Prevents "flashing" of internal nav.
+ */
+function preventAuthFlash() {
+    const path = window.location.pathname;
+    const publicPages = ['help.html', 'privacy-policy.html', 'legal-notice.html'];
+    const isPublicPage = publicPages.some(page => path.includes(page));
+    const isLoginPage = ['index.html', 'signup.html', '/'].some(page => path.endsWith(page));
+
+    if (isPublicPage || isLoginPage) {
+        let sidebarNav = document.getElementById('sidebar-nav');
+        if (sidebarNav) sidebarNav.classList.add('d-none');
+
+        updateHeaderVisibility(false);
+    }
+}
+
+/**
+ * NEW: Toggles visibility of the Help and Profile icons in the header.
+ * @param {boolean} visible - true to show icons, false to hide them.
+ */
+function updateHeaderVisibility(visible) {
+    const helpIcon = document.querySelector('.help-icon');
+    const profileIcon = document.querySelector('.profile-icon');
+
+    if (visible) {
+        if (helpIcon) helpIcon.classList.remove('d-none');
+        if (profileIcon) profileIcon.classList.remove('d-none');
+    } else {
+        if (helpIcon) helpIcon.classList.add('d-none');
+        if (profileIcon) profileIcon.classList.add('d-none');
+    }
 }
 
 /**
@@ -82,6 +120,18 @@ function hideSidebarMenu() {
 
     if (sidebarNav) sidebarNav.classList.add('d-none');
     if (sidebarGuest) sidebarGuest.classList.remove('d-none');
+}
+
+/**
+ * NEW: Shows the main sidebar navigation.
+ * Used when we confirm the user is logged in.
+ */
+function showSidebarMenu() {
+    let sidebarNav = document.getElementById('sidebar-nav');
+    let sidebarGuest = document.getElementById('sidebar-guest');
+
+    if (sidebarNav) sidebarNav.classList.remove('d-none');
+    if (sidebarGuest) sidebarGuest.classList.add('d-none');
 }
 
 /**
