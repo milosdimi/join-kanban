@@ -239,7 +239,7 @@ async function resetPassword() {
         }
 
         if (msgElement) {
-            msgElement.innerText = 'Please enter your email to reset password';
+            msgElement.innerText = 'Please enter your email';
             msgElement.classList.remove('d-none');
         }
         return;
@@ -352,7 +352,7 @@ function validateInput(input) {
         if (input.value.length < 6) {
             if (container) container.classList.add('error-border');
             else input.classList.add('error-border');
-            if (msgElement) { msgElement.innerText = 'Password must be at least 6 characters.'; msgElement.classList.remove('d-none'); }
+            if (msgElement) { msgElement.innerText = 'At least 6 characters'; msgElement.classList.remove('d-none'); }
             return false;
         }
     }
