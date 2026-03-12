@@ -213,10 +213,10 @@ function handleLoginAnimation() {
     const signupBox = document.querySelector('.header-signup-box');
     const loginPage = document.querySelector('.login-page');
 
-    if (!isSignup && logo && loginCard && signupBox && loginPage && !sessionStorage.getItem('introShown')) {
+    if (!isSignup && logo && loginCard && loginPage && !sessionStorage.getItem('introShown')) {
         logo.classList.add('animate');
         loginCard.classList.add('animate');
-        signupBox.classList.add('animate');
+        if (signupBox) signupBox.classList.add('animate');
         loginPage.classList.add('animate');
         sessionStorage.setItem('introShown', 'true');
     }
