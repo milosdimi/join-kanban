@@ -169,9 +169,21 @@ async function register() {
         hideSpinner();
         console.error("Registration failed:", error);
         if (error.code == 'auth/email-already-in-use') {
-            alert('An account with this email address already exists.');
+            const emailInput = document.getElementById('email');
+            const msgElement = document.getElementById('msg-email');
+            if (emailInput && msgElement) {
+                emailInput.closest('.input-container').classList.add('error-border');
+                msgElement.innerText = 'Email already in use';
+                msgElement.classList.remove('d-none');
+            }
         } else if (error.code == 'auth/weak-password') {
-            alert('Password should be at least 6 characters.');
+            const passwordInput = document.getElementById('password');
+            const msgElement = document.getElementById('msg-password');
+            if (passwordInput && msgElement) {
+                passwordInput.closest('.input-container').classList.add('error-border');
+                msgElement.innerText = 'At least 6 characters';
+                msgElement.classList.remove('d-none');
+            }
         } else {
             alert('Registration failed. Please try again.');
         }
@@ -348,7 +360,7 @@ function validateInput(input) {
     }
 
     // 3. Check Password length
-    if (input.type === 'password') {
+    if (input.type === 'password' || input.id === 'password' || input.id === 'confirmPassword') {
         if (input.value.length < 6) {
             if (container) container.classList.add('error-border');
             else input.classList.add('error-border');

@@ -3,10 +3,9 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     position: relative;
-    padding: 20px;
+    padding: 100px 20px 20px 20px;
 }
 
 /* --- HEADER (Logo & Sign Up) --- */
@@ -25,7 +24,7 @@
 }
 
 .logo {
-    width: 100px;
+    width: clamp(80px, 8vw, 120px); 
     z-index: 999;
     position: absolute;
     top: 24px;
@@ -73,6 +72,7 @@
     text-align: center;
     opacity: 1;
     position: relative;
+    margin: auto 0; 
 }
 
 .login-card.animate {
@@ -278,7 +278,7 @@
     }
 
     100% {
-        width: 100px;
+        width: clamp(80px, 8vw, 120px); 
         top: 40px;
         left: 60px;
         transform: translate(0, 0);
@@ -296,7 +296,7 @@
     }
 
     100% {
-        width: 80px;
+        width: clamp(60px, 15vw, 90px);
         top: 20px;
         left: 20px;
         transform: translate(0, 0);
@@ -341,15 +341,14 @@
 
     .login-card {
         padding: 30px 20px;
+        margin-bottom: 40px;
     }
 
     .button-container {
         flex-direction: column;
     }
 
-    .logo {
-        width: 80px;
-    }
+    /* Logo Width handled by animation/clamp now */
 
     .logo.animate {
         animation-name: moveLogoMobile;
@@ -363,7 +362,6 @@
     }
 
     .login-page {
-        justify-content: center;
         padding-top: 140px;
     }
 
@@ -379,8 +377,12 @@
 
 /* --- LANDSCAPE / SHORT SCREEN FIX (z.B. Samsung Horizontal) --- */
 @media (max-height: 600px) {
+    
+    .logo {
+        width: 60px !important;
+    }
+
     .login-page {
-        justify-content: flex-start;
         padding-top: 100px;
         height: auto;
     }
