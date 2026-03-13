@@ -89,6 +89,10 @@
     color: var(--secondary-color);
 }
 
+#sidebar-guest .legal-link {
+    display: none;
+}
+
 /* --- PROFILE DROPDOWN --- */
 .profile-dropdown {
     position: absolute;
@@ -447,14 +451,21 @@
         align-items: center;
     }
 
-    /* Ensure guest links (Login, Legal, Privacy) fit nicely in bottom bar */
-    #sidebar-guest a, 
-    #sidebar-guest button {
+    
+    #sidebar-guest .menu-link {
+        color: var(--secondary-color) !important;
+        font-weight: bold;
+    }
+
+    #sidebar-guest .legal-link {
+        display: block;
         color: #CDCDCD;
         font-size: 14px;
         text-decoration: none;
-        background: none;
-        border: none;
+        border: 1px solid #CDCDCD;
+        padding: 6px 12px;
+        border-radius: 18px;
+        white-space: nowrap;
     }
 
     .menu-link {
