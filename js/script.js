@@ -53,6 +53,14 @@ function checkAuth() {
     const isProtectedPage = protectedPages.some(page => path.includes(page));
     const isLoginPage = loginPages.some(page => path.endsWith(page));
 
+    
+    if (typeof firebase === 'undefined') {
+        hideSidebarMenu();
+        updateHeaderVisibility(false);
+        updateProfileMenu(null);
+        return;
+    }
+
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
 
