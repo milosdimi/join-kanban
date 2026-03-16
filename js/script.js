@@ -11,6 +11,8 @@ async function init() {
     checkAuth(); 
 }
 
+
+
 /**
  * Fetches and includes HTML content for elements with the 'w3-include-html' attribute.
  */
@@ -28,6 +30,8 @@ async function includeHTML() {
     }
 }
 
+
+
 /**
  * Highlights the sidebar menu link corresponding to the current URL.
  */
@@ -41,44 +45,73 @@ function highlightActiveMenu() {
     });
 }
 
+
+
 /**
  * Checks if the user is logged in and redirects accordingly.
  * Redirects logged-in users away from login pages.
  * Redirects guests/unauthenticated users away from protected pages.
  */
 function checkAuth() {
-    const protectedPages = ['summary.html', 'board.html', 'add-task.html', 'contacts.html'];
-    const loginPages = ['index.html', 'signup.html', '/'];
-    const path = window.location.pathname;
-    const isProtectedPage = protectedPages.some(page => path.includes(page));
-    const isLoginPage = loginPages.some(page => path.endsWith(page));
-
-    if (typeof firebase === 'undefined') {
-        hideSidebarMenu();
-        updateHeaderVisibility(false);
-        updateProfileMenu(null);
-        return;
-    }
-
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            if (isLoginPage) {
-                window.location.href = 'summary.html';
-            }
-            showSidebarMenu();
-            updateHeaderVisibility(true);
-        } else {
-            if (isProtectedPage) {
-                window.location.href = 'index.html';
-            }
-            hideSidebarMenu();
-            updateHeaderVisibility(false); 
-        }
-        highlightActiveMenu();
-        updateProfileMenu(user);
-        updateUserInitials(user);
-    });
+    if (typeof firebase === 'undefined') return setGuestState();
+    firebase.auth().onAuthStateChanged(user => processAuthState(user));
 }
+
+
+
+/**
+ * Sets the application to guest mode if Firebase is unavailable.
+ */
+function setGuestState() {
+    hideSidebarMenu();
+    updateHeaderVisibility(false);
+    updateProfileMenu(null);
+}
+
+
+
+/**
+ * Processes the current authentication state and handles redirects.
+ * @param {object|null} user - The authenticated user or null.
+ */
+function processAuthState(user) {
+    const path = window.location.pathname;
+    const isProtected = ['summary.html', 'board.html', 'add-task.html', 'contacts.html'].some(p => path.includes(p));
+    const isLogin = ['index.html', 'signup.html', '/'].some(p => path.endsWith(p));
+
+    if (user) handleLoggedInUser(isLogin);
+    else handleLoggedOutUser(isProtected);
+
+    highlightActiveMenu();
+    updateProfileMenu(user);
+    updateUserInitials(user);
+}
+
+
+
+/**
+ * Handles UI and redirects for a logged-in user.
+ * @param {boolean} isLogin - Whether the user is on a login page.
+ */
+function handleLoggedInUser(isLogin) {
+    if (isLogin) window.location.href = 'summary.html';
+    showSidebarMenu();
+    updateHeaderVisibility(true);
+}
+
+
+
+/**
+ * Handles UI and redirects for a logged-out user.
+ * @param {boolean} isProtected - Whether the user is on a protected page.
+ */
+function handleLoggedOutUser(isProtected) {
+    if (isProtected) window.location.href = 'index.html';
+    hideSidebarMenu();
+    updateHeaderVisibility(false);
+}
+
+
 
 /**
  * Immediately hides sensitive menu items on public pages based on URL,
@@ -97,6 +130,8 @@ function preventAuthFlash() {
     }
 }
 
+
+
 /**
  * Toggles visibility of the Help and Profile icons in the header.
  * @param {boolean} visible - true to show icons, false to hide them.
@@ -114,6 +149,8 @@ function updateHeaderVisibility(visible) {
     }
 }
 
+
+
 /**
  * Hides the main sidebar navigation and shows the guest menu.
  */
@@ -127,6 +164,8 @@ function hideSidebarMenu() {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) sidebar.classList.add('guest-mode');
 }
+
+
 
 /**
  * Shows the main sidebar navigation.
@@ -143,6 +182,8 @@ function showSidebarMenu() {
     if (sidebar) sidebar.classList.remove('guest-mode');
 }
 
+
+
 /**
  * Logs out the current user and redirects to the login page.
  */
@@ -151,9 +192,10 @@ async function logOut() {
         await firebase.auth().signOut();
         window.location.href = 'index.html';
     } catch (error) {
-        console.error("Logout failed", error);
     }
 }
+
+
 
 /**
  * Updates the profile dropdown menu based on user status.
@@ -166,6 +208,8 @@ function updateProfileMenu(user) {
     }
 }
 
+
+
 /**
  * Toggles the visibility of the profile dropdown menu.
  */
@@ -176,17 +220,26 @@ function toggleDropdown() {
     }
 }
 
+
+
+window.addEventListener('click', closeProfileDropdownOnClickOutside);
+
+
+
 /**
  * Closes the profile dropdown when clicking outside of it.
+ * @param {Event} event - The click event.
  */
-window.addEventListener('click', function (event) {
+function closeProfileDropdownOnClickOutside(event) {
     if (!event.target.matches('.profile-icon') && !event.target.closest('.profile-dropdown')) {
         let dropdown = document.getElementById('profileDropdown');
         if (dropdown && !dropdown.classList.contains('d-none')) {
             dropdown.classList.add('d-none');
         }
     }
-});
+}
+
+
 
 /**
  * Checks if the user has accepted cookies. If not, displays a banner.
@@ -197,6 +250,8 @@ function checkCookieConsent() {
     }
 }
 
+
+
 /**
  * Saves cookie consent and removes the banner.
  */
@@ -205,10 +260,17 @@ function acceptCookies() {
     document.getElementById('cookie-banner').remove();
 }
 
+
+
+/**
+ * Declines cookie consent and removes the banner.
+ */
 function declineCookies() {
     localStorage.setItem('cookieConsent', 'false');
     document.getElementById('cookie-banner').remove();
 }
+
+
 
 /**
  * Handles the intro animation on the login page.
@@ -231,6 +293,8 @@ function handleLoginAnimation() {
     }
 }
 
+
+
 /**
  * Updates the header profile icon with user initials if logged in.
  */
@@ -250,6 +314,8 @@ function updateUserInitials(user) {
     }
 }
 
+
+
 /**
  * Generates initials from a name.
  * @param {string} name - The full name.
@@ -260,70 +326,126 @@ function getInitials(name) {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 }
 
+
+
 /**
  * Checks URL parameters for signup success message and displays a toast.
  */
 function checkSignupSuccess() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('msg') === 'signup_success') {
-        const msgDiv = document.createElement('div');
-        msgDiv.innerText = 'You Signed Up successfully';
-        msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 3s ease-in-out forwards;";
-        
-        if (!document.getElementById('keyframes-slideInAndOut')) {
-            const style = document.createElement('style');
-            style.id = 'keyframes-slideInAndOut';
-            style.innerHTML = `
-                @keyframes slideInAndOut {
-                    0% { opacity: 0; transform: translate(-50%, 100px); }
-                    10% { opacity: 1; transform: translate(-50%, 50%); }
-                    90% { opacity: 1; transform: translate(-50%, 50%); }
-                    100% { opacity: 0; transform: translate(-50%, 100px); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        document.body.appendChild(msgDiv);
-        
-        setTimeout(() => {
-            msgDiv.remove();
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }, 3000);
+        showSignupSuccessToast();
     }
 }
 
+
+
+/**
+ * Displays the signup success toast and cleans up the URL.
+ */
+function showSignupSuccessToast() {
+    const msgDiv = createSignupToastElement();
+    injectSignupToastStyles();
+    document.body.appendChild(msgDiv);
+    
+    setTimeout(() => {
+        msgDiv.remove();
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }, 3000);
+}
+
+
+
+/**
+ * Creates the toast message element for signup success.
+ * @returns {HTMLElement} The created toast element.
+ */
+function createSignupToastElement() {
+    const msgDiv = document.createElement('div');
+    msgDiv.innerText = 'You Signed Up successfully';
+    msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 3s ease-in-out forwards;";
+    return msgDiv;
+}
+
+
+
+/**
+ * Injects CSS keyframes for the signup toast animation if not present.
+ */
+function injectSignupToastStyles() {
+    if (!document.getElementById('keyframes-slideInAndOut')) {
+        const style = document.createElement('style');
+        style.id = 'keyframes-slideInAndOut';
+        style.innerHTML = `@keyframes slideInAndOut { 0% { opacity: 0; transform: translate(-50%, 100px); } 10% { opacity: 1; transform: translate(-50%, 50%); } 90% { opacity: 1; transform: translate(-50%, 50%); } 100% { opacity: 0; transform: translate(-50%, 100px); } }`;
+        document.head.appendChild(style);
+    }
+}
+
+
+
 /**
  * Creates the initial set of dummy tasks and contacts for a new user in Firestore.
- * This function is placed here to be globally accessible.
  * @param {string} userId - The UID of the new user.
  * @param {string} name - The name of the user.
  * @param {string} email - The email of the user.
  */
 async function seedInitialDataForUser(userId, name, email) {
     const batch = db.batch();
-    const dummyTasks = getDummyTasks();
-    const dummyContacts = getDummyContacts();
+    setNewUserDocument(batch, userId, name, email);
+    seedDummyTasks(batch, userId);
+    seedDummyContacts(batch, userId);
+    await batch.commit();
+}
 
+
+
+/**
+ * Sets the basic user document in the batch.
+ * @param {object} batch - The Firestore batch.
+ * @param {string} userId - The user ID.
+ * @param {string} name - The user name.
+ * @param {string} email - The user email.
+ */
+function setNewUserDocument(batch, userId, name, email) {
     const userRef = db.collection('users').doc(userId);
     batch.set(userRef, {
         name: name,
         email: email,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+}
 
+
+
+/**
+ * Adds dummy tasks to the batch for a new user.
+ * @param {object} batch - The Firestore batch.
+ * @param {string} userId - The user ID.
+ */
+function seedDummyTasks(batch, userId) {
+    const dummyTasks = getDummyTasks();
     dummyTasks.forEach(task => {
         const taskRef = db.collection('users').doc(userId).collection('tasks').doc();
         batch.set(taskRef, task);
     });
+}
 
+
+
+/**
+ * Adds dummy contacts to the batch for a new user.
+ * @param {object} batch - The Firestore batch.
+ * @param {string} userId - The user ID.
+ */
+function seedDummyContacts(batch, userId) {
+    const dummyContacts = getDummyContacts();
     dummyContacts.forEach(contact => {
         const contactRef = db.collection('users').doc(userId).collection('contacts').doc();
         batch.set(contactRef, contact);
     });
-
-    await batch.commit();
 }
+
+
 
 /**
  * Shows the global loading spinner.
@@ -331,6 +453,8 @@ async function seedInitialDataForUser(userId, name, email) {
 function showSpinner() {
     document.getElementById('loader-overlay').classList.remove('d-none');
 }
+
+
 
 /**
  * Hides the global loading spinner.

@@ -2,33 +2,50 @@
  * Initializes the summary page.
  */
 function initSummary() {
-    firebase.auth().onAuthStateChanged(async (user) => {
-        showSpinner();
-        if (user) {
-            if (user.isAnonymous) {
-                const tasksSnapshot = await db.collection('users').doc(user.uid).collection('tasks').limit(1).get();
-                if (tasksSnapshot.empty) {
-                    await seedInitialDataForUser(user.uid, 'Guest', 'guest@join.test');
-                }
-            }
-            setGreeting(user);
-            await updateSummaryMetrics(user);
-            checkMobileGreeting(user);
-            hideSpinner();
-        }
-    });
+    firebase.auth().onAuthStateChanged(handleSummaryAuth);
 }
+
+
+
+/**
+ * Handles the authentication state change for the summary page.
+ * @param {object|null} user - The authenticated user.
+ */
+async function handleSummaryAuth(user) {
+    showSpinner();
+    if (user) {
+        await handleGuestSeeding(user);
+        setGreeting(user);
+        await updateSummaryMetrics(user);
+        checkMobileGreeting(user);
+        hideSpinner();
+    }
+}
+
+
+
+/**
+ * Seeds dummy data if the user is a new anonymous guest.
+ * @param {object} user - The authenticated user.
+ */
+async function handleGuestSeeding(user) {
+    if (!user.isAnonymous) return;
+    const tasksSnapshot = await db.collection('users').doc(user.uid).collection('tasks').limit(1).get();
+    if (tasksSnapshot.empty) await seedInitialDataForUser(user.uid, 'Guest', 'guest@join.test');
+}
+
+
 
 /**
  * Sets the greeting text based on time and user status.
+ * @param {object} user - The authenticated user.
  */
 function setGreeting(user) {
     let greetingElement = document.querySelector('.greeting-text');
     let nameElement = document.querySelector('.greeting-name');
-    let timeText = getTimeGreeting();
-
     if (!greetingElement || !nameElement) return;
 
+    let timeText = getTimeGreeting();
     if (user.isAnonymous) {
         greetingElement.innerHTML = `${timeText}!`;
         nameElement.innerHTML = '';
@@ -37,6 +54,8 @@ function setGreeting(user) {
         nameElement.innerHTML = user.displayName || 'User';
     }
 }
+
+
 
 /**
  * Returns the greeting string based on the current hour.
@@ -53,8 +72,11 @@ function getTimeGreeting() {
     }
 }
 
+
+
 /**
  * Loads tasks and updates the metric cards on the summary page.
+ * @param {object} user - The authenticated user.
  */
 async function updateSummaryMetrics(user) {
     let tasks = await loadTasksFromFirestore(user.uid);
@@ -62,8 +84,11 @@ async function updateSummaryMetrics(user) {
     updateUrgentMetric(tasks);
 }
 
+
+
 /**
  * Loads tasks from Firestore.
+ * @param {string} userId - The user ID.
  * @returns {Array} Array of tasks.
  */
 async function loadTasksFromFirestore(userId) {
@@ -71,10 +96,11 @@ async function loadTasksFromFirestore(userId) {
         const snapshot = await db.collection('users').doc(userId).collection('tasks').get();
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (e) {
-        console.error('Could not load tasks', e);
         return [];
     }
 }
+
+
 
 /**
  * Updates the count numbers for each task status.
@@ -90,12 +116,20 @@ function updateTaskCounts(tasks) {
     animateNumber(document.getElementById('summaryUrgent'), getCount(tasks, 'prio', 'urgent'), duration);
 }
 
+
+
 /**
  * Helper to count tasks by property.
+ * @param {Array} tasks - The tasks array.
+ * @param {string} key - The property key.
+ * @param {string} value - The value to match.
+ * @returns {number} The count.
  */
 function getCount(tasks, key, value) {
     return tasks.filter(t => t[key] === value).length;
 }
+
+
 
 /**
  * Updates the urgent task date display.
@@ -115,6 +149,8 @@ function updateUrgentMetric(tasks) {
     }
 }
 
+
+
 /**
  * Animates a number from 0 to a target value.
  * @param {HTMLElement} element The element to update.
@@ -123,28 +159,22 @@ function updateUrgentMetric(tasks) {
  */
 function animateNumber(element, endValue, duration) {
     if (!element) return;
-    let startValue = 0;
-    let startTime = null;
-
-    function animation(currentTime) {
-        if (startTime === null) startTime = currentTime;
-        let timeElapsed = currentTime - startTime;
-        let progress = Math.min(timeElapsed / duration, 1);
-        let currentValue = Math.floor(progress * (endValue - startValue) + startValue);
-        element.innerText = currentValue;
-
-        if (progress < 1) {
-            requestAnimationFrame(animation);
-        } else {
-            element.innerText = endValue; 
-        }
+    let start = null;
+    function step(timestamp) {
+        if (!start) start = timestamp;
+        let progress = Math.min((timestamp - start) / duration, 1);
+        element.innerText = Math.floor(progress * endValue);
+        if (progress < 1) requestAnimationFrame(step);
+        else element.innerText = endValue;
     }
-
-    requestAnimationFrame(animation);
+    requestAnimationFrame(step);
 }
+
+
 
 /**
  * Handles the mobile greeting animation.
+ * @param {object} user - The authenticated user.
  */
 function checkMobileGreeting(user) {
     if (window.innerWidth < 1000 && !sessionStorage.getItem('mobileGreetingShown')) {
@@ -152,8 +182,11 @@ function checkMobileGreeting(user) {
     }
 }
 
+
+
 /**
  * Displays the mobile greeting overlay and hides it after a delay.
+ * @param {object} user - The authenticated user.
  */
 function showMobileGreetingOverlay(user) {
     const overlay = document.getElementById('mobileGreeting');

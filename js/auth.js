@@ -6,7 +6,6 @@ async function guestLogin() {
         await auth.signInAnonymously();
         window.location.href = 'summary.html';
     } catch (error) {
-        console.error("Guest login failed:", error);
         alert("Guest login failed. Please try again.");
     }
 }
@@ -49,7 +48,6 @@ function checkSignupValidity() {
     const privacyCheckbox = document.getElementById('privacyPolicy');
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-
     return privacyCheckbox.checked && password.length > 0 && password === confirmPassword;
 }
 
@@ -103,9 +101,7 @@ function updatePasswordIcon(inputId) {
         icon.src = 'assets/img/lock_icon.png';
         input.type = 'password';
     } else {
-        if (icon.src.includes('lock_icon.png')) {
-            icon.src = 'assets/img/invisible.png';
-        }
+        if (icon.src.includes('lock_icon.png')) icon.src = 'assets/img/invisible.png';
     }
 }
 
@@ -127,63 +123,86 @@ function togglePasswordVisibility(inputId, icon) {
  * Registers a new user if they don't exist yet.
  */
 async function register() {
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const confirmInput = document.getElementById('confirmPassword');
-    const privacyCheckbox = document.getElementById('privacyPolicy');
-
-    resetValidationErrors([nameInput, emailInput, passwordInput, confirmInput]);
-
-    let isValid = true;
-    if (!validateInput(nameInput)) isValid = false;
-    if (!validateInput(emailInput)) isValid = false;
-    if (!validateInput(passwordInput)) isValid = false;
-    if (!validateInput(confirmInput)) isValid = false;
-    if (!privacyCheckbox.checked) isValid = false;
-
-    if (!isValid) return;
-
-    const name = nameInput.value;
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
+    const inputs = getSignupInputs();
+    resetValidationErrors(Object.values(inputs));
+    if (!validateSignupForm(inputs)) return;
     showSpinner();
-
     try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        await user.updateProfile({
-            displayName: name
-        });
-
-        await seedInitialDataForUser(user.uid, name, email);
-
-        await auth.signOut();
-        window.location.href = 'index.html?msg=signup_success';
+        await executeRegistration(inputs);
     } catch (error) {
-        hideSpinner();
-        console.error("Registration failed:", error);
-        if (error.code == 'auth/email-already-in-use') {
-            const emailInput = document.getElementById('email');
-            const msgElement = document.getElementById('msg-email');
-            if (emailInput && msgElement) {
-                emailInput.closest('.input-container').classList.add('error-border');
-                msgElement.innerText = 'Email already in use';
-                msgElement.classList.remove('d-none');
-            }
-        } else if (error.code == 'auth/weak-password') {
-            const passwordInput = document.getElementById('password');
-            const msgElement = document.getElementById('msg-password');
-            if (passwordInput && msgElement) {
-                passwordInput.closest('.input-container').classList.add('error-border');
-                msgElement.innerText = 'At least 6 characters';
-                msgElement.classList.remove('d-none');
-            }
-        } else {
-            alert('Registration failed. Please try again.');
-        }
+        handleRegistrationError(error);
+    }
+}
+
+/**
+ * Retrieves the signup form inputs.
+ * @returns {object} The input elements.
+ */
+function getSignupInputs() {
+    return {
+        name: document.getElementById('name'),
+        email: document.getElementById('email'),
+        password: document.getElementById('password'),
+        confirm: document.getElementById('confirmPassword'),
+        privacy: document.getElementById('privacyPolicy')
+    };
+}
+
+/**
+ * Validates the entire signup form.
+ * @param {object} inputs - The input elements.
+ * @returns {boolean} True if valid.
+ */
+function validateSignupForm(inputs) {
+    let isValid = true;
+    if (!validateInput(inputs.name)) isValid = false;
+    if (!validateInput(inputs.email)) isValid = false;
+    if (!validateInput(inputs.password)) isValid = false;
+    if (!validateInput(inputs.confirm)) isValid = false;
+    if (!inputs.privacy.checked) isValid = false;
+    return isValid;
+}
+
+/**
+ * Executes the user registration process.
+ * @param {object} inputs - The input elements.
+ */
+async function executeRegistration(inputs) {
+    const { email, password, name } = inputs;
+    const userCredential = await auth.createUserWithEmailAndPassword(email.value, password.value);
+    await userCredential.user.updateProfile({ displayName: name.value });
+    await seedInitialDataForUser(userCredential.user.uid, name.value, email.value);
+    await auth.signOut();
+    window.location.href = 'index.html?msg=signup_success';
+}
+
+/**
+ * Handles errors during the registration process.
+ * @param {Error} error - The error object.
+ */
+function handleRegistrationError(error) {
+    hideSpinner();
+    if (error.code == 'auth/email-already-in-use') {
+        showInputError('email', 'Email already in use');
+    } else if (error.code == 'auth/weak-password') {
+        showInputError('password', 'At least 6 characters');
+    } else {
+        alert('Registration failed. Please try again.');
+    }
+}
+
+/**
+ * Shows a validation error message for a specific input field.
+ * @param {string} inputId - The ID of the input field.
+ * @param {string} msg - The error message to display.
+ */
+function showInputError(inputId, msg) {
+    const input = document.getElementById(inputId);
+    const msgElement = document.getElementById(`msg-${inputId}`);
+    if (input && msgElement) {
+        input.closest('.input-container').classList.add('error-border');
+        msgElement.innerText = msg;
+        msgElement.classList.remove('d-none');
     }
 }
 
@@ -194,36 +213,42 @@ async function login() {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const msgBox = document.getElementById('msgBox');
-
     resetValidationErrors([emailInput, passwordInput]);
     if (msgBox) msgBox.classList.remove('visible');
 
-    let isValid = true;
-    if (!validateInput(emailInput)) isValid = false;
-    if (!validateInput(passwordInput)) isValid = false;
-
+    let isValid = validateInput(emailInput) && validateInput(passwordInput);
     if (!isValid) return;
 
-    showSpinner();
+    await executeLogin(emailInput, passwordInput);
+}
 
+/**
+ * Executes the login authentication request.
+ * @param {HTMLElement} emailInput - The email input element.
+ * @param {HTMLElement} passwordInput - The password input element.
+ */
+async function executeLogin(emailInput, passwordInput) {
+    showSpinner();
     try {
         const userCredential = await auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value);
-        const user = userCredential.user;
-
-        const rememberMe = document.getElementById('rememberMe');
-        if (rememberMe && rememberMe.checked) {
-            localStorage.setItem('rememberedEmail', emailInput.value);
-        } else {
-            localStorage.removeItem('rememberedEmail');
-        }
-
+        handleRememberMe(emailInput.value);
         window.location.href = 'summary.html';
     } catch (error) {
         hideSpinner();
-        if (error.code !== 'auth/invalid-login-credentials' && error.code !== 'auth/user-not-found' && error.code !== 'auth/wrong-password') {
-            console.error("Login failed:", error);
-        }
         showLoginError();
+    }
+}
+
+/**
+ * Stores or removes the remembered email based on the checkbox.
+ * @param {string} email - The email to remember.
+ */
+function handleRememberMe(email) {
+    const rememberMe = document.getElementById('rememberMe');
+    if (rememberMe && rememberMe.checked) {
+        localStorage.setItem('rememberedEmail', email);
+    } else {
+        localStorage.removeItem('rememberedEmail');
     }
 }
 
@@ -233,36 +258,40 @@ async function login() {
 async function resetPassword() {
     const emailInput = document.getElementById('email');
     const email = emailInput.value;
-    const container = emailInput.closest('.input-container');
-
     if (!email) {
-        const msgElement = document.getElementById('msg-email');
-        
-        if (container) {
-            container.classList.add('error-border');
-        } else {
-            emailInput.classList.add('error-border');
-        }
-
-        if (msgElement) {
-            msgElement.innerText = 'Please enter your email';
-            msgElement.classList.remove('d-none');
-        }
+        showResetEmailError(emailInput);
         return;
     }
+    await executePasswordReset(email);
+}
 
+/**
+ * Displays an error if the reset email input is empty.
+ * @param {HTMLElement} emailInput - The email input element.
+ */
+function showResetEmailError(emailInput) {
+    const container = emailInput.closest('.input-container');
+    const msgElement = document.getElementById('msg-email');
+    if (container) container.classList.add('error-border');
+    else emailInput.classList.add('error-border');
+    if (msgElement) {
+        msgElement.innerText = 'Please enter your email';
+        msgElement.classList.remove('d-none');
+    }
+}
+
+/**
+ * Executes the Firebase password reset request.
+ * @param {string} email - The email address.
+ */
+async function executePasswordReset(email) {
     showSpinner();
-
     try {
         await auth.sendPasswordResetEmail(email);
         showAuthToast('Email sent');
     } catch (error) {
-        console.error("Reset password failed:", error);
-        if (error.code === 'auth/user-not-found') {
-            showAuthToast('Email not found');
-        } else {
-            showAuthToast('Something went wrong');
-        }
+        if (error.code === 'auth/user-not-found') showAuthToast('Email not found');
+        else showAuthToast('Something went wrong');
     } finally {
         hideSpinner();
     }
@@ -285,14 +314,8 @@ function showAuthToast(message) {
 function setupValidationListeners() {
     const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
-        input.addEventListener('input', function() {
-            const container = this.closest('.input-container');
-            const msgId = 'msg-' + this.id;
-            const msgElement = document.getElementById(msgId);
-
-            if (container) container.classList.remove('error-border');
-            this.classList.remove('error-border');
-            if (msgElement) msgElement.classList.add('d-none');
+        input.addEventListener('input', function () {
+            clearInputErrorState(this);
         });
     });
 }
@@ -303,13 +326,7 @@ function setupValidationListeners() {
  */
 function resetValidationErrors(inputs) {
     inputs.forEach(input => {
-        const container = input.closest('.input-container');
-        const msgId = 'msg-' + input.id;
-        const msgElement = document.getElementById(msgId);
-
-        if (container) container.classList.remove('error-border');
-        input.classList.remove('error-border');
-        if (msgElement) msgElement.classList.add('d-none');
+        clearInputErrorState(input);
     });
 }
 
@@ -327,39 +344,61 @@ function showLoginError() {
  * @returns {boolean} True if valid.
  */
 function validateInput(input) {
+    if (!input.value.trim()) return setInputErrorState(input, 'This field is required');
+    if (input.type === 'email' && !isValidEmail(input.value)) {
+        return setInputErrorState(input, 'Please enter a valid email');
+    }
+    if (isPasswordField(input) && input.value.length < 6) {
+        return setInputErrorState(input, 'At least 6 characters');
+    }
+    return clearInputErrorState(input);
+}
+
+/**
+ * Checks if a string is a valid email format.
+ * @param {string} email - The email string.
+ * @returns {boolean} True if valid.
+ */
+function isValidEmail(email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+}
+
+/**
+ * Checks if an input element is a password field.
+ * @param {HTMLElement} input - The input element.
+ * @returns {boolean} True if it is a password field.
+ */
+function isPasswordField(input) {
+    return input.type === 'password' || input.id === 'password' || input.id === 'confirmPassword';
+}
+
+/**
+ * Sets the error styling and message for an input field.
+ * @param {HTMLElement} input - The input element.
+ * @param {string} message - The error message.
+ * @returns {boolean} Always false.
+ */
+function setInputErrorState(input, message) {
+    if (container) container.classList.remove('error-border');
+    const msgElement = document.getElementById('msg-' + input.id);
+    if (container) container.classList.add('error-border');
+    else input.classList.add('error-border');
+    if (msgElement) {
+        msgElement.innerText = message;
+        msgElement.classList.remove('d-none');
+    }
+    return false;
+}
+
+/**
+ * Clears the error styling and message for an input field.
+ * @param {HTMLElement} input - The input element.
+ * @returns {boolean} Always true.
+ */
+function clearInputErrorState(input) {
     const container = input.closest('.input-container');
-    const msgId = 'msg-' + input.id;
-    const msgElement = document.getElementById(msgId);
-
-    if (!input.value.trim()) {
-        if (container) {
-            container.classList.add('error-border');
-            if (msgElement) { msgElement.innerText = 'This field is required'; msgElement.classList.remove('d-none'); }
-        } else {
-            input.classList.add('error-border');
-        }
-        return false;
-    }
-
-    if (input.type === 'email') {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(input.value)) {
-            if (container) container.classList.add('error-border');
-            else input.classList.add('error-border');
-            if (msgElement) { msgElement.innerText = 'Please enter a valid email'; msgElement.classList.remove('d-none'); }
-            return false;
-        }
-    }
-
-    if (input.type === 'password' || input.id === 'password' || input.id === 'confirmPassword') {
-        if (input.value.length < 6) {
-            if (container) container.classList.add('error-border');
-            else input.classList.add('error-border');
-            if (msgElement) { msgElement.innerText = 'At least 6 characters'; msgElement.classList.remove('d-none'); }
-            return false;
-        }
-    }
-
+    const msgElement = document.getElementById('msg-' + input.id);
     if (container) container.classList.remove('error-border');
     else input.classList.remove('error-border');
     if (msgElement) msgElement.classList.add('d-none');

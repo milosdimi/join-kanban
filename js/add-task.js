@@ -6,6 +6,7 @@ let contacts = [];
 let assignedContacts = [];
 let messageTimeout = null;
 
+
 /**
  * Initializes the add task page.
  */
@@ -24,6 +25,7 @@ async function initAddTask() {
     }
 }
 
+
 /**
  * Injects validation message elements into the DOM if they don't exist.
  */
@@ -40,6 +42,7 @@ function addValidationMsgElements() {
         }
     });
 }
+
 
 /**
  * Sets up event listeners to clear validation errors on input/change.
@@ -60,6 +63,7 @@ function setupInputEventListeners() {
     });
 }
 
+
 /**
  * Sets the minimum date for the due date input to today.
  */
@@ -76,6 +80,7 @@ function setMinDate() {
         }
     });
 }
+
 
 /**
  * Loads contacts from local storage.
@@ -94,6 +99,7 @@ async function loadContacts() {
     });
 }
 
+
 /**
  * Prepares the form for editing an existing task.
  */
@@ -102,7 +108,14 @@ async function prepareEditMode() {
     const createBtn = document.querySelector('.btn-create');
     createBtn.innerHTML = 'Save <img src="assets/img/check_icon.png" alt="">';
     document.querySelector('.btn-clear').classList.add('d-none'); 
+    await fetchAndPopulateTaskToEdit();
+}
 
+
+/**
+ * Fetches tasks from Firestore and populates the edit form.
+ */
+async function fetchAndPopulateTaskToEdit() {
     let tasks = [];
     const user = firebase.auth().currentUser;
     if (user) {
@@ -110,11 +123,9 @@ async function prepareEditMode() {
         tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
     const taskToEdit = tasks.find(t => t.id === editingTaskId);
-
-    if (taskToEdit) {
-        populateForm(taskToEdit);
-    }
+    if (taskToEdit) populateForm(taskToEdit);
 }
+
 
 /**
  * Sets the priority for the task and updates the button styles.
@@ -132,28 +143,42 @@ function setPrio(prio) {
     currentPrio = prio;
 }
 
+
 /**
  * Clears all inputs in the task form.
  */
 function clearTask() {
-    document.getElementById('title').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('dueDate').value = '';
-    document.getElementById('category').value = '';
-    document.getElementById('subtask').value = '';
+    clearTaskInputs();
+    resetTaskVariablesAndErrors();
+}
+
+
+/**
+ * Clears all text and value inputs in the task form.
+ */
+function clearTaskInputs() {
+    ['title', 'description', 'dueDate', 'category', 'subtask'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('subtaskList').innerHTML = '';
+}
+
+
+/**
+ * Resets variables, priorities, and validation errors for the task form.
+ */
+function resetTaskVariablesAndErrors() {
     setPrio('medium');
     subtasks = [];
-    document.getElementById('subtaskList').innerHTML = '';
     newTaskStatus = 'todo';
     assignedContacts = [];
     renderSelectedContactsBadges();
-    document.getElementById('title').classList.remove('error-border');
-    document.getElementById('dueDate').classList.remove('error-border');
-    document.getElementById('category').classList.remove('error-border');
-    document.getElementById('msg-title')?.classList.add('d-none');
-    document.getElementById('msg-dueDate')?.classList.add('d-none');
-    document.getElementById('msg-category')?.classList.add('d-none');
+    ['title', 'dueDate', 'category'].forEach(id => {
+        document.getElementById(id).classList.remove('error-border');
+        document.getElementById(`msg-${id}`)?.classList.add('d-none');
+    });
 }
+
 
 /**
  * Populates the form with data from an existing task.
@@ -170,6 +195,7 @@ function populateForm(task) {
     renderSelectedContactsBadges();
     renderSubtasks();
 }
+
 
 /**
  * Validates the required fields in the task form.
@@ -193,6 +219,13 @@ function validateTaskForm() {
     return isValid;
 }
 
+
+/**
+ * Validates a single input field.
+ * @param {HTMLElement} input - The input element to validate.
+ * @param {string} msgId - The ID of the error message element.
+ * @returns {boolean} True if valid.
+ */
 function validateField(input, msgId) {
     const msgElement = document.getElementById(msgId);
     if (!input.value.trim()) {
@@ -205,6 +238,7 @@ function validateField(input, msgId) {
         return true;
     }
 }
+
 
 /**
  * Handles the form submission event.
@@ -220,6 +254,7 @@ function handleTaskFormSubmit() {
     }
     return false;
 }
+
 
 /**
  * Creates a new task and saves it to storage.
@@ -237,6 +272,7 @@ async function createTask() {
     redirectToBoard();
 }
 
+
 /**
  * Collects task data from the form inputs.
  * @returns {object} The task object.
@@ -253,6 +289,7 @@ function getTaskData() {
         assignedContacts: assignedContacts
     };
 }
+
 
 /**
  * Redirects the user to the board page after a short delay.
@@ -272,6 +309,7 @@ function redirectToBoard() {
     }
 }
 
+
 /**
  * Saves changes to an existing task.
  */
@@ -289,6 +327,7 @@ async function saveEditedTask() {
     }
 }
 
+
 /**
  * Updates a task object with current form values.
  * @param {object} task - The task object to update.
@@ -302,6 +341,7 @@ function updateTaskObject(task) {
     task.subtasks = subtasks;
     task.assignedContacts = assignedContacts;
 }
+
 
 /**
  * Sets up the event listener for the subtask input field (Enter key).
@@ -318,6 +358,7 @@ function setupSubtaskInput() {
     }
 }
 
+
 /**
  * Adds a new subtask to the list.
  */
@@ -333,6 +374,7 @@ function addSubtask() {
     }
 }
 
+
 /**
  * Renders the list of subtasks.
  */
@@ -344,6 +386,7 @@ function renderSubtasks() {
         list.innerHTML += generateSubtaskHTML(subtasks[i], i);
     }
 }
+
 
 /**
  * Enables edit mode for a specific subtask.
@@ -357,6 +400,7 @@ function editSubtask(index) {
     subtaskItem.innerHTML = generateEditSubtaskHTML(currentTitle, index);
     document.getElementById(`edit-subtask-${index}`).focus();
 }
+
 
 /**
  * Saves the edited subtask title.
@@ -372,6 +416,7 @@ function saveSubtask(index) {
     renderSubtasks();
 }
 
+
 /**
  * Deletes a subtask from the list.
  * @param {number} index - The index of the subtask.
@@ -381,6 +426,7 @@ function deleteSubtask(index) {
     renderSubtasks();
 }
 
+
 /**
  * Clears the subtask input field.
  */
@@ -388,8 +434,10 @@ function clearSubtaskInput() {
     document.getElementById('subtask').value = '';
 }
 
+
 /**
  * Shows a confirmation message when a task is added.
+ * @param {string} text - The message to show.
  */
 function showTaskAddedMessage(text = 'Task added to board') {
     const msgElement = document.getElementById('taskAddedMsg');
@@ -406,6 +454,7 @@ function showTaskAddedMessage(text = 'Task added to board') {
         }, 2000);
     }
 }
+
 
 /**
  * Toggles the visibility of the contacts dropdown.
@@ -424,6 +473,7 @@ function toggleContactsDropdown(event) {
     }
 }
 
+
 /**
  * Closes the dropdown when clicking outside of it.
  * @param {Event} event - The click event.
@@ -435,6 +485,7 @@ function closeDropdownOnClickOutside(event) {
         document.removeEventListener('click', closeDropdownOnClickOutside, true);
     }
 }
+
 
 /**
  * Renders the list of contacts in the dropdown.
@@ -448,6 +499,7 @@ function renderContactsDropdown() {
         container.innerHTML += generateContactOptionHTML(contact, index, isSelected);
     });
 }
+
 
 /**
  * Toggles the selection status of a contact.
@@ -466,6 +518,7 @@ function toggleContactSelection(index) {
     renderSelectedContactsBadges();
 }
 
+
 /**
  * Renders badges for selected contacts below the dropdown.
  */
@@ -480,6 +533,7 @@ function renderSelectedContactsBadges() {
         }
     });
 }
+
 
 /**
  * Generates initials from a name.

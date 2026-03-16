@@ -2,6 +2,8 @@ let tasks = [];
 let currentDraggedElement;
 let taskFormTemplate = '';
 
+
+
 /**
  * Initializes the board by loading tasks, contacts, and templates.
  */
@@ -13,6 +15,8 @@ async function initBoard() {
     await loadTaskFormTemplate();
     hideSpinner();
 }
+
+
 
 /**
  * Loads tasks from local storage.
@@ -31,43 +35,60 @@ async function loadTasks() {
     });
 }
 
+
+
 /**
  * Loads the HTML template for the add task form.
  */
 async function loadTaskFormTemplate() {
     try {
         let resp = await fetch('assets/templates/add-task-form.html');
-        if (resp.ok) {
-            taskFormTemplate = await resp.text();
-        }
-    } catch (e) { console.error('Could not load task form template', e); }
+        if (resp.ok) taskFormTemplate = await resp.text();
+    } catch (e) {
+    }
 }
+
+
 
 /**
  * Renders all tasks into their respective columns on the board.
  */
 function renderBoard() {
-    const columns = ['todo', 'inprogress', 'awaitingfeedback', 'done'];
+    if (!document.getElementById('todo')) return;
     const searchInput = document.getElementById('searchInput');
     const search = searchInput ? searchInput.value.toLowerCase() : '';
+    clearBoardColumns();
+    renderTasksMatchingSearch(search);
+    checkEmptyColumns();
+}
 
-    if (!document.getElementById('todo')) return;
 
-    columns.forEach(colId => {
+
+/**
+ * Clears all task columns on the board.
+ */
+function clearBoardColumns() {
+    ['todo', 'inprogress', 'awaitingfeedback', 'done'].forEach(colId => {
         document.getElementById(colId).innerHTML = '';
     });
+}
 
+
+
+/**
+ * Renders tasks that match the search query into columns.
+ * @param {string} search - The search string.
+ */
+function renderTasksMatchingSearch(search) {
     tasks.forEach(task => {
         if (task.title.toLowerCase().includes(search) || task.description.toLowerCase().includes(search)) {
             const column = document.getElementById(task.status);
-            if (column) {
-                column.innerHTML += generateTaskHTML(task);
-            }
+            if (column) column.innerHTML += generateTaskHTML(task);
         }
     });
-
-    checkEmptyColumns();
 }
+
+
 
 /**
  * Checks if columns are empty and displays a placeholder message.
@@ -88,6 +109,8 @@ function checkEmptyColumns() {
     });
 }
 
+
+
 /**
  * Toggles the visibility of the move-to menu on a task card.
  * @param {Event} event - The click event.
@@ -102,6 +125,8 @@ function toggleMoveMenu(event, taskId) {
     menu.classList.toggle('d-none');
 }
 
+
+
 /**
  * Moves a task to a new status from the dropdown menu.
  * @param {Event} event - The click event.
@@ -112,6 +137,8 @@ async function moveToFromMenu(event, taskId, newStatus) {
     event.stopPropagation();
     await moveToStatus(taskId, newStatus);
 }
+
+
 
 /**
  * Starts the drag operation.
@@ -125,6 +152,8 @@ function startDragging(id) {
     }, 10);
 }
 
+
+
 /**
  * Allows dropping an element.
  * @param {Event} ev - The dragover event.
@@ -133,12 +162,16 @@ function allowDrop(ev) {
     ev.preventDefault();
 }
 
+
+
 /**
  * Stops the drag operation and cleans up.
  */
 function stopDragging() {
     document.body.classList.remove('dragging-active');
 }
+
+
 
 /**
  * Highlights the drop area when dragging a task over it.
@@ -148,6 +181,8 @@ function highlight(id) {
     document.getElementById(id).classList.add('drag-area-highlight');
 }
 
+
+
 /**
  * Removes the highlight from the drop area.
  * @param {string} id - The ID of the column.
@@ -155,6 +190,8 @@ function highlight(id) {
 function removeHighlight(id) {
     document.getElementById(id).classList.remove('drag-area-highlight');
 }
+
+
 
 /**
  * Moves the dragged task to a new status column.
@@ -172,6 +209,8 @@ function moveTo(status) {
     }
 }
 
+
+
 /**
  * Opens the task detail modal.
  * @param {number} taskId - The ID of the task to show.
@@ -187,6 +226,8 @@ function openTaskDetails(taskId) {
     overlay.classList.remove('d-none');
     document.body.classList.add('no-scroll');
 }
+
+
 
 /**
  * Closes the task detail modal.
@@ -204,13 +245,22 @@ function closeTaskDetails() {
     }, 300);
 }
 
-window.addEventListener('click', function (e) {
+
+
+window.addEventListener('click', closeAllMoveMenus);
+
+
+
+/**
+ * Closes the move-to dropdown menus when clicking outside.
+ */
+function closeAllMoveMenus() {
     document.querySelectorAll('.move-menu-dropdown').forEach(menu => {
-        if (!menu.classList.contains('d-none')) {
-            menu.classList.add('d-none');
-        }
+        if (!menu.classList.contains('d-none')) menu.classList.add('d-none');
     });
-});
+}
+
+
 
 /**
  * Updates the status of a task.
@@ -228,6 +278,8 @@ async function moveToStatus(taskId, newStatus) {
     }
 }
 
+
+
 /**
  * Deletes a task from the board.
  * @param {number} taskId - The ID of the task.
@@ -242,6 +294,8 @@ async function deleteTask(taskId) {
     showBoardToastMessage('Task deleted');
 }
 
+
+
 /**
  * Opens the edit task modal.
  * @param {number} taskId - The ID of the task to edit.
@@ -250,20 +304,41 @@ function editTask(taskId) {
     const task = tasks.find(t => t.id === taskId);
     const modal = document.querySelector('#taskDetailOverlay .task-detail-modal');
     loadContacts();
+    setupEditTaskModal(task, modal);
+}
+
+
+
+/**
+ * Sets up the modal for editing a task.
+ * @param {object} task - The task object to edit.
+ * @param {HTMLElement} modal - The modal element.
+ */
+function setupEditTaskModal(task, modal) {
     modal.classList.add('large-modal');
     modal.innerHTML = generateAddTaskModalHTML('Edit Task', taskFormTemplate);
-    editingTaskId = taskId;
+    editingTaskId = task.id;
     newTaskStatus = task.status;
     populateForm(task);
-    setupSubtaskInput();
-    setMinDate();
-    addValidationMsgElements();
-    setupInputEventListeners();
-
+    initializeTaskFormBehaviors();
     const createBtn = modal.querySelector('.btn-create');
     createBtn.innerHTML = 'Save <img src="assets/img/check_icon.png" alt="">';
     modal.querySelector('.btn-clear').classList.add('d-none');
 }
+
+
+
+/**
+ * Initializes inputs, validations, and listeners for the task form.
+ */
+function initializeTaskFormBehaviors() {
+    setupSubtaskInput();
+    setMinDate();
+    addValidationMsgElements();
+    setupInputEventListeners();
+}
+
+
 
 /**
  * Opens the add task modal.
@@ -277,19 +352,28 @@ function openAddTaskModal(status = 'todo') {
     const overlay = document.getElementById('addTaskOverlay');
     const modal = overlay.querySelector('.task-detail-modal');
     loadContacts();
+    setupAddTaskModal(status, modal);
+    overlay.classList.remove('d-none');
+    document.body.classList.add('no-scroll');
+}
+
+
+
+/**
+ * Sets up the modal for adding a new task.
+ * @param {string} status - The default status.
+ * @param {HTMLElement} modal - The modal element.
+ */
+function setupAddTaskModal(status, modal) {
     modal.classList.add('large-modal');
     modal.innerHTML = generateAddTaskModalHTML('Add Task', taskFormTemplate);
     newTaskStatus = status;
     editingTaskId = null;
     clearTask();
-    setMinDate();
-    setupSubtaskInput();
-    addValidationMsgElements();
-    setupInputEventListeners();
-
-    overlay.classList.remove('d-none');
-    document.body.classList.add('no-scroll');
+    initializeTaskFormBehaviors();
 }
+
+
 
 /**
  * Toggles the completion status of a subtask.
@@ -308,6 +392,8 @@ async function toggleSubtask(taskId, subtaskIndex) {
     }
 }
 
+
+
 /**
  * Closes the add task modal.
  */
@@ -324,6 +410,8 @@ function closeAddTaskModal() {
     }, 300);
 }
 
+
+
 /**
  * Shows a toast message on the board.
  * @param {string} text - The message text.
@@ -332,21 +420,21 @@ function showBoardToastMessage(text) {
     const msgDiv = document.createElement('div');
     msgDiv.innerText = text;
     msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 2s ease-in-out forwards;";
+    injectBoardToastStyles();
+    document.body.appendChild(msgDiv);
+    setTimeout(() => msgDiv.remove(), 2000);
+}
 
+
+
+/**
+ * Injects CSS keyframes for the board toast animation if not present.
+ */
+function injectBoardToastStyles() {
     if (!document.getElementById('keyframes-slideInAndOut')) {
         const style = document.createElement('style');
         style.id = 'keyframes-slideInAndOut';
-        style.innerHTML = `
-            @keyframes slideInAndOut {
-                0% { opacity: 0; transform: translate(-50%, 100px); }
-                10% { opacity: 1; transform: translate(-50%, 50%); }
-                90% { opacity: 1; transform: translate(-50%, 50%); }
-                100% { opacity: 0; transform: translate(-50%, 100px); }
-            }
-        `;
+        style.innerHTML = `@keyframes slideInAndOut { 0% { opacity: 0; transform: translate(-50%, 100px); } 10% { opacity: 1; transform: translate(-50%, 50%); } 90% { opacity: 1; transform: translate(-50%, 50%); } 100% { opacity: 0; transform: translate(-50%, 100px); } }`;
         document.head.appendChild(style);
     }
-
-    document.body.appendChild(msgDiv);
-    setTimeout(() => msgDiv.remove(), 2000);
 }
