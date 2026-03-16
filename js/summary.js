@@ -5,14 +5,12 @@ function initSummary() {
     firebase.auth().onAuthStateChanged(async (user) => {
         showSpinner();
         if (user) {
-
             if (user.isAnonymous) {
                 const tasksSnapshot = await db.collection('users').doc(user.uid).collection('tasks').limit(1).get();
                 if (tasksSnapshot.empty) {
                     await seedInitialDataForUser(user.uid, 'Guest', 'guest@join.test');
                 }
             }
-
             setGreeting(user);
             await updateSummaryMetrics(user);
             checkMobileGreeting(user);
@@ -46,7 +44,6 @@ function setGreeting(user) {
  */
 function getTimeGreeting() {
     let hour = new Date().getHours();
-
     if (hour < 12) {
         return 'Good morning';
     } else if (hour < 18) {
@@ -133,7 +130,6 @@ function animateNumber(element, endValue, duration) {
         if (startTime === null) startTime = currentTime;
         let timeElapsed = currentTime - startTime;
         let progress = Math.min(timeElapsed / duration, 1);
-        
         let currentValue = Math.floor(progress * (endValue - startValue) + startValue);
         element.innerText = currentValue;
 
@@ -162,7 +158,6 @@ function checkMobileGreeting(user) {
 function showMobileGreetingOverlay(user) {
     const overlay = document.getElementById('mobileGreeting');
     if (!overlay) return;
-    
     const userName = user.isAnonymous ? 'Guest' : (user.displayName || 'User');
     const greeting = getTimeGreeting();
 

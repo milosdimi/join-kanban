@@ -1,5 +1,6 @@
 /**
  * Provides dummy data for new user initialization.
+ * @returns {Array} Array of contact objects.
  */
 function getDummyContacts() {
     return [
@@ -16,6 +17,10 @@ function getDummyContacts() {
     ];
 }
 
+/**
+ * Provides dummy tasks for new user initialization.
+ * @returns {Array} Array of task objects.
+ */
 function getDummyTasks() {
     return [
         { title: "Cook Batch #42", description: "Prepare the new batch of Blue Sky. Purity must be 99.1%.", dueDate: "2027-12-31", category: "Technical Task", prio: "urgent", status: "todo", subtasks: [{ title: "Clean glassware", completed: false }, { title: "Check methylamine supply", completed: false }], assignedContacts: ["heisenberg@gmail.com", "capncook@hotmail.com"] },

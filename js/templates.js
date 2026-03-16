@@ -239,7 +239,6 @@ function generateBoardContactsHTML(assignedContacts) {
     if (count > maxVisible) {
         html += `<div class="contact-badge-board" style="background-color: #2A3647; color: white;">+${count - displayCount}</div>`;
     }
-    
     return html;
 }
 
@@ -301,7 +300,6 @@ function getCategoryColor(category) {
  */
 function getSubtasksProgress(task) {
     if (!task.subtasks || task.subtasks.length === 0) return '';
-    
     let completed = task.subtasks.filter(s => s.completed).length;
     let total = task.subtasks.length;
     let percent = (completed / total) * 100;
@@ -417,6 +415,7 @@ function generateContactModalActionsHTML(mode, index) {
 function generateMobileGreetingHTML(greeting, name) {
     return /*html*/`${greeting},<br><span style="color: var(--secondary-color); font-size: 48px;">${name}</span>`;
 }
+
 /**
  * Generates HTML for a contact option in the dropdown.
  * @param {object} contact - The contact object.

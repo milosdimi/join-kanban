@@ -88,9 +88,7 @@ function showContactDetails(index) {
 }
 
 function highlightActiveContact(index) {
-
     document.querySelectorAll('.contact-item').forEach(item => item.classList.remove('active'));
-
     const activeItem = document.getElementById(`contact-${index}`);
     if (activeItem) activeItem.classList.add('active');
 }
@@ -151,7 +149,7 @@ function openAddContact() {
     document.getElementById('addContactOverlay').onclick = function(e) {
         if(e.target === this) closeAddContact();
     };
-    document.body.classList.add('no-scroll'); 
+    document.body.classList.add('no-scroll');
 }
 
 /**
@@ -183,7 +181,7 @@ function openEditContact(index) {
     document.getElementById('addContactOverlay').onclick = function(e) {
         if(e.target === this) closeAddContact();
     };
-    document.body.classList.add('no-scroll'); 
+    document.body.classList.add('no-scroll');
 }
 
 /**
@@ -197,7 +195,7 @@ function closeAddContact() {
     setTimeout(() => {
         overlay.classList.add('d-none');
         card.classList.remove('slide-out');
-        document.body.classList.remove('no-scroll'); 
+        document.body.classList.remove('no-scroll');
     }, 300);
 }
 
@@ -242,7 +240,7 @@ function validateInput(input) {
 
     if (!input.value.trim()) {
         message = 'This field is required.';
-    } 
+    }
     
     if (!message && input.type === 'email') {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -290,6 +288,7 @@ function resetContactValidation() {
         }
     });
 }
+
 /**
  * Creates a new contact and saves it.
  */
@@ -350,7 +349,7 @@ async function deleteContact(index) {
     contacts.splice(index, 1);
     renderContactList();
     document.getElementById('contactDetail').innerHTML = '';
-    closeMobileDetails(); 
+    closeMobileDetails();
     showContactSuccessMessage('Contact deleted');
 }
 

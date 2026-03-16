@@ -1,7 +1,7 @@
-let currentPrio = 'medium'; // Default priority
+let currentPrio = 'medium';
 let subtasks = [];
 let editingTaskId = null;
-let newTaskStatus = 'todo'; // Standard Status
+let newTaskStatus = 'todo';
 let contacts = [];
 let assignedContacts = [];
 let messageTimeout = null;
@@ -121,7 +121,6 @@ async function prepareEditMode() {
  * @param {string} prio - The selected priority ('urgent', 'medium', 'low').
  */
 function setPrio(prio) {    
-    
     const buttons = document.querySelectorAll('.prio-btn');
     buttons.forEach(button => {
         button.classList.remove('active');
@@ -148,7 +147,6 @@ function clearTask() {
     newTaskStatus = 'todo';
     assignedContacts = [];
     renderSelectedContactsBadges();
-
     document.getElementById('title').classList.remove('error-border');
     document.getElementById('dueDate').classList.remove('error-border');
     document.getElementById('category').classList.remove('error-border');
@@ -187,13 +185,11 @@ function validateTaskForm() {
     if (!validateField(date, 'msg-dueDate')) isValid = false;
     if (!validateField(category, 'msg-category')) isValid = false;
 
-    // Date Year Validation
     if (date.value && new Date(date.value).getFullYear() < 2000) {
         document.getElementById('msg-dueDate').innerText = 'Please enter a valid year';
         document.getElementById('msg-dueDate').classList.remove('d-none');
         isValid = false;
     }
-    
     return isValid;
 }
 
@@ -215,14 +211,14 @@ function validateField(input, msgId) {
  * @returns {boolean} Always false to prevent default submission.
  */
 function handleTaskFormSubmit() {
-    if (!validateTaskForm()) return false; 
+    if (!validateTaskForm()) return false;
 
     if (editingTaskId !== null) {
         saveEditedTask();
     } else {
         createTask();
     }
-    return false; 
+    return false;
 }
 
 /**
@@ -371,7 +367,6 @@ function saveSubtask(index) {
     if (input.value.trim().length > 0) {
         subtasks[index].title = input.value;
     } else {
-        
         subtasks.splice(index, 1);
     }
     renderSubtasks();
@@ -402,7 +397,6 @@ function showTaskAddedMessage(text = 'Task added to board') {
         if (messageTimeout) clearTimeout(messageTimeout);
 
         msgElement.innerHTML = `${text} <img src="assets/img/board-icon.svg" alt="">`;
-        
         msgElement.classList.add('d-none');
         void msgElement.offsetWidth; 
         msgElement.classList.remove('d-none');
@@ -412,8 +406,6 @@ function showTaskAddedMessage(text = 'Task added to board') {
         }, 2000);
     }
 }
-
-// --- CONTACTS DROPDOWN LOGIC ---
 
 /**
  * Toggles the visibility of the contacts dropdown.
@@ -426,7 +418,6 @@ function toggleContactsDropdown(event) {
     
     if (!options.classList.contains('d-none')) {
         renderContactsDropdown();
-        
         document.addEventListener('click', closeDropdownOnClickOutside, true);
     } else {
         document.removeEventListener('click', closeDropdownOnClickOutside, true);

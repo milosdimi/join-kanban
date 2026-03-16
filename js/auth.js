@@ -103,7 +103,6 @@ function updatePasswordIcon(inputId) {
         icon.src = 'assets/img/lock_icon.png';
         input.type = 'password';
     } else {
-
         if (icon.src.includes('lock_icon.png')) {
             icon.src = 'assets/img/invisible.png';
         }
@@ -134,10 +133,8 @@ async function register() {
     const confirmInput = document.getElementById('confirmPassword');
     const privacyCheckbox = document.getElementById('privacyPolicy');
 
-    // Reset errors
     resetValidationErrors([nameInput, emailInput, passwordInput, confirmInput]);
 
-    // Validate
     let isValid = true;
     if (!validateInput(nameInput)) isValid = false;
     if (!validateInput(emailInput)) isValid = false;
@@ -223,12 +220,9 @@ async function login() {
         window.location.href = 'summary.html';
     } catch (error) {
         hideSpinner();
-        if (error.code === 'auth/invalid-login-credentials' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-
-        } else {
+        if (error.code !== 'auth/invalid-login-credentials' && error.code !== 'auth/user-not-found' && error.code !== 'auth/wrong-password') {
             console.error("Login failed:", error);
         }
-
         showLoginError();
     }
 }
@@ -337,7 +331,6 @@ function validateInput(input) {
     const msgId = 'msg-' + input.id;
     const msgElement = document.getElementById(msgId);
 
-    // 1. Check if empty
     if (!input.value.trim()) {
         if (container) {
             container.classList.add('error-border');
@@ -348,7 +341,6 @@ function validateInput(input) {
         return false;
     }
 
-    // 2. Check Email format if it is an email field
     if (input.type === 'email') {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(input.value)) {
@@ -359,7 +351,6 @@ function validateInput(input) {
         }
     }
 
-    // 3. Check Password length
     if (input.type === 'password' || input.id === 'password' || input.id === 'confirmPassword') {
         if (input.value.length < 6) {
             if (container) container.classList.add('error-border');
@@ -369,7 +360,6 @@ function validateInput(input) {
         }
     }
 
-    // Remove error if valid
     if (container) container.classList.remove('error-border');
     else input.classList.remove('error-border');
     if (msgElement) msgElement.classList.add('d-none');

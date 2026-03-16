@@ -53,7 +53,6 @@ function checkAuth() {
     const isProtectedPage = protectedPages.some(page => path.includes(page));
     const isLoginPage = loginPages.some(page => path.endsWith(page));
 
-    // Check if Firebase is loaded. If not (e.g. on public pages for performance), treat as guest.
     if (typeof firebase === 'undefined') {
         hideSidebarMenu();
         updateHeaderVisibility(false);
@@ -63,21 +62,18 @@ function checkAuth() {
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-
             if (isLoginPage) {
                 window.location.href = 'summary.html';
             }
             showSidebarMenu();
             updateHeaderVisibility(true);
         } else {
-
             if (isProtectedPage) {
                 window.location.href = 'index.html';
             }
             hideSidebarMenu();
             updateHeaderVisibility(false); 
         }
-
         highlightActiveMenu();
         updateProfileMenu(user);
         updateUserInitials(user);
@@ -85,7 +81,7 @@ function checkAuth() {
 }
 
 /**
- * NEW: Immediately hides sensitive menu items on public pages based on URL,
+ * Immediately hides sensitive menu items on public pages based on URL,
  * before Firebase auth check completes. Prevents "flashing" of internal nav.
  */
 function preventAuthFlash() {
@@ -97,13 +93,12 @@ function preventAuthFlash() {
     if (isPublicPage || isLoginPage) {
         let sidebarNav = document.getElementById('sidebar-nav');
         if (sidebarNav) sidebarNav.classList.add('d-none');
-
         updateHeaderVisibility(false);
     }
 }
 
 /**
- * NEW: Toggles visibility of the Help and Profile icons in the header.
+ * Toggles visibility of the Help and Profile icons in the header.
  * @param {boolean} visible - true to show icons, false to hide them.
  */
 function updateHeaderVisibility(visible) {
@@ -129,13 +124,12 @@ function hideSidebarMenu() {
     if (sidebarNav) sidebarNav.classList.add('d-none');
     if (sidebarGuest) sidebarGuest.classList.remove('d-none');
     
-    // Enable Mobile Footer Links for Guest
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) sidebar.classList.add('guest-mode');
 }
 
 /**
- * NEW: Shows the main sidebar navigation.
+ * Shows the main sidebar navigation.
  * Used when we confirm the user is logged in.
  */
 function showSidebarMenu() {
@@ -145,7 +139,6 @@ function showSidebarMenu() {
     if (sidebarNav) sidebarNav.classList.remove('d-none');
     if (sidebarGuest) sidebarGuest.classList.add('d-none');
 
-    // Disable Mobile Footer Links for Logged-In User
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) sidebar.classList.remove('guest-mode');
 }
