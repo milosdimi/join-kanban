@@ -1,4 +1,4 @@
-/* --- LAYOUT --- */
+/* Layout */
 .contacts-container {
     display: flex;
     padding: 0 !important;
@@ -6,7 +6,7 @@
     overflow: hidden;
 }
 
-/* --- LEFT LIST --- */
+/* Left List */
 .contact-list-container {
     width: 400px;
     background-color: var(--white);
@@ -63,7 +63,6 @@
     background-color: #F0F0F0;
 }
 
-
 .contact-item.active {
     background-color: #2A3647; 
     color: white;
@@ -107,7 +106,7 @@
     color: white; 
 }
 
-/* --- RIGHT DETAIL VIEW --- */
+/* Right Detail View */
 .contact-detail-view {
     flex: 1;
     padding: 60px;
@@ -222,7 +221,7 @@
     word-break: break-word;
 }
 
-/* --- ADD CONTACT OVERLAY --- */
+/* Add Contact Overlay */
 .overlay {
     position: fixed;
     top: 0;
@@ -246,7 +245,6 @@
     overflow: hidden;
     animation: slideIn 0.4s ease-out;
     position: relative;
-
 }
 
 @keyframes slideIn {
@@ -432,12 +430,26 @@ form {
     gap: 10px;
 }
 
+.btn-transparent:hover {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-create-contact {
+    padding: 12px 24px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .btn-create-contact img {
     flex-shrink: 0;
     object-fit: contain;
 }
 
-/* --- ANIMATIONS --- */
+/* Animations */
 @keyframes slideInBottom {
     from {
         transform: translateY(100%);
@@ -448,7 +460,7 @@ form {
     }
 }
 
-/* --- MOBILE ELEMENTS (Hidden on Desktop) --- */
+/* Mobile Elements (Hidden on Desktop) */
 .mobile-back-arrow {
     display: none;
 }
@@ -461,7 +473,7 @@ form {
     display: none;
 }
 
-/* --- RESPONSIVE CONTACTS (Desktop Intermediate 1000px - 1200px) --- */
+/* Responsive (1000px - 1200px) */
 @media (max-width: 1200px) {
     .contact-list-container {
         width: 320px; 
@@ -478,7 +490,7 @@ form {
     }
 }
 
-/* --- RESPONSIVE CONTACTS (Mobile < 1000px) --- */
+/* Responsive (< 1000px) */
 @media (max-width: 1000px) {
     .contacts-container {
         flex-direction: column;
@@ -488,10 +500,9 @@ form {
         overflow-y: auto;
     }
 
-    /* LIST VIEW */
+    /* List View */
     .contact-list-container {
         width: 100%;
-
         padding: 10px;
         box-shadow: none;
     }
@@ -504,8 +515,8 @@ form {
         width: 80px;
         height: 80px;
         font-size: 30px;
-        
     }
+
     .btn-add-contact {
         position: fixed;
         bottom: 100px;
@@ -528,7 +539,7 @@ form {
         height: 32px;
     }
 
-    /* DETAIL VIEW (Hidden by default) */
+    /* Detail View (Hidden by default) */
     .contact-detail-view {
         display: none;
         padding: 40px 20px;
@@ -557,12 +568,10 @@ form {
         -webkit-overflow-scrolling: touch; 
     }
 
-    
     .header {
         z-index: 20 !important;
         position: relative;
     }
-
 
     .contacts-header {
         flex-direction: column;
@@ -600,7 +609,6 @@ form {
         gap: 20px;
     }
 
-
     .mobile-back-arrow {
         display: block;
         position: absolute;
@@ -632,8 +640,6 @@ form {
         gap: 0;
     }
 
-
-
     .mobile-menu-options {
         position: fixed;
         bottom: 100px;
@@ -655,7 +661,7 @@ form {
         transform: scale(1);
     }
 
-    /* --- MODAL MOBILE (Slide Up) --- */
+    /* Modal Mobile (Slide Up) */
     .add-contact-card {
         flex-direction: column;
         width: 90%;
@@ -734,7 +740,7 @@ form {
         display: none;
     }
 
-    /* Kompakteres Formular auf Mobile */
+    /* Compact Form on Mobile */
     form {
         gap: 30px;
     }
@@ -745,21 +751,7 @@ form {
     }
 }
 
-.btn-transparent:hover {
-    border-color: var(--secondary-color);
-    color: var(--secondary-color);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-create-contact {
-    padding: 12px 24px;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* --- CUSTOM SCROLLBAR FOR CONTACTS --- */
+/* Custom Scrollbar */
 .contact-list::-webkit-scrollbar,
 .contact-detail-view::-webkit-scrollbar {
     width: 6px;
@@ -788,7 +780,7 @@ form {
     scrollbar-color: #2a3d59 transparent;
 }
 
-/* --- SUCCESS MESSAGE --- */
+/* Success Message */
 .contact-success-msg {
     position: fixed;
     bottom: 50%;

@@ -1,4 +1,4 @@
-/* --- FORM LAYOUT --- */
+/* Form Layout */
 .form-layout {
     display: flex;
     gap: 50px;
@@ -20,7 +20,7 @@
     height: 420px;
 }
 
-/* --- INPUT GROUPS --- */
+/* Input Groups */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -69,7 +69,7 @@ input[type="date"] {
     bottom: -24px;
 }
 
-/* --- CUSTOM SELECT ARROW --- */
+/* Custom Select Arrow */
 select {
     appearance: none;
     -webkit-appearance: none;
@@ -104,7 +104,7 @@ textarea {
     height: 120px;
 }
 
-/* --- PRIO BUTTONS --- */
+/* Priority Buttons */
 .prio-buttons {
     display: flex;
     gap: 10px;
@@ -147,12 +147,11 @@ textarea {
     border-color: #7AE229;
 }
 
-
 .prio-btn.active img {
     filter: brightness(0) invert(1);
 }
 
-/* --- SUBTASKS --- */
+/* Subtasks */
 .subtask-input-wrapper {
     position: relative;
     display: flex;
@@ -210,12 +209,12 @@ textarea {
     margin: 0 5px;
 }
 
-/* --- FOCUS STATE LOGIC --- */
+/* Focus State Logic */
 .subtask-input-wrapper:focus-within .subtask-icons {
     display: flex;
 }
 
-/* --- SUBTASK LIST --- */
+/* Subtask List */
 .subtask-list {
     list-style: none;
     margin-top: 10px;
@@ -277,7 +276,6 @@ textarea {
     background-color: #D1D1D1;
 }
 
-
 .subtask-item.editing {
     background-color: white;
     border-bottom: 1px solid #29ABE2;
@@ -311,7 +309,7 @@ textarea {
     gap: 4px;
 }
 
-/* --- FOOTER & BUTTONS --- */
+/* Footer & Buttons */
 .form-footer {
     display: flex;
     justify-content: space-between;
@@ -361,7 +359,7 @@ textarea {
     padding: 16px;
 }
 
-/* --- TASK ADDED CONFIRMATION --- */
+/* Task Added Confirmation */
 .task-added-msg {
     position: fixed;
     bottom: 50%;
@@ -386,7 +384,6 @@ textarea {
 }
 
 @keyframes slideInAndOut {
-
     0%,
     100% {
         opacity: 0;
@@ -400,14 +397,14 @@ textarea {
     }
 }
 
-/* --- RESPONSIVE (Laptop 1000px - 1400px) --- */
+/* Responsive (1000px - 1400px) */
 @media (max-width: 1400px) {
     .form-layout {
         gap: 20px; 
     }
 }
 
-/* --- RESPONSIVE --- */
+/* Responsive (< 1000px) */
 @media (max-width: 1000px) {
     .form-layout {
         flex-direction: column;
@@ -473,7 +470,7 @@ textarea {
     }
 }
 
-/* --- RESET FÜR MODAL (Board) --- */
+/* Modal Reset (Board) */
 @media (min-width: 1001px) {
     .task-detail-modal .form-footer {
         position: static;
@@ -515,7 +512,7 @@ textarea {
     padding-bottom: 0;
 }
 
-/* --- CONTACTS DROPDOWN --- */
+/* Contacts Dropdown */
 .dropdown-container {
     position: relative;
     cursor: pointer;
@@ -620,7 +617,7 @@ textarea {
     border-radius: 4px;
 }
 
-/* --- CUSTOM SCROLLBAR FOR DROPDOWN --- */
+/* Custom Scrollbar for Dropdown */
 .dropdown-options::-webkit-scrollbar {
     width: 6px;
 }
@@ -644,7 +641,7 @@ textarea {
     scrollbar-color: #A8A8A8 transparent;
 }
 
-/* --- MOBILE OPTIMIZATION (Small Screens) --- */
+/* Mobile Optimization (< 380px) */
 @media (max-width: 380px) {
     .prio-buttons {
         gap: 5px;

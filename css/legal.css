@@ -1,4 +1,4 @@
-/* --- LAYOUT --- */
+/* Layout */
 body {
     background-color: var(--bg-color);
     font-family: 'Inter', sans-serif;
@@ -6,10 +6,9 @@ body {
     padding: 0;
 }
 
-/* Reset content padding imposed by summary.css to avoid double padding */
 .content {
     padding: 0 !important;
-    padding-bottom: 80px !important; /* Etwas Platz unten für Mobile Nav */
+    padding-bottom: 80px !important;
 }
 
 .legal-wrapper {
@@ -19,7 +18,7 @@ body {
     position: relative;
 }
 
-/* --- HEADER / LOGO --- */
+/* Header & Logo */
 .legal-header {
     display: flex;
     justify-content: flex-start; 
@@ -30,7 +29,7 @@ body {
     width: 100px;
 }
 
-/* --- BACK ARROW --- */
+/* Back Arrow */
 .arrow-back-legal {
     position: absolute;
     top: 40px;
@@ -48,7 +47,7 @@ body {
     transform: scale(1.1);
 }
 
-/* --- CONTENT TYPOGRAPHY --- */
+/* Typography */
 h1 {
     font-size: 60px;
     font-weight: 700;

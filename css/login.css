@@ -1,4 +1,4 @@
-/* --- LOGIN PAGE LAYOUT --- */
+/* Layout */
 .login-page {
     min-height: 100vh;
     display: flex;
@@ -8,7 +8,7 @@
     padding: 100px 20px 20px 20px;
 }
 
-/* --- HEADER (Logo & Sign Up) --- */
+/* Header */
 .login-header {
     position: absolute;
     top: 0;
@@ -35,7 +35,7 @@
     animation: moveLogo 1s ease-in-out forwards;
 }
 
-/* --- SIGNUP BOX (Top Right) --- */
+/* Signup Box */
 .header-signup-box {
     display: flex;
     align-items: center;
@@ -61,7 +61,7 @@
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* --- LOGIN CARD --- */
+/* Login Card */
 .login-card {
     background-color: var(--white);
     padding: 40px 60px;
@@ -92,7 +92,7 @@
     margin: 0 auto 30px auto;
 }
 
-/* --- FORM ELEMENTS --- */
+/* Form Elements */
 .input-container {
     display: flex;
     align-items: center;
@@ -160,14 +160,6 @@
     margin-bottom: 30px;
 }
 
-/* Mobile: Stack options to avoid bad breaks */
-@media (max-width: 450px) {
-    .options-container {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-    }
-}
 
 .remember-me {
     display: flex;
@@ -177,7 +169,7 @@
     font-size: 16px;
 }
 
-/* --- BUTTONS --- */
+/* Buttons */
 .button-container {
     display: flex;
     justify-content: center;
@@ -200,7 +192,7 @@
     color: var(--secondary-color);
 }
 
-/* --- FOOTER --- */
+/* Footer */
 .login-footer {
     position: absolute;
     bottom: 24px;
@@ -220,7 +212,7 @@
     color: var(--secondary-color);
 }
 
-/* --- SIGNUP SPECIFIC --- */
+/* Signup Specific */
 .arrow-back {
     position: absolute;
     top: 30px;
@@ -252,7 +244,7 @@
     font-weight: bold;
 }
 
-/* --- BACKGROUND ANIMATION --- */
+/* Background Animation */
 .login-page.animate {
     animation: bgFade 1s ease-in-out forwards;
 }
@@ -267,14 +259,13 @@
     }
 }
 
-/* --- ANIMATIONS --- */
+/* Animations */
 @keyframes moveLogo {
     0% {
         width: 250px;
         top: 50vh;
         left: 50vw;
         transform: translate(-50%, -50%);
-        position: absolute;
     }
 
     100% {
@@ -282,7 +273,6 @@
         top: 40px;
         left: 60px;
         transform: translate(0, 0);
-        position: absolute;
     }
 }
 
@@ -292,7 +282,6 @@
         top: 50vh;
         left: 50vw;
         transform: translate(-50%, -50%);
-        position: absolute;
     }
 
     100% {
@@ -300,7 +289,6 @@
         top: 20px;
         left: 20px;
         transform: translate(0, 0);
-        position: absolute;
     }
 }
 
@@ -310,7 +298,6 @@
         top: 50vh;
         left: 50vw;
         transform: translate(-50%, -50%);
-        position: absolute;
     }
 
     100% {
@@ -318,7 +305,6 @@
         top: 20px;
         left: 20px;
         transform: translate(0, 0);
-        position: absolute;
     }
 }
 
@@ -326,13 +312,12 @@
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }
 }
 
-/* --- RESPONSIVE --- */
+/* Responsive (< 600px) */
 @media (max-width: 600px) {
 
     .login-header {
@@ -347,8 +332,6 @@
     .button-container {
         flex-direction: column;
     }
-
-    /* Logo Width handled by animation/clamp now */
 
     .logo.animate {
         animation-name: moveLogoMobile;
@@ -365,7 +348,6 @@
         padding-top: 140px;
     }
 
-    /* Signup Box repositioning for Mobile */
     .header-signup-box {
         position: static;
         margin-top: 20px;
@@ -375,9 +357,16 @@
     }
 }
 
-/* --- LANDSCAPE / SHORT SCREEN FIX (z.B. Samsung Horizontal) --- */
+@media (max-width: 450px) {
+    .options-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+}
+
+/* Landscape / Short Screen Fix */
 @media (max-height: 600px) {
-    
     .logo {
         width: 60px !important;
     }
@@ -402,7 +391,7 @@
     }
 }
 
-/* --- EXTRA SMALL DEVICES --- */
+/* Extra Small Devices (< 380px) */
 @media (max-width: 380px) {
     .logo {
         width: 60px;
@@ -430,7 +419,7 @@
     }
 }
 
-/* --- AUTH TOAST MESSAGE --- */
+/* Auth Toast Message */
 .auth-toast {
     position: fixed;
     bottom: 50%;
@@ -455,17 +444,14 @@
         opacity: 0;
         transform: translate(-50%, 100px);
     }
-
     10% {
         opacity: 1;
         transform: translate(-50%, 50%);
     }
-
     90% {
         opacity: 1;
         transform: translate(-50%, 50%);
     }
-
     100% {
         opacity: 0;
         transform: translate(-50%, 100px);

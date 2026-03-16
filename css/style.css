@@ -1,3 +1,4 @@
+/* Fonts */
 @font-face {
     font-family: 'Inter';
     src: url('../assets/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
@@ -6,7 +7,7 @@
     font-display: swap;
 }
 
-/* --- GLOBALE VARIABLEN --- */
+/* Global Variables */
 :root {
     --primary-color: #2A3647;
     --secondary-color: #29ABE2;
@@ -14,7 +15,7 @@
     --white: #FFFFFF;
 }
 
-/* --- RESET & BASIC SETUP --- */
+/* Reset & Basic Setup */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -40,14 +41,13 @@ button {
     outline: none;
 }
 
-/* Buttons */
 button,
 a {
     cursor: pointer;
     text-decoration: none;
 }
 
-/* --- GLOBALE BUTTON-KLASSEN --- */
+/* Global Button Classes */
 .btn-primary {
     background-color: var(--primary-color);
     color: var(--white);
@@ -67,12 +67,12 @@ a {
     cursor: not-allowed;
 }
 
-/* --- UTILITIES --- */
+/* Utilities */
 .d-none {
     display: none !important;
 }
 
-/* --- HEADER (Global) --- */
+/* Global Header */
 .header {
     height: 90px;
     background-color: var(--white);
@@ -128,7 +128,7 @@ a {
     border-color: var(--secondary-color);
 }
 
-/* --- HEADER PROFILE --- */
+/* Header Profile */
 .profile-icon {
     width: 50px;
     height: 50px;
@@ -173,7 +173,7 @@ a {
     z-index: 1000;
 }
 
-/* --- MOBILE LOGO (Global) --- */
+/* Mobile Logo */
 .mobile-logo {
     position: absolute;
     top: 20px;
@@ -190,18 +190,18 @@ a {
     }
 }
 
-/* --- SCROLL LOCK --- */
+/* Scroll Lock */
 .no-scroll {
     overflow: hidden;
 }
 
-/* --- GLOBAL CONTENT LIMIT --- */
+/* Global Content Limit */
 .content {
     max-width: 1440px;
     width: 100%;
 }
 
-/* --- DRAG & DROP HIGHLIGHTING --- */
+/* Drag & Drop Highlighting */
 .drag-area-highlight {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 24px;
@@ -211,14 +211,14 @@ a {
     pointer-events: none; 
 }
 
-/* --- HIDE MOBILE MOVE MENU ON DESKTOP --- */
+/* Hide Mobile Move Menu on Desktop */
 @media (hover: hover) {
     .move-menu-wrapper {
         display: none !important;
     }
 }
 
-/* --- HIDE GLOBAL SCROLLBAR --- */
+/* Hide Global Scrollbar */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
 .wrapper::-webkit-scrollbar,
@@ -238,7 +238,7 @@ body,
     scrollbar-width: none;  
 }
 
-/* --- GLOBAL LOADER --- */
+/* Global Loader */
 .loader-overlay {
     position: fixed;
     top: 0;

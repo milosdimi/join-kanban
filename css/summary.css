@@ -1,4 +1,4 @@
-/* --- LAYOUT CONTAINER --- */
+/* Layout */
 .wrapper {
     display: flex;
     height: 100vh;
@@ -6,7 +6,7 @@
     overflow: hidden;
 }
 
-/* --- SIDEBAR --- */
+/* Sidebar */
 .sidebar {
     width: 230px;
     background-color: var(--primary-color);
@@ -56,7 +56,6 @@
     gap: 10px;
     transition: all 100ms ease-in-out;
     cursor: pointer;
-
 }
 
 .menu-link img {
@@ -90,7 +89,7 @@
     color: var(--secondary-color);
 }
 
-/* --- PROFILE DROPDOWN --- */
+/* Profile Dropdown */
 .profile-dropdown {
     position: absolute;
     top: 60px;
@@ -116,7 +115,7 @@
     color: var(--secondary-color);
 }
 
-/* --- MAIN AREA & CONTENT --- */
+/* Main Area & Content */
 .main-area {
     flex: 1;
     display: flex;
@@ -166,7 +165,7 @@
     gap: 60px;
 }
 
-/* --- METRICS CARDS --- */
+/* Metrics Cards */
 .metrics-container {
     display: flex;
     flex-direction: column;
@@ -230,7 +229,7 @@
     gap: 40px;
 }
 
-/* --- URGENT CARD DETAILS --- */
+/* Urgent Card Details */
 .urgent-left {
     display: flex;
     align-items: center;
@@ -258,7 +257,7 @@
     font-size: 16px;
 }
 
-/* --- CARD ICONS  --- */
+/* Card Icons */
 .card-icon {
     width: 70px;
     height: 70px;
@@ -283,7 +282,7 @@
     background-color: #FF3D00;
 }
 
-/* --- GREETING --- */
+/* Greeting */
 .greeting-container {
     flex: 1;
     display: flex;
@@ -303,7 +302,7 @@
     color: var(--secondary-color);
 }
 
-/* --- HOVER EFFECTS --- */
+/* Hover Effects */
 .metric-card:hover {
     background-color: var(--primary-color);
     transform: translateY(-5px);
@@ -326,7 +325,7 @@
     background-color: var(--white);
 }
 
-/* --- ICON SWAP ON HOVER --- */
+/* Icon Swap on Hover */
 .icon-hover {
     opacity: 0;
 }
@@ -339,7 +338,7 @@
     opacity: 1;
 }
 
-/* --- MOBILE ELEMENTS (Hidden on Desktop) --- */
+/* Mobile Elements */
 .mobile-greeting-overlay {
     position: fixed;
     top: 0;
@@ -374,7 +373,7 @@
     }
 }
 
-/* --- RESPONSIVE (Laptop / Small Desktop 1000px - 1400px) --- */
+/* Responsive (1000px - 1400px) */
 @media (max-width: 1400px) {
     .dashboard-header h1 {
         font-size: 48px;
@@ -401,7 +400,7 @@
     }
 }
 
-/* --- RESPONSIVE (Tablet Portrait 1000px - 1150px) --- */
+/* Responsive (1000px - 1150px) */
 @media (max-width: 1150px) {
     .dashboard-content {
         flex-direction: column;
@@ -415,7 +414,7 @@
     }
 }
 
-/* --- RESPONSIVE DESIGN (Mobile < 1000px) --- */
+/* Responsive (< 1000px) */
 @media (max-width: 1000px) {
     .wrapper {
         flex-direction: column;
@@ -441,7 +440,6 @@
         display: none;
     }
 
-
     .sidebar.guest-mode {
         justify-content: space-evenly;
         padding: 0 5px;
@@ -454,7 +452,6 @@
         align-items: center;
         margin-top: 0;
     }
-
 
     .sidebar.guest-mode .sidebar-bottom .legal-link {
         color: #CDCDCD;
@@ -482,7 +479,6 @@
         align-items: center;
     }
 
-
     #sidebar-guest .menu-link {
         color: var(--secondary-color) !important;
         font-weight: bold;
@@ -496,7 +492,6 @@
         width: auto;
         border-radius: 16px;
     }
-
 
     .main-area {
         margin-bottom: 0;
@@ -560,12 +555,10 @@
         gap: 10px;
     }
 
-
     .wide-card {
         justify-content: space-evenly;
     }
 
-  
     .urgent-right {
         align-items: center;
         text-align: center;
@@ -590,7 +583,7 @@
     }
 }
 
-/* --- RESPONSIVE (Small Mobile < 400px) --- */
+/* Responsive (< 400px) */
 @media (max-width: 400px) {
     .wide-card {
         padding: 0 15px;
