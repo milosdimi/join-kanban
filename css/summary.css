@@ -560,6 +560,17 @@
         gap: 10px;
     }
 
+
+    .wide-card {
+        justify-content: space-evenly;
+    }
+
+  
+    .urgent-right {
+        align-items: center;
+        text-align: center;
+    }
+
     .small-card {
         height: 124px;
         padding: 10px;
