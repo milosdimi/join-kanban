@@ -50,7 +50,43 @@
     
     <div class="wrapper">
         <!-- Sidebar -->
-        <nav class="sidebar" w3-include-html="assets/templates/sidebar.html"></nav>
+        <nav class="sidebar">
+            <div class="sidebar-top">
+                <img src="assets/img/join_logo_menu.png" alt="Join Logo" class="sidebar-logo">
+            </div>
+
+            <div class="sidebar-menu d-none" id="sidebar-nav">
+                <a href="summary.html" class="menu-link">
+                    <img src="assets/img/summary-icon.svg" alt="Summary">
+                    <span>Summary</span>
+                </a>
+                <a href="add-task.html" class="menu-link">
+                    <img src="assets/img/add-task-icon.svg" alt="Add Task">
+                    <span>Add Task</span>
+                </a>
+                <a href="board.html" class="menu-link">
+                    <img src="assets/img/board-icon.svg" alt="Board">
+                    <span>Board</span>
+                </a>
+                <a href="contacts.html" class="menu-link">
+                    <img src="assets/img/contacts-icon.svg" alt="Contacts">
+                    <span>Contacts</span>
+                </a>
+            </div>
+
+            <!-- Guest / Not Logged In Menu -->
+            <div class="sidebar-menu d-none" id="sidebar-guest">
+                <a href="index.html" class="menu-link">
+                    <img src="assets/img/login.png" alt="Log in">
+                    <span>Log in</span>
+                </a>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="privacy-policy.html" class="legal-link">Privacy Policy</a>
+                <a href="legal-notice.html" class="legal-link">Legal notice</a>
+            </div>
+        </nav>
 
         <!-- Main Content Area -->
         <div class="main-area">

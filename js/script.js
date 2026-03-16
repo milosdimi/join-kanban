@@ -53,7 +53,7 @@ function checkAuth() {
     const isProtectedPage = protectedPages.some(page => path.includes(page));
     const isLoginPage = loginPages.some(page => path.endsWith(page));
 
-    
+    // Check if Firebase is loaded. If not (e.g. on public pages for performance), treat as guest.
     if (typeof firebase === 'undefined') {
         hideSidebarMenu();
         updateHeaderVisibility(false);
@@ -128,6 +128,10 @@ function hideSidebarMenu() {
 
     if (sidebarNav) sidebarNav.classList.add('d-none');
     if (sidebarGuest) sidebarGuest.classList.remove('d-none');
+    
+    // Enable Mobile Footer Links for Guest
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.classList.add('guest-mode');
 }
 
 /**
@@ -140,6 +144,10 @@ function showSidebarMenu() {
 
     if (sidebarNav) sidebarNav.classList.remove('d-none');
     if (sidebarGuest) sidebarGuest.classList.add('d-none');
+
+    // Disable Mobile Footer Links for Logged-In User
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.classList.remove('guest-mode');
 }
 
 /**
