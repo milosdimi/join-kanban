@@ -333,7 +333,7 @@ function getValidationMessage(input) {
  * @returns {boolean} True if valid.
  */
 function isValidContactEmail(email) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+    const emailPattern = /^[^\s@]+@(?!.*\.\.)[^\s@]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);
 }
 
