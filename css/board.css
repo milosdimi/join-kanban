@@ -420,18 +420,26 @@
     word-break: break-word;
 }
 
-.task-detail-subtask-item input {
+.subtask-checkbox-img {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .task-detail-footer {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 10px;
     margin-top: auto;
     padding-top: 20px;
+}
+
+.task-detail-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #D1D1D1;
 }
 
 .task-detail-btn {
@@ -447,8 +455,12 @@
 
 .task-detail-btn:hover {
     color: var(--secondary-color);
-    font-weight: bold;
+    text-decoration: underline;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-detail-btn:hover img {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(68%) saturate(553%) hue-rotate(159deg) brightness(99%) contrast(98%);
 }
 
 .task-detail-btn img {

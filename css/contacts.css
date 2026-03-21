@@ -187,7 +187,11 @@
 
 .action-btn:hover {
     color: var(--secondary-color);
-    font-weight: bold;
+    text-decoration: underline;
+}
+
+.action-btn:hover img {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(68%) saturate(553%) hue-rotate(159deg) brightness(99%) contrast(98%);
 }
 
 .contact-info-headline {

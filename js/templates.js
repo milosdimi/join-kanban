@@ -158,6 +158,7 @@ function generateTaskDetailHTML(task) {
                 <img src="assets/img/delete_icon.svg" alt="Delete">
                 <span>Delete</span>
             </div>
+            <div class="task-detail-divider"></div>
             <div class="task-detail-btn" onclick="editTask('${task.id}')">
                 <img src="assets/img/edit_icon.svg" alt="Edit">
                 <span>Edit</span>
@@ -204,10 +205,10 @@ function generateSubtaskListDetailHTML(task) {
         return '<li>No subtasks.</li>';
     }
     task.subtasks.forEach((subtask, index) => {
-        let checked = subtask.completed ? 'checked' : '';
+        let checkImg = subtask.completed ? 'assets/img/checked.png' : 'assets/img/unchecked.png';
         html += /*html*/`
             <li class="task-detail-subtask-item">
-                <input type="checkbox" ${checked} onchange="toggleSubtask('${task.id}', ${index})">
+                <img src="${checkImg}" class="subtask-checkbox-img" onclick="toggleSubtask('${task.id}', ${index})">
                 <span>${subtask.title}</span>
             </li>
         `;
