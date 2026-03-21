@@ -96,6 +96,7 @@ async function loadTasksFromFirestore(userId) {
         const snapshot = await db.collection('users').doc(userId).collection('tasks').get();
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (e) {
+        console.error('Failed to load tasks from Firestore:', e);
         return [];
     }
 }

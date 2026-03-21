@@ -345,7 +345,7 @@ function isValidContactEmail(email) {
  * @returns {boolean} True if valid.
  */
 function isValidContactPhone(phone) {
-    const phonePattern = /^[+0-9\s]*$/;
+    const phonePattern = /^\+?[0-9\s\-]{3,}$/;
     return !phone.trim() || phonePattern.test(phone);
 }
 

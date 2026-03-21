@@ -192,6 +192,7 @@ async function logOut() {
         await firebase.auth().signOut();
         window.location.href = 'index.html';
     } catch (error) {
+        console.error('Logout failed:', error);
     }
 }
 

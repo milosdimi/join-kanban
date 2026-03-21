@@ -45,6 +45,7 @@ async function loadTaskFormTemplate() {
         let resp = await fetch('assets/templates/add-task-form.html');
         if (resp.ok) taskFormTemplate = await resp.text();
     } catch (e) {
+        console.error('Failed to load task form template:', e);
     }
 }
 
