@@ -380,6 +380,7 @@ function isPasswordField(input) {
  * @returns {boolean} Always false.
  */
 function setInputErrorState(input, message) {
+    const container = input.closest('.input-container');
     if (container) container.classList.remove('error-border');
     const msgElement = document.getElementById('msg-' + input.id);
     if (container) container.classList.add('error-border');
