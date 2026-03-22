@@ -115,7 +115,7 @@ function checkEmptyColumns() {
 /**
  * Toggles the visibility of the move-to menu on a task card.
  * @param {Event} event - The click event.
- * @param {number} taskId - The ID of the task.
+ * @param {string} taskId - The ID of the task.
  */
 function toggleMoveMenu(event, taskId) {
     event.stopPropagation();
@@ -131,7 +131,7 @@ function toggleMoveMenu(event, taskId) {
 /**
  * Moves a task to a new status from the dropdown menu.
  * @param {Event} event - The click event.
- * @param {number} taskId - The ID of the task.
+ * @param {string} taskId - The ID of the task.
  * @param {string} newStatus - The new status.
  */
 async function moveToFromMenu(event, taskId, newStatus) {
@@ -142,79 +142,8 @@ async function moveToFromMenu(event, taskId, newStatus) {
 
 
 /**
- * Starts the drag operation.
- * @param {number} id - The ID of the dragged task.
- */
-function startDragging(id) {
-    if (window.innerWidth < 1000) return;
-    currentDraggedElement = id;
-    setTimeout(() => {
-        document.body.classList.add('dragging-active');
-    }, 10);
-}
-
-
-
-/**
- * Allows dropping an element.
- * @param {Event} ev - The dragover event.
- */
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-
-
-/**
- * Stops the drag operation and cleans up.
- */
-function stopDragging() {
-    document.body.classList.remove('dragging-active');
-}
-
-
-
-/**
- * Highlights the drop area when dragging a task over it.
- * @param {string} id - The ID of the column.
- */
-function highlight(id) {
-    document.getElementById(id).classList.add('drag-area-highlight');
-}
-
-
-
-/**
- * Removes the highlight from the drop area.
- * @param {string} id - The ID of the column.
- */
-function removeHighlight(id) {
-    document.getElementById(id).classList.remove('drag-area-highlight');
-}
-
-
-
-/**
- * Moves the dragged task to a new status column.
- * @param {string} status - The target status.
- */
-function moveTo(status) {
-    const task = tasks.find(t => t.id === currentDraggedElement);
-    if (task) {
-        task.status = status;
-        const user = firebase.auth().currentUser;
-        if (user) db.collection('users').doc(user.uid).collection('tasks').doc(currentDraggedElement).update({ status: status });
-        renderBoard();
-        removeHighlight(status);
-        stopDragging();
-    }
-}
-
-
-
-/**
  * Opens the task detail modal.
- * @param {number} taskId - The ID of the task to show.
+ * @param {string} taskId - The ID of the task to show.
  */
 function openTaskDetails(taskId) {
     const task = tasks.find(t => t.id === taskId);
@@ -265,7 +194,7 @@ function closeAllMoveMenus() {
 
 /**
  * Updates the status of a task.
- * @param {number} taskId - The ID of the task.
+ * @param {string} taskId - The ID of the task.
  * @param {string} newStatus - The new status.
  */
 async function moveToStatus(taskId, newStatus) {
@@ -283,7 +212,7 @@ async function moveToStatus(taskId, newStatus) {
 
 /**
  * Deletes a task from the board.
- * @param {number} taskId - The ID of the task.
+ * @param {string} taskId - The ID of the task.
  */
 async function deleteTask(taskId) {
     const user = firebase.auth().currentUser;
@@ -299,7 +228,7 @@ async function deleteTask(taskId) {
 
 /**
  * Opens the edit task modal.
- * @param {number} taskId - The ID of the task to edit.
+ * @param {string} taskId - The ID of the task to edit.
  */
 function editTask(taskId) {
     const task = tasks.find(t => t.id === taskId);
@@ -378,7 +307,7 @@ function setupAddTaskModal(status, modal) {
 
 /**
  * Toggles the completion status of a subtask.
- * @param {number} taskId - The ID of the task.
+ * @param {string} taskId - The ID of the task.
  * @param {number} subtaskIndex - The index of the subtask.
  */
 async function toggleSubtask(taskId, subtaskIndex) {
@@ -409,33 +338,4 @@ function closeAddTaskModal() {
         modal.innerHTML = '';
         document.body.classList.remove('no-scroll');
     }, 300);
-}
-
-
-
-/**
- * Shows a toast message on the board.
- * @param {string} text - The message text.
- */
-function showBoardToastMessage(text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.innerText = text;
-    msgDiv.style.cssText = "position: fixed; bottom: 50%; left: 50%; transform: translate(-50%, 50%); background: #2A3647; color: white; padding: 20px; border-radius: 20px; z-index: 999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); animation: slideInAndOut 2s ease-in-out forwards;";
-    injectBoardToastStyles();
-    document.body.appendChild(msgDiv);
-    setTimeout(() => msgDiv.remove(), 2000);
-}
-
-
-
-/**
- * Injects CSS keyframes for the board toast animation if not present.
- */
-function injectBoardToastStyles() {
-    if (!document.getElementById('keyframes-slideInAndOut')) {
-        const style = document.createElement('style');
-        style.id = 'keyframes-slideInAndOut';
-        style.innerHTML = `@keyframes slideInAndOut { 0% { opacity: 0; transform: translate(-50%, 100px); } 10% { opacity: 1; transform: translate(-50%, 50%); } 90% { opacity: 1; transform: translate(-50%, 50%); } 100% { opacity: 0; transform: translate(-50%, 100px); } }`;
-        document.head.appendChild(style);
-    }
 }
