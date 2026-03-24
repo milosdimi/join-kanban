@@ -623,11 +623,13 @@
 }
 
 @media (max-width: 360px) {
-    .menu-link span {
-        display: none;
+    .menu-link {
+        padding: 4px 2px;
+        gap: 2px;
     }
 
-    .menu-link {
-        padding: 8px 12px;
+    .sidebar-menu {
+        justify-content: space-evenly;
+        gap: 0;
     }
 }
