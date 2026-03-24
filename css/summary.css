@@ -1,9 +1,9 @@
 /* Layout */
 .wrapper {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     width: 100%;
-    overflow: hidden;
 }
 
 /* Sidebar */
@@ -14,6 +14,10 @@
     flex-direction: column;
     padding: 50px 0;
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
 }
 
 .sidebar-top {
@@ -127,7 +131,7 @@
 .content {
     flex: 1;
     padding: 50px;
-    overflow-y: auto;
+    overflow-y: visible;
     min-width: 0;
 }
 
@@ -430,9 +434,11 @@
         flex-direction: row;
         justify-content: center;
         position: fixed;
+        top: unset;
         bottom: 0;
         left: 0;
         z-index: 100;
+        align-self: unset;
     }
 
     .sidebar-top,

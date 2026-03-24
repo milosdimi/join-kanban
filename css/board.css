@@ -72,12 +72,6 @@
     gap: 24px;
     overflow-x: auto;
     overflow-y: visible;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.board-columns::-webkit-scrollbar {
-    display: none;
 }
 
 .board-column {
@@ -667,12 +661,6 @@
         padding-bottom: 10px;
         padding-right: 20px;
         min-height: auto;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-
-    .task-list::-webkit-scrollbar {
-        display: none;
     }
 
     .board-column {
