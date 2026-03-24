@@ -319,17 +319,48 @@ function setupAddTaskModal(status, modal) {
  */
 async function toggleSubtask(taskId, subtaskIndex) {
     const task = tasks.find(t => t.id === taskId);
-    if (task) {
-        const subtask = task.subtasks[subtaskIndex];
-        subtask.completed = !subtask.completed;
-        const user = firebase.auth().currentUser;
-        try {
-            if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
-        } catch (e) {
-            console.error('Failed to update subtask:', e);
-        }
-        renderBoard();
-        openTaskDetails(taskId);
+    if (!task) return;
+
+    const subtask = task.subtasks[subtaskIndex];
+    subtask.completed = !subtask.completed;
+    const user = firebase.auth().currentUser;
+    try {
+        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
+    } catch (e) {
+        console.error('Failed to update subtask:', e);
+    }
+    updateSubtaskCheckboxInModal(subtaskIndex, subtask.completed);
+    updateTaskCardProgress(taskId, task);
+}
+
+
+/**
+ * Updates the checkbox image of a subtask in the open modal without re-rendering.
+ * @param {number} index - The subtask index.
+ * @param {boolean} completed - Whether the subtask is completed.
+ */
+function updateSubtaskCheckboxInModal(index, completed) {
+    const items = document.querySelectorAll('.task-detail-subtask-item');
+    if (items[index]) {
+        const img = items[index].querySelector('img');
+        if (img) img.src = completed ? 'assets/img/checked.png' : 'assets/img/unchecked.png';
+    }
+}
+
+
+/**
+ * Updates only the progress bar of a specific task card on the board.
+ * @param {string} taskId - The ID of the task.
+ * @param {object} task - The task object.
+ */
+function updateTaskCardProgress(taskId, task) {
+    const card = document.querySelector(`[onclick="openTaskDetails('${taskId}')"]`);
+    if (!card) return;
+
+    const progressContainer = card.querySelector('.task-subtasks');
+    const newProgress = getSubtasksProgress(task);
+    if (progressContainer && newProgress) {
+        progressContainer.outerHTML = newProgress;
     }
 }
 
