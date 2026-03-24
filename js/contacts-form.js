@@ -100,12 +100,15 @@ function resetContactValidation() {
 async function createContact() {
     const newContact = getContactDataFromForm();
     const user = firebase.auth().currentUser;
-    if (user) await db.collection('users').doc(user.uid).collection('contacts').add(newContact);
-
-    await loadContacts();
-    renderContactList();
-    closeAddContact();
-    showContactSuccessMessage('Contact successfully created');
+    try {
+        if (user) await db.collection('users').doc(user.uid).collection('contacts').add(newContact);
+        await loadContacts();
+        renderContactList();
+        closeAddContact();
+        showContactSuccessMessage('Contact successfully created');
+    } catch (e) {
+        console.error('Failed to create contact:', e);
+    }
 }
 
 
@@ -131,12 +134,15 @@ async function saveContact(index) {
     updateContactObject(index);
     const contactId = contacts[index].id;
     const user = firebase.auth().currentUser;
-    if (user) await db.collection('users').doc(user.uid).collection('contacts').doc(contactId).update(contacts[index]);
-
-    renderContactList();
-    showContactDetails(index);
-    closeAddContact();
-    showContactSuccessMessage('Contact successfully updated');
+    try {
+        if (user) await db.collection('users').doc(user.uid).collection('contacts').doc(contactId).update(contacts[index]);
+        renderContactList();
+        showContactDetails(index);
+        closeAddContact();
+        showContactSuccessMessage('Contact successfully updated');
+    } catch (e) {
+        console.error('Failed to save contact:', e);
+    }
 }
 
 
@@ -158,13 +164,16 @@ function updateContactObject(index) {
 async function deleteContact(index) {
     const contactId = contacts[index].id;
     const user = firebase.auth().currentUser;
-    if (user) await db.collection('users').doc(user.uid).collection('contacts').doc(contactId).delete();
-
-    contacts.splice(index, 1);
-    renderContactList();
-    document.getElementById('contactDetail').innerHTML = '';
-    closeMobileDetails();
-    showContactSuccessMessage('Contact deleted');
+    try {
+        if (user) await db.collection('users').doc(user.uid).collection('contacts').doc(contactId).delete();
+        contacts.splice(index, 1);
+        renderContactList();
+        document.getElementById('contactDetail').innerHTML = '';
+        closeMobileDetails();
+        showContactSuccessMessage('Contact deleted');
+    } catch (e) {
+        console.error('Failed to delete contact:', e);
+    }
 }
 
 

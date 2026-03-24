@@ -202,7 +202,11 @@ async function moveToStatus(taskId, newStatus) {
     if (task) {
         task.status = newStatus;
         const user = firebase.auth().currentUser;
-        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ status: newStatus });
+        try {
+            if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ status: newStatus });
+        } catch (e) {
+            console.error('Failed to update task status:', e);
+        }
         closeTaskDetails();
         renderBoard();
     }
@@ -216,8 +220,11 @@ async function moveToStatus(taskId, newStatus) {
  */
 async function deleteTask(taskId) {
     const user = firebase.auth().currentUser;
-    if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).delete();
-
+    try {
+        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).delete();
+    } catch (e) {
+        console.error('Failed to delete task:', e);
+    }
     tasks = tasks.filter(t => t.id !== taskId);
     closeTaskDetails();
     renderBoard();
@@ -316,7 +323,11 @@ async function toggleSubtask(taskId, subtaskIndex) {
         const subtask = task.subtasks[subtaskIndex];
         subtask.completed = !subtask.completed;
         const user = firebase.auth().currentUser;
-        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
+        try {
+            if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
+        } catch (e) {
+            console.error('Failed to update subtask:', e);
+        }
         renderBoard();
         openTaskDetails(taskId);
     }

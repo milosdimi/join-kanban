@@ -78,9 +78,13 @@ async function prepareEditMode() {
 async function fetchAndPopulateTaskToEdit() {
     let tasks = [];
     const user = firebase.auth().currentUser;
-    if (user) {
-        const snapshot = await db.collection('users').doc(user.uid).collection('tasks').get();
-        tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    try {
+        if (user) {
+            const snapshot = await db.collection('users').doc(user.uid).collection('tasks').get();
+            tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+    } catch (e) {
+        console.error('Failed to fetch task for editing:', e);
     }
     const taskToEdit = tasks.find(t => t.id === editingTaskId);
     if (taskToEdit) populateForm(taskToEdit);
@@ -176,8 +180,13 @@ async function createTask() {
 
     let newTask = getTaskData();
     const user = firebase.auth().currentUser;
-    if (user) await db.collection('users').doc(user.uid).collection('tasks').add(newTask);
-
+    try {
+        if (user) await db.collection('users').doc(user.uid).collection('tasks').add(newTask);
+    } catch (e) {
+        console.error('Failed to create task:', e);
+        if (btn) btn.disabled = false;
+        return;
+    }
     showTaskAddedMessage();
     redirectToBoard();
 }
@@ -231,9 +240,14 @@ async function saveEditedTask() {
     if (user && editingTaskId) {
         let updatedTask = {};
         updateTaskObject(updatedTask);
-        await db.collection('users').doc(user.uid).collection('tasks').doc(editingTaskId).update(updatedTask);
-        showTaskAddedMessage('Task updated');
-        redirectToBoard();
+        try {
+            await db.collection('users').doc(user.uid).collection('tasks').doc(editingTaskId).update(updatedTask);
+            showTaskAddedMessage('Task updated');
+            redirectToBoard();
+        } catch (e) {
+            console.error('Failed to save edited task:', e);
+            if (btn) btn.disabled = false;
+        }
     }
 }
 
