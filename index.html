@@ -5,31 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="author" content="Milos Dimitrijevic">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="application-name" content="Join">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Join">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#2A3647">
-    <meta name="msapplication-TileColor" content="#2A3647">
-    <title>Join | Login to Your Kanban Workspace</title>
-    <meta name="description" content="Log in to Join and manage your projects, tasks, and teams with a fast, Kanban-based workflow.">
-    <link rel="canonical" href="https://join.dimit.cc/index.html">
-
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:site_name" content="Join">
-    <meta property="og:title" content="Join | Login to Your Kanban Workspace">
-    <meta property="og:description" content="Sign in to Join and keep your projects organized with a clear Kanban board.">
-    <meta property="og:url" content="https://join.dimit.cc/index.html">
-    <meta property="og:image" content="https://join.dimit.cc/assets/img/social_preview.png">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Join | Login to Your Kanban Workspace">
-    <meta name="twitter:description" content="Sign in to Join and keep your projects organized with a clear Kanban board.">
-    <meta name="twitter:image" content="https://join.dimit.cc/assets/img/social_preview.png">
+    <title>Join – Welcome</title>
+    <meta name="description" content="Join is a Kanban board for teams and stakeholders. Choose your role to get started.">
+    <link rel="canonical" href="https://join.dimit.cc/">
 
     <link rel="icon" type="image/png" href="assets/img/favicon/favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="assets/img/favicon/favicon.svg">
@@ -37,73 +20,175 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/apple-touch-icon.png">
     <link rel="manifest" href="assets/img/favicon/site.webmanifest">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/landing.css">
 </head>
-<body onload="init(); initLogin()">
+<body>
 
-    <div id="loader-overlay" class="loader-overlay d-none">
-        <div class="loader"></div>
-    </div>
-
-    <main class="login-page">
-        <header class="login-header">
-            <img src="assets/img/join_logo_login.png" alt="Join Logo" class="logo">
-        </header>
-
-        <section class="login-card">
-            <h1>Log in</h1>
+    <!-- ==================== STATE 1: WELCOME ==================== -->
+    <main id="state-welcome" class="landing-state welcome-bg">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Welcome</h1>
             <div class="underline"></div>
+            <p class="welcome-subtitle">
+                Pick the option that suits your role: create a request as a
+                stakeholder or log in if you're part of the team.
+            </p>
 
-            <form id="loginForm" onsubmit="login(); return false;" novalidate>
-                <div class="input-container">
-                    <input type="email" id="email" placeholder="Email" required>
-                    <img src="assets/img/mail_icon.png" alt="Email" class="input-icon">
-                    <div id="msg-email" class="input-error-msg d-none"></div>
-                </div>
-                
-                <div class="input-container">
-                    <input type="password" id="password" placeholder="Password" required oninput="updatePasswordIcon('password')">
-                    <img src="assets/img/lock_icon.png" alt="Password" class="input-icon" onclick="togglePasswordVisibility('password', this)">
-                    <div id="msg-password" class="input-error-msg d-none"></div>
-                </div>
-
-                <div id="msgBox" class="validation-msg">Email or password is incorrect.</div>
-
-                <div class="options-container">
-                    <label class="remember-me">
-                        <input type="checkbox" id="rememberMe"> Remember me
-                    </label>
-                    <a href="#" onclick="resetPassword(); return false;" class="forgot-password" style="color: #29ABE2; text-decoration: none;">Forgot my password</a>
+            <div class="role-grid">
+                <div class="role-option">
+                    <div class="role-info">
+                        <img src="assets/img/stakeholder.png" alt="Stakeholder icon" class="role-icon">
+                        <p class="role-label">Are you a stakeholder?</p>
+                    </div>
+                    <button class="btn-create-request" onclick="showStakeholderState()">
+                        Create request
+                    </button>
                 </div>
 
-                <div class="button-container">
-                    <button type="submit" class="btn-primary">Log in</button>
-                    <button type="button" class="btn-guest" onclick="guestLogin()">Guest Log in</button>
-                </div>
-            </form>
-        </section>
+                <div class="role-divider" aria-hidden="true"></div>
 
-        <div class="header-signup-box">
-            <span>Not a Join user?</span>
-            <a href="signup.html" class="btn-signup-link">Sign up</a>
+                <div class="role-option">
+                    <div class="role-info">
+                        <img src="assets/img/team-member.png" alt="Team member icon" class="role-icon">
+                        <p class="role-label">Are you a team member?</p>
+                    </div>
+                    <button class="btn-member-login" onclick="goToLogin()">
+                        Member log in
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== STATE 2: STAKEHOLDER ==================== -->
+    <main id="state-stakeholder" class="landing-state stakeholder-bg d-none">
+
+        <!-- Logo – absolute top left (top: 29px, left: 40px) -->
+        <a href="index.html" class="stakeholder-logo-link">
+            <img src="assets/img/join_logo_login.png" alt="Join" class="stakeholder-logo">
+        </a>
+
+        <!-- Main content wrapper (max-width: 1121px, top: 85px) -->
+        <div class="stakeholder-wrapper">
+
+            <!-- Top bar: back arrow + daily counter -->
+            <div class="stakeholder-topbar">
+                <button class="btn-back-arrow" onclick="showState('welcome')" aria-label="Back to welcome">
+                    <img src="assets/img/arrow_left_icon.png" alt="Back">
+                </button>
+                <div class="daily-counter-display">
+                    <span class="counter-number" id="stakeholderCountDisplay">0 of 10</span>
+                    <span class="counter-text">requests used today</span>
+                </div>
+            </div>
+
+            <!-- Title + body -->
+            <div class="stakeholder-main">
+                <h1 class="stakeholder-title">Welcome</h1>
+
+                <div class="stakeholder-content-area">
+
+                    <!-- Two-column row: text | illustration -->
+                    <div class="stakeholder-content-row">
+                        <div class="stakeholder-text-col">
+                            <p class="stakeholder-headline">
+                                Easily create a ticket by sending an email — no extra steps needed.
+                            </p>
+                            <p class="stakeholder-para">
+                                On this platform, you can submit your feature requests via email.
+                                Our AI system will automatically generate a ticket with a deadline
+                                and priority level.
+                            </p>
+                            <p class="stakeholder-para">
+                                A total of 10 requests can be created per day. After this limit,
+                                emails can still be sent, but they will be manually reviewed by
+                                our team instead of generating AI tickets.
+                            </p>
+                        </div>
+                        <img src="assets/img/rectangle.png" alt="Kanban board illustration"
+                            class="stakeholder-illustration">
+                    </div>
+
+                    <!-- CTA button -->
+                    <button class="btn-create-email" onclick="openMailto()">
+                        Create Email Request
+                        <img src="assets/img/check_icon.png" alt="" class="btn-icon">
+                    </button>
+
+                </div>
+            </div>
         </div>
 
-        <footer class="login-footer">
+        <!-- Footer -->
+        <footer class="stakeholder-footer">
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="legal-notice.html">Legal notice</a>
+        </footer>
+
+    </main>
+
+    <!-- ==================== STATE 3: LIMIT REACHED ==================== -->
+    <main id="state-limit" class="landing-state stakeholder-bg d-none">
+
+        <!-- Logo – same position as State 2 -->
+        <a href="index.html" class="stakeholder-logo-link">
+            <img src="assets/img/join_logo_login.png" alt="Join" class="stakeholder-logo">
+        </a>
+
+        <div class="stakeholder-wrapper">
+
+            <!-- Top bar: back arrow + RED counter "10 of 10" -->
+            <div class="stakeholder-topbar">
+                <button class="btn-back-arrow" onclick="showState('welcome')" aria-label="Back to welcome">
+                    <img src="assets/img/arrow_left_icon.png" alt="Back">
+                </button>
+                <div class="daily-counter-display counter-limit">
+                    <span class="counter-number">10 of 10</span>
+                    <span class="counter-text">requests used today</span>
+                </div>
+            </div>
+
+            <div class="stakeholder-main">
+                <h1 class="stakeholder-title">Welcome</h1>
+
+                <!-- Two-column row: left col with button | right illustration -->
+                <div class="stakeholder-content-row">
+
+                    <!-- Left: alert box + para + button -->
+                    <div class="limit-text-col">
+                        <div class="limit-group">
+                            <div class="limit-alert">
+                                The daily 10-request limit has been reached!
+                            </div>
+                            <p class="limit-para">
+                                Need more? No worries — you can still send emails, but our team
+                                will review them manually instead of using AI to create tickets.
+                            </p>
+                        </div>
+                        <button class="btn-create-email btn-send-email" onclick="openMailto()">
+                            Send an email
+                            <img src="assets/img/check_icon.png" alt="" class="btn-icon">
+                        </button>
+                    </div>
+
+                    <!-- Right illustration -->
+                    <img src="assets/img/Artboard-60-3.png" alt="Limit reached illustration"
+                        class="stakeholder-illustration limit-illustration">
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="stakeholder-footer">
             <a href="privacy-policy.html">Privacy Policy</a>
             <a href="legal-notice.html">Legal notice</a>
         </footer>
     </main>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase (Firestore only – no auth needed on landing page) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="js/firebase-init.js"></script>
-
-    <script src="js/dummy-data.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/script-ui.js"></script>
-    <script src="js/templates.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="js/landing.js"></script>
 </body>
 </html>

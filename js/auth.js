@@ -173,7 +173,7 @@ async function executeRegistration(inputs) {
     await userCredential.user.updateProfile({ displayName: name.value });
     await seedInitialDataForUser(userCredential.user.uid, name.value, email.value);
     await auth.signOut();
-    window.location.href = 'index.html?msg=signup_success';
+    window.location.href = 'login.html?msg=signup_success';
 }
 
 /**

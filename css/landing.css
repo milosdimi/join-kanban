@@ -1,0 +1,513 @@
+/* =====================================================
+   Landing Page – All States
+   ===================================================== */
+
+/* Shared state container */
+.landing-state {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* ---- State 1: Welcome background ---- */
+.welcome-bg {
+    background-color: var(--primary-color);
+}
+
+/* ---- State 2 + 3: Light background ---- */
+.stakeholder-bg {
+    background-color: var(--bg-color);
+    flex-direction: column;
+}
+
+
+/* =====================================================
+   State 1 – Welcome Card
+   ===================================================== */
+
+.welcome-card {
+    background-color: var(--white);
+    border-radius: 30px;
+    padding: 56px 72px;
+    box-shadow: 0px 0px 10px 3px #00000014;
+    max-width: 740px;
+    width: 100%;
+    text-align: center;
+}
+
+.welcome-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+/* Reuses .underline from login.css – no redefinition needed */
+
+.welcome-subtitle {
+    font-size: 16px;
+    color: var(--primary-color);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Two-column role grid */
+.role-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+}
+
+.role-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.role-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.role-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.role-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Vertical divider between columns */
+.role-divider {
+    width: 1px;
+    height: 160px;
+    background-color: #D1D1D1;
+    flex-shrink: 0;
+}
+
+/* ---- Buttons ---- */
+
+.btn-create-request {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+}
+
+.btn-create-request:hover {
+    filter: brightness(0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-member-login {
+    background-color: var(--white);
+    color: var(--primary-color);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid var(--primary-color);
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+}
+
+.btn-member-login:hover {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+
+/* =====================================================
+   State 2 – Stakeholder Page
+   ===================================================== */
+
+.stakeholder-bg {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0;
+    position: relative;
+}
+
+/* Logo: absolute top-left (Figma: top 29px, left 40px) */
+.stakeholder-logo-link {
+    position: absolute;
+    top: 29px;
+    left: 40px;
+    z-index: 10;
+    line-height: 0;
+}
+
+.stakeholder-logo {
+    width: 46px;
+    height: 56px;
+    object-fit: contain;
+}
+
+/* Content wrapper: centred, max-width 1121px, starts below 85px header */
+.stakeholder-wrapper {
+    width: 100%;
+    max-width: 1121px;
+    margin: 0 auto;
+    padding: 85px 40px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+}
+
+/* Top bar: back arrow ← .............. counter → */
+.stakeholder-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 37px;
+}
+
+.btn-back-arrow {
+    width: 37px;
+    height: 37px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 100ms ease-in-out;
+}
+
+.btn-back-arrow:hover {
+    transform: scale(1.1);
+}
+
+.btn-back-arrow img {
+    width: 37px;
+    height: 37px;
+    object-fit: contain;
+}
+
+/* Daily counter "X of 10 requests used today" */
+.daily-counter-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--secondary-color);
+    font-size: 19px;
+    line-height: 1.2;
+}
+
+.counter-number {
+    font-weight: 700;
+}
+
+.counter-text {
+    font-weight: 400;
+}
+
+/* Title + content below */
+.stakeholder-main {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.stakeholder-title {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Content area: two-col row + button (gap: 40px) */
+.stakeholder-content-area {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Two-column row: text (502px) | illustration (416px) */
+.stakeholder-content-row {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+}
+
+/* Left text column */
+.stakeholder-text-col {
+    flex: 1;
+    max-width: 502px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.stakeholder-headline {
+    font-size: 28px;
+    font-weight: 400;
+    color: #42526E;
+    line-height: 1.2;
+}
+
+.stakeholder-para {
+    font-size: 19px;
+    font-weight: 400;
+    color: #42526E;
+    line-height: 1.2;
+    text-align: justify;
+}
+
+/* Right illustration */
+.stakeholder-illustration {
+    width: 416px;
+    height: 280px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+
+}
+
+/* CTA button: 293×60px, bg #29ABE2, radius 10px */
+.btn-create-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 18px;
+    width: fit-content;
+    height: 60px;
+    background-color: var(--secondary-color);
+    color: var(--white);
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+}
+
+.btn-create-email:hover {
+    filter: brightness(0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Footer: centred at bottom of page */
+.stakeholder-footer {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    white-space: nowrap;
+}
+
+.stakeholder-footer a {
+    color: #A8A8A8;
+    font-size: 16px;
+    transition: color 100ms ease-in-out;
+}
+
+.stakeholder-footer a:hover {
+    color: var(--secondary-color);
+}
+
+
+/* =====================================================
+   State 3 – Limit Reached
+   ===================================================== */
+
+/* Red counter override */
+.counter-limit {
+    color: #FF3D00;
+}
+
+/* Left column: alert + para + button stacked (gap: 48px) */
+.limit-text-col {
+    flex: 1;
+    max-width: 502px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+/* Alert + para group (gap: 24px) */
+.limit-group {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Alert box: semi-transparent red bg, border-radius 8px */
+.limit-alert {
+    background-color: rgba(255, 210, 210, 0.52); /* #FFD2D285 */
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--primary-color);
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Paragraph (darker text than State 2) */
+.limit-para {
+    font-size: 19px;
+    font-weight: 400;
+    color: var(--primary-color);
+    line-height: 1.2;
+    text-align: justify;
+}
+
+/* Illustration height override (283px vs 280px in State 2) */
+.limit-illustration {
+    height: 283px;
+}
+
+/* Button text larger (23px) and regular weight */
+.btn-send-email {
+    font-size: 23px;
+    font-weight: 400;
+}
+
+
+/* =====================================================
+   Responsive – Mobile
+   ===================================================== */
+
+@media (max-width: 900px) {
+    .stakeholder-content-row {
+        flex-direction: column;
+    }
+
+    .stakeholder-text-col {
+        max-width: 100%;
+    }
+
+    .stakeholder-illustration {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 416 / 280;
+    }
+
+    .stakeholder-title {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 600px) {
+    /* State 1 */
+    .welcome-card {
+        padding: 40px 24px;
+        border-radius: 20px;
+    }
+
+    .welcome-title {
+        font-size: 36px;
+    }
+
+    .role-grid {
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    /* Horizontal divider on mobile */
+    .role-divider {
+        width: 100%;
+        height: 1px;
+    }
+
+    /* State 2 */
+    .stakeholder-wrapper {
+        padding: 80px 20px 80px;
+    }
+
+    .stakeholder-title {
+        font-size: 36px;
+    }
+
+    .stakeholder-headline {
+        font-size: 22px;
+    }
+
+    .stakeholder-para {
+        font-size: 16px;
+    }
+
+    .daily-counter-display {
+        font-size: 16px;
+    }
+
+    .btn-create-email {
+        width: fit-content;
+    }
+
+    /* State 3 */
+    .limit-text-col {
+        max-width: 100%;
+    }
+
+    .limit-alert {
+        font-size: 17px;
+    }
+
+    .limit-para {
+        font-size: 16px;
+    }
+
+    .btn-send-email {
+        font-size: 19px;
+    }
+
+    .stakeholder-footer {
+        position: static;
+        transform: none;
+        justify-content: center;
+        margin-top: 40px;
+        padding-bottom: 24px;
+    }
+
+    .stakeholder-logo-link {
+        top: 16px;
+        left: 20px;
+    }
+}
+
+@media (max-width: 380px) {
+    /* State 1 */
+    .welcome-card {
+        padding: 32px 16px;
+    }
+
+    .welcome-title {
+        font-size: 32px;
+    }
+
+    .btn-create-request,
+    .btn-member-login {
+        width: 100%;
+    }
+}

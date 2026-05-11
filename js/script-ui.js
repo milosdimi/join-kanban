@@ -24,7 +24,7 @@ function setGuestState() {
 function processAuthState(user) {
     const path = window.location.pathname;
     const isProtected = ['summary.html', 'board.html', 'add-task.html', 'contacts.html'].some(p => path.includes(p));
-    const isLogin = ['index.html', 'signup.html', '/'].some(p => path.endsWith(p));
+    const isLogin = ['login.html', 'signup.html'].some(p => path.endsWith(p));
 
     if (user) handleLoggedInUser(isLogin);
     else handleLoggedOutUser(isProtected);
@@ -51,7 +51,7 @@ function handleLoggedInUser(isLogin) {
  * @param {boolean} isProtected - Whether the user is on a protected page.
  */
 function handleLoggedOutUser(isProtected) {
-    if (isProtected) window.location.href = 'index.html';
+    if (isProtected) window.location.href = 'login.html';
     hideSidebarMenu();
     updateHeaderVisibility(false);
 }
@@ -64,7 +64,7 @@ function preventAuthFlash() {
     const path = window.location.pathname;
     const publicPages = ['help.html', 'privacy-policy.html', 'legal-notice.html'];
     const isPublicPage = publicPages.some(page => path.includes(page));
-    const isLoginPage = ['index.html', 'signup.html', '/'].some(page => path.endsWith(page));
+    const isLoginPage = ['login.html', 'signup.html'].some(page => path.endsWith(page));
 
     if (isPublicPage || isLoginPage) {
         let sidebarNav = document.getElementById('sidebar-nav');
@@ -128,7 +128,7 @@ function showSidebarMenu() {
 async function logOut() {
     try {
         await firebase.auth().signOut();
-        window.location.href = 'index.html';
+        window.location.href = 'login.html';
     } catch (error) {
         console.error('Logout failed:', error);
     }

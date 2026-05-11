@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="author" content="Milos Dimitrijevic">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="application-name" content="Join">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Join">
+    <meta name="theme-color" content="#2A3647">
+    <title>Join – Welcome</title>
+    <link rel="icon" href="assets/img/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/img/favicon/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="assets/img/favicon/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+    <!-- ==================== STATE 1: WELCOME ==================== -->
+    <main id="state-welcome" class="landing-state welcome-bg">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Welcome</h1>
+            <div class="underline"></div>
+            <p class="welcome-subtitle">
+                Pick the option that suits your role: create a request as a
+                stakeholder or log in if you're part of the team.
+            </p>
+
+            <div class="role-grid">
+                <div class="role-option">
+                    <img src="assets/img/stakeholder.png" alt="Stakeholder icon" class="role-icon">
+                    <p class="role-label">Are you a stakeholder?</p>
+                    <button class="btn-create-request" onclick="showStakeholderState()">
+                        Create request
+                    </button>
+                </div>
+
+                <div class="role-divider" aria-hidden="true"></div>
+
+                <div class="role-option">
+                    <img src="assets/img/team-member.png" alt="Team member icon" class="role-icon">
+                    <p class="role-label">Are you a team member?</p>
+                    <button class="btn-member-login" onclick="goToLogin()">
+                        Member log in
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== STATE 2: STAKEHOLDER ==================== -->
+    <!-- Content will be added after Figma parameters are provided -->
+    <main id="state-stakeholder" class="landing-state stakeholder-bg d-none">
+        <p style="color: #2A3647; font-size: 18px;">Stakeholder state – coming soon</p>
+    </main>
+
+    <!-- ==================== STATE 3: LIMIT REACHED ==================== -->
+    <!-- Content will be added after Figma parameters are provided -->
+    <main id="state-limit" class="landing-state stakeholder-bg d-none">
+        <p style="color: #2A3647; font-size: 18px;">Limit reached state – coming soon</p>
+    </main>
+
+    <!-- Firebase (Firestore only – no auth needed on landing page) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-init.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html>

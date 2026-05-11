@@ -210,7 +210,7 @@ function generateProfileMenuHTML(user) {
             <a href="help.html">Help</a>
             <a href="legal-notice.html">Legal Notice</a>
             <a href="privacy-policy.html">Privacy Policy</a>
-            <a href="index.html">Log in</a>
+            <a href="login.html">Log in</a>
         `;
     } else {
         return /*html*/`
