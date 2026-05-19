@@ -323,7 +323,7 @@
 .task-detail-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .task-detail-category {
@@ -731,6 +731,26 @@
         padding: 16px;
         width: 95vw;
     }
+
+    .ai-generated-badge {
+        font-size: 12px;
+        gap: 3px;
+    }
+
+    .ai-generated-badge img {
+        width: 14px;
+        height: 14px;
+    }
+
+    .task-creator-info {
+        gap: 6px;
+    }
+
+    .creator-type-badge,
+    .creator-id-badge {
+        font-size: 12px;
+        padding: 3px 8px 3px 5px;
+    }
 }
 
 @media (min-width: 1001px) {
@@ -745,13 +765,81 @@
 }
 
 
+/* ---- AI Generated Badge (header) ---- */
+
+.ai-generated-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+    font-weight: 500;
+    background: linear-gradient(90deg, #9327FF 0%, #2EA1DC 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ai-generated-badge img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    -webkit-text-fill-color: initial;
+}
+
 /* ---- Task Creator Info ---- */
 
 .task-creator-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
+}
+
+.creator-type-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 6px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.creator-type-badge img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.creator-name {
+    font-size: 16px;
+    color: var(--primary-color);
+}
+
+.creator-id-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 6px;
+    border-radius: 20px;
+    background: #EEF2F5;
+    font-size: 14px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.creator-id-badge img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.creator-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
 }
 
 .creator-badge {

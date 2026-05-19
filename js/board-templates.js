@@ -85,11 +85,11 @@ function generateTaskDetailHTML(task) {
     return /*html*/`
         <div class="task-detail-header">
             <div class="task-detail-category" style="background-color: ${categoryColor}">${task.category}</div>
+            ${aiWarningHTML}
             <img src="assets/img/cancel_icon.svg" alt="Close" class="close-icon" onclick="closeTaskDetails()">
         </div>
 
         <h1 class="task-detail-title">${task.title}</h1>
-        ${aiWarningHTML}
         <p class="task-detail-description">${task.description}</p>
 
         <div class="task-detail-info-row">
@@ -145,7 +145,7 @@ function generateTaskDetailHTML(task) {
  */
 function generateAiWarningHTML(task) {
     if (!task.aiGenerated) return '';
-    return `<div class="ai-warning">⚠️ Dieses Ticket wurde KI-generiert.</div>`;
+    return `<div class="ai-generated-badge"><img src="assets/img/wand_stars.png" alt=""><span>AI-generated ticket</span></div>`;
 }
 
 
@@ -156,14 +156,25 @@ function generateAiWarningHTML(task) {
  */
 function generateCreatorHTML(task) {
     if (!task.createdBy) return '';
-    const badgeClass = task.creatorType === 'external' ? 'badge-external' : 'badge-internal';
-    const badgeLabel = task.creatorType === 'external' ? 'External' : 'Internal';
+    const isExternal = task.creatorType === 'external';
+    const typeIcon = isExternal ? 'assets/img/language.png' : 'assets/img/team-member.png';
+    const typeBg = isExternal ? '#EBFC88' : '#92FFBC';
+    const typeLabel = isExternal ? 'Extern' : 'Member';
+    const identIcon = isExternal ? 'assets/img/attach_email.png' : 'assets/img/person.png';
+    const identLabel = isExternal ? 'E-mail' : 'Profil';
     return /*html*/`
         <div class="task-detail-info-row">
-            <span class="task-detail-info-label">Created by:</span>
+            <span class="task-detail-info-label">Creator:</span>
             <div class="task-creator-info">
-                <span>${task.createdBy}</span>
-                <span class="creator-badge ${badgeClass}">${badgeLabel}</span>
+                <div class="creator-type-badge" style="background: ${typeBg}">
+                    <img src="${typeIcon}" alt="">
+                    <span>${typeLabel}</span>
+                </div>
+                ${task.createdByName ? `<span class="creator-name">${task.createdByName}</span>` : ''}
+                <div class="creator-id-badge">
+                    <img src="${identIcon}" alt="">
+                    <span>${task.createdBy}</span>
+                </div>
             </div>
         </div>
     `;

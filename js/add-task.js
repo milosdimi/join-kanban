@@ -208,6 +208,7 @@ function getTaskData() {
         status: newTaskStatus,
         assignedContacts: assignedContacts,
         createdBy: user?.email || '',
+        createdByName: user?.displayName || '',
         creatorType: 'internal',
         aiGenerated: false
     };
