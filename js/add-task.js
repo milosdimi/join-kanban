@@ -1,7 +1,7 @@
 let currentPrio = 'medium';
 let subtasks = [];
 let editingTaskId = null;
-let newTaskStatus = 'todo';
+let newTaskStatus = 'triage';
 let contacts = [];
 let assignedContacts = [];
 let messageTimeout = null;
@@ -129,7 +129,7 @@ function clearTaskInputs() {
 function resetTaskVariablesAndErrors() {
     setPrio('medium');
     subtasks = [];
-    newTaskStatus = 'todo';
+    newTaskStatus = 'triage';
     assignedContacts = [];
     renderSelectedContactsBadges();
     ['title', 'dueDate', 'category'].forEach(id => {
@@ -197,6 +197,7 @@ async function createTask() {
  * @returns {object} The task object.
  */
 function getTaskData() {
+    const user = firebase.auth().currentUser;
     return {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
@@ -205,7 +206,10 @@ function getTaskData() {
         prio: currentPrio,
         subtasks: subtasks,
         status: newTaskStatus,
-        assignedContacts: assignedContacts
+        assignedContacts: assignedContacts,
+        createdBy: user?.email || '',
+        creatorType: 'internal',
+        aiGenerated: false
     };
 }
 
@@ -241,7 +245,11 @@ async function saveEditedTask() {
         let updatedTask = {};
         updateTaskObject(updatedTask);
         try {
-            await db.collection('users').doc(user.uid).collection('tasks').doc(editingTaskId).update(updatedTask);
+            const taskInMemory = typeof tasks !== 'undefined' ? tasks.find(t => t.id === editingTaskId) : null;
+            const docRef = taskInMemory?._collection === 'triage'
+                ? db.collection('triage_tasks').doc(editingTaskId)
+                : db.collection('users').doc(user.uid).collection('tasks').doc(editingTaskId);
+            await docRef.update(updatedTask);
             showTaskAddedMessage('Task updated');
             redirectToBoard();
         } catch (e) {

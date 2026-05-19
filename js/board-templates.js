@@ -39,6 +39,7 @@ function generateTaskHTML(task) {
  */
 function generateMoveMenuHTML(task) {
     const statuses = [
+        { id: 'triage', label: 'Triage' },
         { id: 'todo', label: 'To Do' },
         { id: 'inprogress', label: 'In Progress' },
         { id: 'awaitingfeedback', label: 'Awaiting Feedback' },
@@ -78,6 +79,8 @@ function generateTaskDetailHTML(task) {
     let subtasksHTML = generateSubtaskListDetailHTML(task);
     let assignedContactsHTML = generateAssignedContactsDetailHTML(task.assignedContacts);
     let mobileMoveOptions = generateMobileMoveOptions(task);
+    let aiWarningHTML = generateAiWarningHTML(task);
+    let creatorHTML = generateCreatorHTML(task);
 
     return /*html*/`
         <div class="task-detail-header">
@@ -86,6 +89,7 @@ function generateTaskDetailHTML(task) {
         </div>
 
         <h1 class="task-detail-title">${task.title}</h1>
+        ${aiWarningHTML}
         <p class="task-detail-description">${task.description}</p>
 
         <div class="task-detail-info-row">
@@ -100,6 +104,8 @@ function generateTaskDetailHTML(task) {
                 <img src="${prioIcon}" alt="${task.prio}">
             </div>
         </div>
+
+        ${creatorHTML}
 
         <div class="task-detail-info-row column-direction">
             <span class="task-detail-info-label">Assigned To:</span>
@@ -133,12 +139,45 @@ function generateTaskDetailHTML(task) {
 
 
 /**
+ * Generates an AI-generated warning banner if the task was created by AI.
+ * @param {object} task - The task object.
+ * @returns {string} HTML string or empty string.
+ */
+function generateAiWarningHTML(task) {
+    if (!task.aiGenerated) return '';
+    return `<div class="ai-warning">⚠️ Dieses Ticket wurde KI-generiert.</div>`;
+}
+
+
+/**
+ * Generates the creator info row (email + Internal/External badge).
+ * @param {object} task - The task object.
+ * @returns {string} HTML string or empty string.
+ */
+function generateCreatorHTML(task) {
+    if (!task.createdBy) return '';
+    const badgeClass = task.creatorType === 'external' ? 'badge-external' : 'badge-internal';
+    const badgeLabel = task.creatorType === 'external' ? 'External' : 'Internal';
+    return /*html*/`
+        <div class="task-detail-info-row">
+            <span class="task-detail-info-label">Created by:</span>
+            <div class="task-creator-info">
+                <span>${task.createdBy}</span>
+                <span class="creator-badge ${badgeClass}">${badgeLabel}</span>
+            </div>
+        </div>
+    `;
+}
+
+
+/**
  * Generates HTML for mobile move options in detail view.
  * @param {object} task - The task object.
  * @returns {string} HTML string.
  */
 function generateMobileMoveOptions(task) {
     const statuses = [
+        { id: 'triage', label: 'Triage' },
         { id: 'todo', label: 'To Do' },
         { id: 'inprogress', label: 'In Progress' },
         { id: 'awaitingfeedback', label: 'Awaiting Feedback' },

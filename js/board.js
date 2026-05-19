@@ -25,8 +25,13 @@ async function loadTasks() {
     return new Promise((resolve) => {
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
-                const snapshot = await db.collection('users').doc(user.uid).collection('tasks').get();
-                tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const [userSnap, triageSnap] = await Promise.all([
+                    db.collection('users').doc(user.uid).collection('tasks').get(),
+                    db.collection('triage_tasks').get()
+                ]);
+                const userTasks = userSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), _collection: 'user' }));
+                const triageTasks = triageSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), _collection: 'triage' }));
+                tasks = [...userTasks, ...triageTasks];
             } else {
                 tasks = [];
             }
@@ -69,7 +74,7 @@ function renderBoard() {
  * Clears all task columns on the board.
  */
 function clearBoardColumns() {
-    ['todo', 'inprogress', 'awaitingfeedback', 'done'].forEach(colId => {
+    ['triage', 'todo', 'inprogress', 'awaitingfeedback', 'done'].forEach(colId => {
         document.getElementById(colId).innerHTML = '';
     });
 }
@@ -96,6 +101,7 @@ function renderTasksMatchingSearch(search) {
  */
 function checkEmptyColumns() {
     const columns = [
+        { id: 'triage', label: 'Triage' },
         { id: 'todo', label: 'To do' },
         { id: 'inprogress', label: 'In progress' },
         { id: 'awaitingfeedback', label: 'Awaiting Feedback' },
@@ -203,7 +209,11 @@ async function moveToStatus(taskId, newStatus) {
         task.status = newStatus;
         const user = firebase.auth().currentUser;
         try {
-            if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ status: newStatus });
+            if (task._collection === 'triage') {
+                await db.collection('triage_tasks').doc(taskId).update({ status: newStatus });
+            } else if (user) {
+                await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ status: newStatus });
+            }
         } catch (e) {
             console.error('Failed to update task status:', e);
         }
@@ -219,9 +229,14 @@ async function moveToStatus(taskId, newStatus) {
  * @param {string} taskId - The ID of the task.
  */
 async function deleteTask(taskId) {
+    const task = tasks.find(t => t.id === taskId);
     const user = firebase.auth().currentUser;
     try {
-        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).delete();
+        if (task?._collection === 'triage') {
+            await db.collection('triage_tasks').doc(taskId).delete();
+        } else if (user) {
+            await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).delete();
+        }
     } catch (e) {
         console.error('Failed to delete task:', e);
     }
@@ -281,7 +296,7 @@ function initializeTaskFormBehaviors() {
  * Opens the add task modal.
  * @param {string} status - The default status for the new task.
  */
-function openAddTaskModal(status = 'todo') {
+function openAddTaskModal(status = 'triage') {
     if (window.innerWidth < 1000) {
         window.location.href = 'add-task.html';
         return;
@@ -325,7 +340,11 @@ async function toggleSubtask(taskId, subtaskIndex) {
     subtask.completed = !subtask.completed;
     const user = firebase.auth().currentUser;
     try {
-        if (user) await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
+        if (task._collection === 'triage') {
+            await db.collection('triage_tasks').doc(taskId).update({ subtasks: task.subtasks });
+        } else if (user) {
+            await db.collection('users').doc(user.uid).collection('tasks').doc(taskId).update({ subtasks: task.subtasks });
+        }
     } catch (e) {
         console.error('Failed to update subtask:', e);
     }

@@ -743,3 +743,41 @@
 .assigned-contact-row .contact-badge-board {
     margin-left: 0;
 }
+
+
+/* ---- Task Creator Info ---- */
+
+.task-creator-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.creator-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.badge-internal {
+    background-color: var(--secondary-color);
+}
+
+.badge-external {
+    background-color: #FF7A00;
+}
+
+/* ---- AI Warning Banner ---- */
+
+.ai-warning {
+    background-color: #FFF8E1;
+    border: 1px solid #FFC107;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #7B5800;
+    margin-bottom: 8px;
+}

@@ -108,6 +108,16 @@
                 <div class="board-columns">
                     <div class="board-column">
                         <div class="column-header">
+                            <span>Triage</span>
+                            <div class="plus-btn-border" onclick="openAddTaskModal('triage')">+</div>
+                        </div>
+                        <div class="task-list" id="triage" ondrop="moveTo('triage')" ondragover="allowDrop(event); highlight('triage')" ondragleave="removeHighlight('triage')">
+                            <div class="no-tasks">No tasks in Triage</div>
+                        </div>
+                    </div>
+
+                    <div class="board-column">
+                        <div class="column-header">
                             <span>To do</span>
                             <div class="plus-btn-border" onclick="openAddTaskModal('todo')">+</div>
                         </div>
