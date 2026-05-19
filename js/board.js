@@ -217,6 +217,18 @@ async function moveToStatus(taskId, newStatus) {
         } catch (e) {
             console.error('Failed to update task status:', e);
         }
+        if (task.creatorType === 'external' && task.createdBy) {
+            fetch('https://dimit.app.n8n.cloud/webhook/task-status-change', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: task.title,
+                    newStatus: newStatus,
+                    createdBy: task.createdBy,
+                    createdByName: task.createdByName || ''
+                })
+            }).catch(() => {});
+        }
         closeTaskDetails();
         renderBoard();
     }

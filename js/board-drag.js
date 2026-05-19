@@ -55,7 +55,23 @@ function moveTo(status) {
     if (task) {
         task.status = status;
         const user = firebase.auth().currentUser;
-        if (user) db.collection('users').doc(user.uid).collection('tasks').doc(currentDraggedElement).update({ status: status });
+        if (task._collection === 'triage') {
+            db.collection('triage_tasks').doc(currentDraggedElement).update({ status: status });
+        } else if (user) {
+            db.collection('users').doc(user.uid).collection('tasks').doc(currentDraggedElement).update({ status: status });
+        }
+        if (task.creatorType === 'external' && task.createdBy) {
+            fetch('https://dimit.app.n8n.cloud/webhook/task-status-change', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: task.title,
+                    newStatus: status,
+                    createdBy: task.createdBy,
+                    createdByName: task.createdByName || ''
+                })
+            }).catch(() => {});
+        }
         renderBoard();
         removeHighlight(status);
         stopDragging();
