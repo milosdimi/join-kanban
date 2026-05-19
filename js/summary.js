@@ -82,6 +82,8 @@ async function updateSummaryMetrics(user) {
     let tasks = await loadTasksFromFirestore(user.uid);
     updateTaskCounts(tasks);
     updateUrgentMetric(tasks);
+    let emailCount = await loadEmailRequestsCount();
+    animateNumber(document.getElementById('summaryEmailRequests'), emailCount, 1000);
 }
 
 
@@ -98,6 +100,17 @@ async function loadTasksFromFirestore(userId) {
     } catch (e) {
         console.error('Failed to load tasks from Firestore:', e);
         return [];
+    }
+}
+
+
+
+async function loadEmailRequestsCount() {
+    try {
+        const snapshot = await db.collection('triage_tasks').get();
+        return snapshot.size;
+    } catch (e) {
+        return 0;
     }
 }
 

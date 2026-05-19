@@ -226,7 +226,7 @@
 }
 
 .wide-card {
-    width: 100%;
+    flex: 1;
     height: 150px;
     justify-content: flex-start;
     padding: 0 40px;
@@ -304,6 +304,26 @@
     font-size: 64px;
     font-weight: 700;
     color: var(--secondary-color);
+}
+
+.email-card {
+    flex: 0 0 168px;
+    height: 150px;
+    flex-direction: column;
+    gap: 13px;
+    padding: 25px 0;
+}
+
+.card-number-gradient {
+    background: linear-gradient(180deg, #8933FC 0%, #29ABE2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.metric-card:hover .card-number-gradient {
+    background: none;
+    -webkit-text-fill-color: var(--white);
 }
 
 /* Hover Effects */
@@ -575,6 +595,12 @@
         padding: 10px;
     }
 
+    .email-card {
+        flex: 1;
+        height: 124px;
+        padding: 10px;
+    }
+
     .card-icon {
         width: 64px;
         height: 64px;
@@ -586,6 +612,22 @@
 
     .card-number {
         font-size: 54px;
+    }
+}
+
+/* Responsive (< 480px) — Urgent row stacks */
+@media (max-width: 480px) {
+    .email-card {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .metrics-row:has(.wide-card) {
+        flex-direction: column;
+    }
+
+    .wide-card {
+        height: 124px;
     }
 }
 
