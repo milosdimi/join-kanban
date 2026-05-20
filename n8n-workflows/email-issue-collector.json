@@ -1,0 +1,418 @@
+{
+  "name": "Join – AI Issue Collector",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        -704,
+        -400
+      ],
+      "id": "f4c6cd77-ba77-4873-aa4d-baff031f0209",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "jHaemlsBGoUY8ru5",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-haiku-4-5-20251001"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a project management assistant. \nExtract task information from this support email and return ONLY valid JSON.\n\nEmail content: {{ $('Email Trigger (IMAP)').first().json.textPlain || $('Email Trigger (IMAP)').first().json.textHtml }}\nSubject: {{ $('Email Trigger (IMAP)').first().json.metadata['thread-topic'] }}\nSender: {{ $('Email Trigger (IMAP)').first().json.metadata['return-path'] }}\n\nReturn this exact JSON structure:\n{\n  \"title\": \"short task title (max 60 chars)\",\n  \"description\": \"detailed description of the request\",\n  \"prio\": \"urgent OR medium OR low\",\n  \"dueDate\": \"YYYY-MM-DD (7 days from today if not specified)\",\n  \"category\": \"Technical Task OR User Story\",\n  \"createdBy\": \"sender email address\"\n}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -384
+      ],
+      "id": "29207fd4-3dc2-411e-a8d3-f0cf128b3847",
+      "name": "Message a model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "QEgszQfqwqanplD3",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst aiOutput = $input.first().json;\nconst raw = aiOutput?.message?.content?.[0]?.text \n         || aiOutput?.content?.[0]?.text \n         || aiOutput?.text || '';\n\nconst jsonMatch = raw.match(/\\{[\\s\\S]*\\}/);\nif (!jsonMatch) throw new Error('No JSON found in AI response');\n\nconst parsed = JSON.parse(jsonMatch[0]);\n\nconst badTitle = !parsed.title \n    || parsed.title.toLowerCase().includes('no email')\n    || parsed.title.toLowerCase().includes('unable to extract')\n    || parsed.title.toLowerCase().includes('not provided')\n    || parsed.title.trim().length < 3;\nif (badTitle) throw new Error('Empty email — skipping task creation');\n\nif (!parsed.dueDate || parsed.dueDate < today) {\n    parsed.dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);\n}\n\nconst emailData = $('Email Trigger (IMAP)').first().json;\nconst from = emailData.from;\nlet fromText = '';\nif (typeof from === 'string') { fromText = from; }\nelse { fromText = from?.text || from?.value?.[0]?.name || from?.value?.[0]?.address || ''; }\n\nconst nameMatch = fromText.match(/^([^<]+)</);\nif (nameMatch) { parsed.createdByName = nameMatch[1].trim(); }\nelse if (fromText.includes('@')) { parsed.createdByName = fromText.split('@')[0]; }\nelse { parsed.createdByName = fromText || ''; }\n\n// Fallback: return-path aus Outlook metadata\nconst returnPath = emailData.metadata?.['return-path'] || '';\nparsed.createdBy = from?.value?.[0]?.address \n                || fromText.match(/[\\w.-]+@[\\w.-]+\\.\\w+/)?.[0]\n                || returnPath.replace(/[<>]/g, '').trim()\n                || '';\n\nreturn [{ json: parsed }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -384
+      ],
+      "id": "0d7fabfd-2630-4ea6-80c3-06c05a79af01",
+      "name": "Extract Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://firestore.googleapis.com/v1/projects/join-c7e60/databases/(default)/documents/triage_tasks",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fields\": {\n    \"title\": { \"stringValue\": \"{{ $json.title }}\" },\n    \"description\": { \"stringValue\": \"{{ $json.description }}\" },\n    \"dueDate\": { \"stringValue\": \"{{ $json.dueDate }}\" },\n    \"category\": { \"stringValue\": \"{{ $json.category }}\" },\n    \"prio\": { \"stringValue\": \"{{ $json.prio }}\" },\n    \"status\": { \"stringValue\": \"triage\" },\n    \"subtasks\": { \"arrayValue\": { \"values\": [] } },\n    \"assignedContacts\": { \"arrayValue\": { \"values\": [] } },\n    \"createdBy\": { \"stringValue\": \"{{ $json.createdBy }}\" },\n    \"createdByName\": { \"stringValue\": \"{{ $json.createdByName }}\" },\n    \"creatorType\": { \"stringValue\": \"external\" },\n    \"aiGenerated\": { \"booleanValue\": true }\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        -384
+      ],
+      "id": "94ec7fab-93a9-4d4d-9371-1996ea00279a",
+      "name": "Firestore: Create Task",
+      "credentials": {
+        "googleApi": {
+          "id": "qeGbKVHteKp2W2sr",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/join-c7e60/databases/(default)/documents/system/dailyLimit",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        992,
+        -384
+      ],
+      "id": "8ca633fc-cc5f-4d72-913d-64c5118e1836",
+      "name": "Firestore: Get Counter",
+      "retryOnFail": false,
+      "credentials": {
+        "googleApi": {
+          "id": "qeGbKVHteKp2W2sr",
+          "name": "Google Service Account account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst doc = $input.first().json;\nconst currentDate = doc.fields?.date?.stringValue || '';\nconst currentCount = parseInt(doc.fields?.count?.integerValue || 0);\nconst newCount = currentDate === today ? currentCount + 1 : 1;\nreturn [{ json: { count: newCount, date: today } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -384
+      ],
+      "id": "5541ac97-d990-4021-a7a0-0cf69b0a6472",
+      "name": "Calc Counter"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://firestore.googleapis.com/v1/projects/join-c7e60/databases/(default)/documents/system/dailyLimit?updateMask.fieldPaths=count&updateMask.fieldPaths=date",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fields\": {\n    \"count\": { \"integerValue\": \"{{ $json.count }}\" },\n    \"date\": { \"stringValue\": \"{{ $json.date }}\" }\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1376,
+        -384
+      ],
+      "id": "d5c64cd6-c7c0-47e0-9d43-f2e6777c3423",
+      "name": "Firestore: Update Counter",
+      "credentials": {
+        "googleApi": {
+          "id": "qeGbKVHteKp2W2sr",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7e2b6732-90d0-4b91-9de4-1dfd97339755",
+              "leftValue": "={{ $json.fields.count.integerValue }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -240,
+        -400
+      ],
+      "id": "f2e534a2-da47-442c-9b81-a4a359ae97e4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "https://firestore.googleapis.com/v1/projects/join-c7e60/databases/(default)/documents/system/dailyLimit",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -464,
+        -400
+      ],
+      "id": "dd8c297a-41b4-41e0-9341-41faa4dd3ed3",
+      "name": "IF: Limit Reached?",
+      "credentials": {
+        "googleApi": {
+          "id": "qeGbKVHteKp2W2sr",
+          "name": "Google Service Account account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@join.dimit.cc",
+        "toEmail": "={{ $('Email Trigger (IMAP)').first().json.metadata['return-path'].replace(/[<>]/g, '') }}\n",
+        "subject": "Daily request limit reached – Join Issue Collector",
+        "html": "<p>Hi there,</p>\n<p>Thank you for reaching out!</p>\n<p>Unfortunately, the daily limit of 10 AI-generated tickets has been reached for today. Your email has been received and will be <strong>manually reviewed</strong> by our team.</p>\n<p>You can expect a response within 1-2 business days.</p>\n<p>Best regards,<br>Join Team</p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        -576
+      ],
+      "id": "09c76289-742b-4e7b-8aa4-aa1d56155c8d",
+      "name": "Email: Confirmation",
+      "webhookId": "46fbbcdf-bb4e-4b4d-80a8-c6080d1297e8",
+      "credentials": {
+        "smtp": {
+          "id": "0Joz1qp5sIUQ2zuk",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@join.dimit.cc",
+        "toEmail": "={{ $('Extract Fields').first().json.createdBy }}",
+        "subject": "Your request has been received – Join Issue Collector",
+        "html": "=<p>Hi {{ $('Extract Fields').first().json.createdByName }},</p>\n<p>Great news! Your request has been successfully received and added to our board as a new ticket.</p>\n<p><strong>Title:</strong> {{ $('Extract Fields').first().json.title }}<br>\n<strong>Priority:</strong> {{ $('Extract Fields').first().json.prio }}<br>\n<strong>Due date:</strong> {{ $('Extract Fields').first().json.dueDate }}</p>\n<p>Our team will review it shortly.</p>\n<p>Best regards,<br>Join Team</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        -384
+      ],
+      "id": "834f7254-fa1d-4d6c-a528-05acb3c2e3b0",
+      "name": "Send an Email",
+      "webhookId": "1318b4a6-5602-4fcd-857c-61793c562102",
+      "credentials": {
+        "smtp": {
+          "id": "0Joz1qp5sIUQ2zuk",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@join.dimit.cc",
+        "toEmail": "dm@dimit.cc",
+        "subject": "=[Manual Review] New customer request",
+        "html": "=<p><strong>Manual review needed — daily limit was reached.</strong></p>\n<p><strong>From:</strong> {{ $('Email Trigger (IMAP)').first().json.metadata['return-path'].replace(/[<>]/g, '') }}</p>\n<hr>\n<p>{{ $('Email Trigger (IMAP)').first().json.textPlain }}</p>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        -576
+      ],
+      "id": "ca448087-8ec1-4f74-8bb0-5cc8f25263c8",
+      "name": "Send an Email1",
+      "webhookId": "5f6f83e8-082a-4ef1-a2d2-b1531453191e",
+      "credentials": {
+        "smtp": {
+          "id": "0Joz1qp5sIUQ2zuk",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "IF: Limit Reached?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Extract Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Fields": {
+      "main": [
+        [
+          {
+            "node": "Firestore: Create Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firestore: Create Task": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firestore: Get Counter": {
+      "main": [
+        [
+          {
+            "node": "Calc Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calc Counter": {
+      "main": [
+        [
+          {
+            "node": "Firestore: Update Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Email: Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Limit Reached?": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email: Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Send an Email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Firestore: Get Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fe8f893c-c726-4f81-ac87-6d7eafe6892d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "820015eb7a1df54fb7759625d86aebd5d857c4bbe38b5fcaaef85619f61fea02"
+  },
+  "id": "Dc18rnj1O17NIVZK",
+  "tags": []
+}

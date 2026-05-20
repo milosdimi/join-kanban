@@ -1,0 +1,73 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "task-status-change",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9e4ec3ab-c6ce-4b8b-b1cb-e75e65292a42",
+      "name": "Webhook",
+      "webhookId": "83b042c8-413c-4bde-b03e-463515312026"
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@join.dimit.cc",
+        "toEmail": "={{ $json.body.createdBy }}",
+        "subject": "Your ticket status has been updated – Join",
+        "html": "=<p>Hi {{ $json.body.createdByName }},</p>\n<p>Your ticket <strong>{{ $json.body.title }}</strong> has been moved to <strong>{{ $json.body.newStatus }}</strong>.</p>\n<p>Best regards,<br>Join Team</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a9d9b90a-aac6-44e1-99e7-2375ff75f8ff",
+      "name": "Send an Email",
+      "webhookId": "c8bb68e7-1831-4849-af87-2ca853dee5e7",
+      "credentials": {
+        "smtp": {
+          "id": "0Joz1qp5sIUQ2zuk",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "dd2c6586-8492-436b-a2a8-e4d66dd18973",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "820015eb7a1df54fb7759625d86aebd5d857c4bbe38b5fcaaef85619f61fea02"
+  },
+  "id": "hMKRdIDx23BI2VMy",
+  "tags": []
+}

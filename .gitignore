@@ -1,2 +1,7 @@
 todo.md
 .claude/
+node_modules/
+.env
+*.env.local
+*.pem
+*service-account*.json
