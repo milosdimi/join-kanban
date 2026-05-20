@@ -53,7 +53,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst aiOutput = $input.first().json;\nconst raw = aiOutput?.message?.content?.[0]?.text \n         || aiOutput?.content?.[0]?.text \n         || aiOutput?.text || '';\n\nconst jsonMatch = raw.match(/\\{[\\s\\S]*\\}/);\nif (!jsonMatch) throw new Error('No JSON found in AI response');\n\nconst parsed = JSON.parse(jsonMatch[0]);\n\nconst badTitle = !parsed.title \n    || parsed.title.toLowerCase().includes('no email')\n    || parsed.title.toLowerCase().includes('unable to extract')\n    || parsed.title.toLowerCase().includes('not provided')\n    || parsed.title.trim().length < 3;\nif (badTitle) throw new Error('Empty email — skipping task creation');\n\nif (!parsed.dueDate || parsed.dueDate < today) {\n    parsed.dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);\n}\n\nconst emailData = $('Email Trigger (IMAP)').first().json;\nconst from = emailData.from;\nlet fromText = '';\nif (typeof from === 'string') { fromText = from; }\nelse { fromText = from?.text || from?.value?.[0]?.name || from?.value?.[0]?.address || ''; }\n\nconst nameMatch = fromText.match(/^([^<]+)</);\nif (nameMatch) { parsed.createdByName = nameMatch[1].trim(); }\nelse if (fromText.includes('@')) { parsed.createdByName = fromText.split('@')[0]; }\nelse { parsed.createdByName = fromText || ''; }\n\n// Fallback: return-path aus Outlook metadata\nconst returnPath = emailData.metadata?.['return-path'] || '';\nparsed.createdBy = from?.value?.[0]?.address \n                || fromText.match(/[\\w.-]+@[\\w.-]+\\.\\w+/)?.[0]\n                || returnPath.replace(/[<>]/g, '').trim()\n                || '';\n\nreturn [{ json: parsed }];\n"
+        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst aiOutput = $input.first().json;\nconst raw = aiOutput?.message?.content?.[0]?.text \n         || aiOutput?.content?.[0]?.text \n         || aiOutput?.text || '';\n\nconst jsonMatch = raw.match(/\\{[\\s\\S]*\\}/);\nif (!jsonMatch) throw new Error('No JSON found in AI response');\n\nconst parsed = JSON.parse(jsonMatch[0]);\n\nconst emailData = $('Email Trigger (IMAP)').first().json;\nconst from = emailData.from;\nlet fromText = '';\nif (typeof from === 'string') { fromText = from; }\nelse { fromText = from?.text || from?.value?.[0]?.name || from?.value?.[0]?.address || ''; }\n\nconst returnPath = emailData.metadata?.['return-path'] || '';\nconst senderEmail = from?.value?.[0]?.address \n                 || fromText.match(/[\\w.-]+@[\\w.-]+\\.\\w+/)?.[0]\n                 || returnPath.replace(/[<>]/g, '').trim()\n                 || '';\n\nconst badTitle = !parsed.title \n    || parsed.title.toLowerCase().includes('no email')\n    || parsed.title.toLowerCase().includes('unable to extract')\n    || parsed.title.toLowerCase().includes('not provided')\n    || parsed.title.trim().length < 3;\n\nif (badTitle) {\n    return [{ json: { valid: false, createdBy: senderEmail } }];\n}\n\nif (!parsed.dueDate || parsed.dueDate < today) {\n    parsed.dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);\n}\n\nconst nameMatch = fromText.match(/^([^<]+)</);\nif (nameMatch) { parsed.createdByName = nameMatch[1].trim(); }\nelse if (fromText.includes('@')) { parsed.createdByName = fromText.split('@')[0]; }\nelse { parsed.createdByName = fromText || ''; }\n\nparsed.createdBy = senderEmail;\nparsed.description = (parsed.description || '') + ' — Dieses Ticket wurde KI-generiert.';\n\n\nreturn [{ json: { ...parsed, valid: true } }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -72,14 +72,14 @@
         "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"fields\": {\n    \"title\": { \"stringValue\": \"{{ $json.title }}\" },\n    \"description\": { \"stringValue\": \"{{ $json.description }}\" },\n    \"dueDate\": { \"stringValue\": \"{{ $json.dueDate }}\" },\n    \"category\": { \"stringValue\": \"{{ $json.category }}\" },\n    \"prio\": { \"stringValue\": \"{{ $json.prio }}\" },\n    \"status\": { \"stringValue\": \"triage\" },\n    \"subtasks\": { \"arrayValue\": { \"values\": [] } },\n    \"assignedContacts\": { \"arrayValue\": { \"values\": [] } },\n    \"createdBy\": { \"stringValue\": \"{{ $json.createdBy }}\" },\n    \"createdByName\": { \"stringValue\": \"{{ $json.createdByName }}\" },\n    \"creatorType\": { \"stringValue\": \"external\" },\n    \"aiGenerated\": { \"booleanValue\": true }\n  }\n}\n",
+        "jsonBody": "={\n  \"fields\": {\n    \"title\": { \"stringValue\": \"{{ $json.title }}\" },\n    \"description\": { \"stringValue\": \"{{ $json.description.replace(/[\\n\\r]/g, ' ') }}\" },\n    \"dueDate\": { \"stringValue\": \"{{ $json.dueDate }}\" },\n    \"category\": { \"stringValue\": \"{{ $json.category }}\" },\n    \"prio\": { \"stringValue\": \"{{ $json.prio }}\" },\n    \"status\": { \"stringValue\": \"triage\" },\n    \"subtasks\": { \"arrayValue\": { \"values\": [] } },\n    \"assignedContacts\": { \"arrayValue\": { \"values\": [] } },\n    \"createdBy\": { \"stringValue\": \"{{ $json.createdBy }}\" },\n    \"createdByName\": { \"stringValue\": \"{{ $json.createdByName }}\" },\n    \"creatorType\": { \"stringValue\": \"external\" },\n    \"aiGenerated\": { \"booleanValue\": true }\n  }\n}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        576,
-        -384
+        800,
+        -368
       ],
       "id": "94ec7fab-93a9-4d4d-9371-1996ea00279a",
       "name": "Firestore: Create Task",
@@ -100,8 +100,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        992,
-        -384
+        1232,
+        -368
       ],
       "id": "8ca633fc-cc5f-4d72-913d-64c5118e1836",
       "name": "Firestore: Get Counter",
@@ -121,8 +121,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1200,
-        -384
+        1440,
+        -368
       ],
       "id": "5541ac97-d990-4021-a7a0-0cf69b0a6472",
       "name": "Calc Counter"
@@ -141,8 +141,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1376,
-        -384
+        1648,
+        -368
       ],
       "id": "d5c64cd6-c7c0-47e0-9d43-f2e6777c3423",
       "name": "Firestore: Update Counter",
@@ -245,8 +245,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        784,
-        -384
+        1024,
+        -368
       ],
       "id": "834f7254-fa1d-4d6c-a528-05acb3c2e3b0",
       "name": "Send an Email",
@@ -275,6 +275,64 @@
       "id": "ca448087-8ec1-4f74-8bb0-5cc8f25263c8",
       "name": "Send an Email1",
       "webhookId": "5f6f83e8-082a-4ef1-a2d2-b1531453191e",
+      "credentials": {
+        "smtp": {
+          "id": "0Joz1qp5sIUQ2zuk",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2e53c46c-923b-4f3a-8dd9-b02d822c0eb5",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        -384
+      ],
+      "id": "9486edf5-7a2c-4647-a797-303a70951f31",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@join.dimit.cc",
+        "toEmail": "={{ $json.createdBy }}",
+        "subject": "Your request has been received – Join Team",
+        "html": "<p>Hi there,</p>\n<p>Thank you for reaching out! We received your email but were unable to automatically process it.</p>\n<p>Our team has been notified and will review your request manually within 1-2 business days.</p>\n<p>Best regards,<br>Join Team</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        -592
+      ],
+      "id": "79f4960f-bee5-4e9d-981a-350df37120fb",
+      "name": "Send Error Email",
+      "webhookId": "bd00dae8-62d1-499b-a364-c47f197cfb1a",
       "credentials": {
         "smtp": {
           "id": "0Joz1qp5sIUQ2zuk",
@@ -311,7 +369,7 @@
       "main": [
         [
           {
-            "node": "Firestore: Create Task",
+            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -401,6 +459,29 @@
           }
         ]
       ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Firestore: Create Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Email": {
+      "main": [
+        []
+      ]
     }
   },
   "active": true,
@@ -408,7 +489,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "fe8f893c-c726-4f81-ac87-6d7eafe6892d",
+  "versionId": "6d8026f7-7853-435b-8678-c66563632189",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "820015eb7a1df54fb7759625d86aebd5d857c4bbe38b5fcaaef85619f61fea02"
