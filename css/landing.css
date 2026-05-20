@@ -363,7 +363,8 @@
 
 /* Alert box: semi-transparent red bg, border-radius 8px */
 .limit-alert {
-    background-color: rgba(255, 210, 210, 0.52); /* #FFD2D285 */
+    background-color: rgba(255, 210, 210, 0.52);
+    /* #FFD2D285 */
     border-radius: 8px;
     padding: 16px 24px;
     font-size: 20px;
@@ -416,9 +417,12 @@
     .stakeholder-title {
         font-size: 48px;
     }
+
+
 }
 
 @media (max-width: 600px) {
+
     /* State 1 */
     .welcome-card {
         padding: 40px 24px;
@@ -442,7 +446,7 @@
 
     /* State 2 */
     .stakeholder-wrapper {
-        padding: 80px 20px 80px;
+        padding: 100px 20px 80px;
     }
 
     .stakeholder-title {
@@ -482,13 +486,7 @@
         font-size: 19px;
     }
 
-    .stakeholder-footer {
-        position: static;
-        transform: none;
-        justify-content: center;
-        margin-top: 40px;
-        padding-bottom: 24px;
-    }
+
 
     .stakeholder-logo-link {
         top: 16px;
@@ -497,6 +495,7 @@
 }
 
 @media (max-width: 380px) {
+
     /* State 1 */
     .welcome-card {
         padding: 32px 16px;
