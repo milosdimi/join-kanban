@@ -574,16 +574,16 @@
 
 @media (min-width: 1001px) and (max-width: 1200px) {
     .board-columns {
-        flex-wrap: wrap;
-        overflow-x: hidden;
+        flex-wrap: nowrap;
+        overflow-x: auto;
         overflow-y: visible;
-        gap: 18px;
+        gap: 16px;
         padding-bottom: 24px;
     }
 
     .board-column {
-        flex: 1 1 calc(50% - 9px);
-        min-width: 280px;
+        flex: 0 0 200px;
+        min-width: 200px;
     }
 }
 
