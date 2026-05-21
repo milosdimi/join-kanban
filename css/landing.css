@@ -147,11 +147,11 @@
     position: relative;
 }
 
-/* Logo: absolute top-left (Figma: top 29px, left 40px) */
+/* Logo: absolute top-left, aligned to wrapper edge on wide screens */
 .stakeholder-logo-link {
     position: absolute;
     top: 29px;
-    left: 40px;
+    left: max(40px, calc(50% - 520px));
     z-index: 10;
     line-height: 0;
 }
@@ -167,7 +167,7 @@
     width: 100%;
     max-width: 1121px;
     margin: 0 auto;
-    padding: 85px 40px 80px;
+    padding: 110px 40px 80px;
     display: flex;
     flex-direction: column;
     gap: 56px;
