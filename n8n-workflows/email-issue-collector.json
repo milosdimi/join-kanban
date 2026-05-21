@@ -30,7 +30,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a project management assistant. \nExtract task information from this support email and return ONLY valid JSON.\n\nEmail content: {{ $('Email Trigger (IMAP)').first().json.textPlain || $('Email Trigger (IMAP)').first().json.textHtml }}\nSubject: {{ $('Email Trigger (IMAP)').first().json.metadata['thread-topic'] }}\nSender: {{ $('Email Trigger (IMAP)').first().json.metadata['return-path'] }}\n\nReturn this exact JSON structure:\n{\n  \"title\": \"short task title (max 60 chars)\",\n  \"description\": \"detailed description of the request\",\n  \"prio\": \"urgent OR medium OR low\",\n  \"dueDate\": \"YYYY-MM-DD (7 days from today if not specified)\",\n  \"category\": \"Technical Task OR User Story\",\n  \"createdBy\": \"sender email address\"\n}\n"
+              "content": "=You are a project management assistant. \nExtract task information from this support email and return ONLY valid JSON.\n\nEmail content: {{ $('Email Trigger (IMAP)').first().json.textPlain || $('Email Trigger (IMAP)').first().json.textHtml }}\nSubject: {{ $('Email Trigger (IMAP)').first().json.metadata['thread-topic'] }}\nSender: {{ $('Email Trigger (IMAP)').first().json.metadata['return-path'] }}\n\nReturn this exact JSON structure:\n{\n  \"title\": \"short task title (max 60 chars)\",\n  \"description\": \"detailed description of the request\",\n  \"prio\": \"urgent OR medium OR low\",\n  \"dueDate\": \"YYYY-MM-DD (7 days from today if not specified)\",\n  \"category\": \"Technical Task OR User Story\",\n  \"subtasks\": [\"subtask item 1\", \"subtask item 2\"],\n  \"createdBy\": \"sender email address\"\n}\n\nFor subtasks: if the email mentions specific steps, items or tasks to complete, list each as a string in the subtasks array. If none are mentioned, use an empty array [].\n"
             }
           ]
         },
@@ -53,7 +53,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst aiOutput = $input.first().json;\nconst raw = aiOutput?.message?.content?.[0]?.text \n         || aiOutput?.content?.[0]?.text \n         || aiOutput?.text || '';\n\nconst jsonMatch = raw.match(/\\{[\\s\\S]*\\}/);\nif (!jsonMatch) throw new Error('No JSON found in AI response');\n\nconst parsed = JSON.parse(jsonMatch[0]);\n\nconst emailData = $('Email Trigger (IMAP)').first().json;\nconst from = emailData.from;\nlet fromText = '';\nif (typeof from === 'string') { fromText = from; }\nelse { fromText = from?.text || from?.value?.[0]?.name || from?.value?.[0]?.address || ''; }\n\nconst returnPath = emailData.metadata?.['return-path'] || '';\nconst senderEmail = from?.value?.[0]?.address \n                 || fromText.match(/[\\w.-]+@[\\w.-]+\\.\\w+/)?.[0]\n                 || returnPath.replace(/[<>]/g, '').trim()\n                 || '';\n\nconst badTitle = !parsed.title \n    || parsed.title.toLowerCase().includes('no email')\n    || parsed.title.toLowerCase().includes('unable to extract')\n    || parsed.title.toLowerCase().includes('not provided')\n    || parsed.title.trim().length < 3;\n\nif (badTitle) {\n    return [{ json: { valid: false, createdBy: senderEmail } }];\n}\n\nif (!parsed.dueDate || parsed.dueDate < today) {\n    parsed.dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);\n}\n\nconst nameMatch = fromText.match(/^([^<]+)</);\nif (nameMatch) { parsed.createdByName = nameMatch[1].trim(); }\nelse if (fromText.includes('@')) { parsed.createdByName = fromText.split('@')[0]; }\nelse { parsed.createdByName = fromText || ''; }\n\nparsed.createdBy = senderEmail;\nparsed.description = (parsed.description || '') + ' — Dieses Ticket wurde KI-generiert.';\n\n\nreturn [{ json: { ...parsed, valid: true } }];\n"
+        "jsCode": "const today = new Date().toISOString().slice(0, 10);\nconst aiOutput = $input.first().json;\nconst raw = aiOutput?.message?.content?.[0]?.text\n         || aiOutput?.content?.[0]?.text\n         || aiOutput?.text || '';\n\nconst jsonMatch = raw.match(/{[sS]*}/);\nif (!jsonMatch) throw new Error('No JSON found in AI response');\n\nconst parsed = JSON.parse(jsonMatch[0]);\n\nconst emailData = $('Email Trigger (IMAP)').first().json;\nconst from = emailData.from;\nlet fromText = '';\nif (typeof from === 'string') { fromText = from; }\nelse { fromText = from?.text || from?.value?.[0]?.name || from?.value?.[0]?.address || ''; }\n\nconst returnPath = emailData.metadata?.['return-path'] || '';\nconst senderEmail = from?.value?.[0]?.address\n                 || fromText.match(/[w.-]+@[w.-]+.w+/)?.[0]\n                 || returnPath.replace(/[<>]/g, '').trim()\n                 || '';\n\nconst badTitle = !parsed.title\n    || parsed.title.toLowerCase().includes('no email')\n    || parsed.title.toLowerCase().includes('unable to extract')\n    || parsed.title.toLowerCase().includes('not provided')\n    || parsed.title.trim().length < 3;\n\nif (badTitle) {\n    return [{ json: { valid: false, createdBy: senderEmail } }];\n}\n\nif (!parsed.dueDate || parsed.dueDate < today) {\n    parsed.dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);\n}\n\nconst nameMatch = fromText.match(/^([^<]+)</);\nif (nameMatch) { parsed.createdByName = nameMatch[1].trim(); }\nelse if (fromText.includes('@')) { parsed.createdByName = fromText.split('@')[0]; }\nelse { parsed.createdByName = fromText || ''; }\n\nparsed.createdBy = senderEmail;\nparsed.description = (parsed.description || '') + ' — Dieses Ticket wurde KI-generiert.';\n\nconst subtasksRaw = Array.isArray(parsed.subtasks) ? parsed.subtasks : [];\nconst subtasksForFirestore = subtasksRaw.map(t => ({\n    mapValue: {\n        fields: {\n            title: { stringValue: typeof t === 'string' ? t : (t.title || '') },\n            completed: { booleanValue: false }\n        }\n    }\n}));\n\nconst firestoreBody = JSON.stringify({\n    fields: {\n        title: { stringValue: parsed.title || '' },\n        description: { stringValue: (parsed.description || '').replace(/[\n\r]/g, ' ') },\n        dueDate: { stringValue: parsed.dueDate || '' },\n        category: { stringValue: parsed.category || '' },\n        prio: { stringValue: parsed.prio || '' },\n        status: { stringValue: 'triage' },\n        subtasks: { arrayValue: { values: subtasksForFirestore } },\n        assignedContacts: { arrayValue: { values: [] } },\n        createdBy: { stringValue: parsed.createdBy || '' },\n        createdByName: { stringValue: parsed.createdByName || '' },\n        creatorType: { stringValue: 'external' },\n        aiGenerated: { booleanValue: true }\n    }\n});\n\nreturn [{ json: { ...parsed, valid: true, firestoreBody } }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -72,7 +72,7 @@
         "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"fields\": {\n    \"title\": { \"stringValue\": \"{{ $json.title }}\" },\n    \"description\": { \"stringValue\": \"{{ $json.description.replace(/[\\n\\r]/g, ' ') }}\" },\n    \"dueDate\": { \"stringValue\": \"{{ $json.dueDate }}\" },\n    \"category\": { \"stringValue\": \"{{ $json.category }}\" },\n    \"prio\": { \"stringValue\": \"{{ $json.prio }}\" },\n    \"status\": { \"stringValue\": \"triage\" },\n    \"subtasks\": { \"arrayValue\": { \"values\": [] } },\n    \"assignedContacts\": { \"arrayValue\": { \"values\": [] } },\n    \"createdBy\": { \"stringValue\": \"{{ $json.createdBy }}\" },\n    \"createdByName\": { \"stringValue\": \"{{ $json.createdByName }}\" },\n    \"creatorType\": { \"stringValue\": \"external\" },\n    \"aiGenerated\": { \"booleanValue\": true }\n  }\n}\n",
+        "jsonBody": "={{ $json.firestoreBody }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -125,7 +125,7 @@
         -368
       ],
       "id": "5541ac97-d990-4021-a7a0-0cf69b0a6472",
-      "name": "Calc Counter"
+      "name": "Code: Calculate Counter"
     },
     {
       "parameters": {
@@ -185,7 +185,7 @@
         -400
       ],
       "id": "f2e534a2-da47-442c-9b81-a4a359ae97e4",
-      "name": "If"
+      "name": "IF: Daily limit reached?"
     },
     {
       "parameters": {
@@ -225,7 +225,7 @@
         -576
       ],
       "id": "09c76289-742b-4e7b-8aa4-aa1d56155c8d",
-      "name": "Email: Confirmation",
+      "name": "Email: Limit Reply to Sender",
       "webhookId": "46fbbcdf-bb4e-4b4d-80a8-c6080d1297e8",
       "credentials": {
         "smtp": {
@@ -249,7 +249,7 @@
         -368
       ],
       "id": "834f7254-fa1d-4d6c-a528-05acb3c2e3b0",
-      "name": "Send an Email",
+      "name": "Email: Confirmation to Sender",
       "webhookId": "1318b4a6-5602-4fcd-857c-61793c562102",
       "credentials": {
         "smtp": {
@@ -273,7 +273,7 @@
         -576
       ],
       "id": "ca448087-8ec1-4f74-8bb0-5cc8f25263c8",
-      "name": "Send an Email1",
+      "name": "Email: Forward to Team",
       "webhookId": "5f6f83e8-082a-4ef1-a2d2-b1531453191e",
       "credentials": {
         "smtp": {
@@ -314,7 +314,7 @@
         -384
       ],
       "id": "9486edf5-7a2c-4647-a797-303a70951f31",
-      "name": "If1"
+      "name": "IF: Valid email content?"
     },
     {
       "parameters": {
@@ -369,7 +369,7 @@
       "main": [
         [
           {
-            "node": "If1",
+            "node": "IF: Valid email content?",
             "type": "main",
             "index": 0
           }
@@ -380,7 +380,7 @@
       "main": [
         [
           {
-            "node": "Send an Email",
+            "node": "Email: Confirmation to Sender",
             "type": "main",
             "index": 0
           }
@@ -391,14 +391,14 @@
       "main": [
         [
           {
-            "node": "Calc Counter",
+            "node": "Code: Calculate Counter",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Calc Counter": {
+    "Code: Calculate Counter": {
       "main": [
         [
           {
@@ -409,11 +409,11 @@
         ]
       ]
     },
-    "If": {
+    "IF: Daily limit reached?": {
       "main": [
         [
           {
-            "node": "Email: Confirmation",
+            "node": "Email: Limit Reply to Sender",
             "type": "main",
             "index": 0
           }
@@ -431,25 +431,25 @@
       "main": [
         [
           {
-            "node": "If",
+            "node": "IF: Daily limit reached?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Email: Confirmation": {
+    "Email: Limit Reply to Sender": {
       "main": [
         [
           {
-            "node": "Send an Email1",
+            "node": "Email: Forward to Team",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Send an Email": {
+    "Email: Confirmation to Sender": {
       "main": [
         [
           {
@@ -460,7 +460,7 @@
         ]
       ]
     },
-    "If1": {
+    "IF: Valid email content?": {
       "main": [
         [
           {
